@@ -6,11 +6,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
+import com.m4ykey.albly.collection.presentation.CollectionScreen
+import com.m4ykey.albly.news.presentation.NewsScreen
+import com.m4ykey.albly.ui.navigation.Collection
+import com.m4ykey.albly.ui.navigation.News
 import com.m4ykey.albly.ui.theme.AlblyTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +27,47 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AlblyTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                val bottomNavItems = listOf(Collection, News)
+                val backStack = rememberNavBackStack(Collection)
+
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar {
+                            bottomNavItems.forEach { item ->
+                                NavigationBarItem(
+                                    selected = false,
+                                    onClick = {},
+                                    icon = {
+                                        Icon(
+                                            imageVector = item.icon,
+                                            contentDescription = item.title
+                                        )
+                                    },
+                                    label = {
+                                        Text(text = item.title)
+                                    }
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
+                    val screenModifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+
+                    NavDisplay(
+                        backStack = backStack,
+                        onBack = { backStack.removeLastOrNull() },
+                        entryProvider = entryProvider {
+                            entry<Collection> {
+                                CollectionScreen(modifier = screenModifier)
+                            }
+                            entry<News> { NewsScreen() }
+                        }
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AlblyTheme {
-        Greeting("Android")
     }
 }
