@@ -14,7 +14,7 @@ sealed class Screen : NavKey, BottomNavItem {
 }
 
 @Serializable
-data object Collection : Screen() {
+data object CollectionScreen : Screen() {
     override val icon: ImageVector
         get() = Icons.AutoMirrored.Outlined.ListAlt
     override val title: String
@@ -22,7 +22,7 @@ data object Collection : Screen() {
 }
 
 @Serializable
-data object News : Screen() {
+data object NewsScreen : Screen() {
     override val icon: ImageVector
         get() = Icons.Default.Public
     override val title: String

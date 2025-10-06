@@ -11,14 +11,17 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.m4ykey.albly.collection.presentation.CollectionScreen
 import com.m4ykey.albly.news.presentation.NewsScreen
-import com.m4ykey.albly.ui.navigation.Collection
-import com.m4ykey.albly.ui.navigation.News
+import com.m4ykey.albly.ui.navigation.CollectionScreen
+import com.m4ykey.albly.ui.navigation.NavigationViewModel
+import com.m4ykey.albly.ui.navigation.NewsScreen
 import com.m4ykey.albly.ui.theme.AlblyTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,16 +30,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AlblyTheme {
-                val bottomNavItems = listOf(Collection, News)
-                val backStack = rememberNavBackStack(Collection)
+                val bottomNavItems = listOf(CollectionScreen, NewsScreen)
+                val navigationViewModel : NavigationViewModel = viewModel()
+                val navStack by navigationViewModel.navStack.collectAsState()
 
                 Scaffold(
                     bottomBar = {
                         NavigationBar {
                             bottomNavItems.forEach { item ->
+                                val selected = navStack.topLevelKey == item
                                 NavigationBarItem(
-                                    selected = false,
-                                    onClick = {},
+                                    selected = selected,
+                                    onClick = {
+                                        navigationViewModel.switchTopLevel(item)
+                                    },
                                     icon = {
                                         Icon(
                                             imageVector = item.icon,
@@ -57,13 +64,13 @@ class MainActivity : ComponentActivity() {
                         .padding(innerPadding)
 
                     NavDisplay(
-                        backStack = backStack,
-                        onBack = { backStack.removeLastOrNull() },
+                        backStack = navStack.backStack,
+                        onBack = { navigationViewModel.goBack() },
                         entryProvider = entryProvider {
-                            entry<Collection> {
+                            entry<CollectionScreen> {
                                 CollectionScreen(modifier = screenModifier)
                             }
-                            entry<News> { NewsScreen() }
+                            entry<NewsScreen> { NewsScreen() }
                         }
                     )
                 }
