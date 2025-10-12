@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Albly</string>
+    <string name="collection">Collection</string>
+    <string name="news">News</string>
+    <string name="album">Album</string>
+    <string name="ep">EP</string>
+    <string name="single">Single</string>
+    <string name="compilation">Compilation</string>
+    <string name="search">Search</string>
+    <string name="enter_url">Enter URL</string>
+    <string name="latest">Latest</string>
+    <string name="oldest">Oldest</string>
+    <string name="alphabetical">Alphabetical</string>
 </resources>

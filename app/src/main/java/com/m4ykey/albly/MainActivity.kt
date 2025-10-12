@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -47,11 +48,11 @@ class MainActivity : ComponentActivity() {
                                     icon = {
                                         Icon(
                                             imageVector = item.icon,
-                                            contentDescription = item.title
+                                            contentDescription = stringResource(id = item.title)
                                         )
                                     },
                                     label = {
-                                        Text(text = item.title)
+                                        Text(text = stringResource(id = item.title))
                                     }
                                 )
                             }
@@ -68,7 +69,7 @@ class MainActivity : ComponentActivity() {
                         onBack = { navigationViewModel.goBack() },
                         entryProvider = entryProvider {
                             entry<CollectionScreen> {
-                                CollectionScreen(modifier = screenModifier)
+                                CollectionScreen(screenModifier)
                             }
                             entry<NewsScreen> { NewsScreen() }
                         }
