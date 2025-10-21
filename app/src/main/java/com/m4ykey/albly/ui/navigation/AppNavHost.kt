@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.m4ykey.albly.collection.presentation.CollectionScreen
-import com.m4ykey.albly.search.SearchScreen
+import com.m4ykey.albly.search.presentation.SearchScreen
 
 @Composable
 fun AppNavHost(

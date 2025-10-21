@@ -1,4 +1,4 @@
-package com.m4ykey.albly.search
+package com.m4ykey.albly.search.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
