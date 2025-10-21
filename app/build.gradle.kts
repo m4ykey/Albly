@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.icons.extended)
     implementation(libs.androidx.navigation)
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter)
