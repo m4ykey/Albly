@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.m4ykey.albly.collection.presentation.CollectionScreen
+import com.m4ykey.albly.search.SearchScreen
 
 @Composable
 fun AppNavHost(
@@ -18,7 +19,19 @@ fun AppNavHost(
         startDestination = Screen.CollectionScreen.screen
     ) {
         composable(Screen.CollectionScreen.screen) {
-            CollectionScreen()
+            CollectionScreen(
+                onSearch = {
+                    navHostController.navigate(Screen.SearchScreen.screen)
+                }
+            )
+        }
+
+        composable(Screen.SearchScreen.screen) {
+            SearchScreen(
+                onNavBack = {
+                    navHostController.navigateUp()
+                }
+            )
         }
     }
 }

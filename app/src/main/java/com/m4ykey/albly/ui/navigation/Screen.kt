@@ -11,4 +11,7 @@ sealed class Screen(val screen : String) {
     @Serializable
     object NewsScreen : Screen(screen = "news_screen")
 
+    @Serializable
+    object SearchScreen : Screen(screen = "search_screen")
+
 }

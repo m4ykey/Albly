@@ -69,7 +69,10 @@ import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectionScreen(modifier : Modifier = Modifier) {
+fun CollectionScreen(
+    modifier : Modifier = Modifier,
+    onSearch : () -> Unit
+) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val viewModel : CollectionViewModel = viewModel()
@@ -99,7 +102,7 @@ fun CollectionScreen(modifier : Modifier = Modifier) {
                 title = { Text(text = stringResource(id = R.string.collection)) },
                 actions = {
                     IconButton(
-                        onClick = {}
+                        onClick = { onSearch() }
                     ) {
                         Icon(
                             contentDescription = stringResource(R.string.search),
@@ -311,5 +314,5 @@ fun AlbumTypeChipList(
 @Preview
 @Composable
 private fun CollectionScreenPrev() {
-    CollectionScreen()
+    CollectionScreen {  }
 }
