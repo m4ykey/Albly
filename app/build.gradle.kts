@@ -64,12 +64,19 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    implementation(libs.coil3.compose)
+    implementation(libs.coil3.network.okhttp)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter)
 
     implementation(libs.moshi.kotlin)
     implementation(libs.moshi)
+    implementation(libs.androidx.paging.compose)
     ksp(libs.moshi.codegen)
 
     implementation(libs.kotlinx.coroutines.android)
