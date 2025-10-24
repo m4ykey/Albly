@@ -16,7 +16,9 @@ fun ChipItem(
     modifier: Modifier = Modifier,
     label : String = "",
     selected : Boolean,
-    onSelect : (Boolean) -> Unit
+    onSelect : (Boolean) -> Unit,
+    isLeadingIcon : Boolean = false,
+    isTrailingIcon : Boolean = false
 ) {
     FilterChip(
         label = { Text(text = label) },
@@ -24,12 +26,25 @@ fun ChipItem(
         selected = selected,
         modifier = modifier.wrapContentWidth(),
         leadingIcon = {
-            if (selected) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = label,
-                    modifier = modifier.size(14.dp)
-                )
+            if (isLeadingIcon) {
+                if (selected) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = label,
+                        modifier = modifier.size(14.dp)
+                    )
+                }
+            }
+        },
+        trailingIcon = {
+            if (isTrailingIcon) {
+                if (selected) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = label,
+                        modifier = modifier.size(14.dp)
+                    )
+                }
             }
         }
     )

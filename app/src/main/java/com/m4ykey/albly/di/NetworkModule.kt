@@ -20,7 +20,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @SpotBaseUrl
-    fun provideSpotiBaseUrl() : String = ""
+    fun provideSpotBaseUrl() : String = "https://api.spotify.com/v1/"
 
     @Provides
     @Singleton

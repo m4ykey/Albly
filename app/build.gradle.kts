@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.androidx.icons.extended)
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.common)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter)

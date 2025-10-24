@@ -50,7 +50,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -71,11 +70,11 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun CollectionScreen(
     modifier : Modifier = Modifier,
-    onSearch : () -> Unit
+    onSearch : () -> Unit,
+    viewModel : CollectionViewModel = viewModel()
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val viewModel : CollectionViewModel = viewModel()
     val viewState by viewModel.albumType.collectAsState()
     val type by rememberUpdatedState(viewState.type)
 
@@ -146,7 +145,7 @@ fun CollectionScreen(
                 Surface(
                     shape = RoundedCornerShape(16.dp),
                     tonalElevation = 6.dp,
-                    modifier = modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Column {
                         UrlInputField(state = state)
@@ -304,15 +303,10 @@ fun AlbumTypeChipList(
                         } else {
                             onChipSelected(sortKey)
                         }
-                    }
+                    },
+                    isLeadingIcon = true
                 )
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun CollectionScreenPrev() {
-    CollectionScreen {  }
 }
