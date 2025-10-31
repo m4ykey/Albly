@@ -1,4 +1,4 @@
-package com.m4ykey.albly.ui.navigation
+package com.m4ykey.albly.app.ui.navigation
 
 import kotlinx.serialization.Serializable
 

@@ -1,4 +1,4 @@
-package com.m4ykey.albly.ui.theme
+package com.m4ykey.albly.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -14,7 +14,7 @@ class CustomTokenProvider @Inject constructor(
 
         val newRequest = chain.request().newBuilder()
             .header("Content-Type", "application/json")
-            .header("Authorization", accessToken)
+            .header("Authorization", "Bearer $accessToken")
             .build()
 
         return chain.proceed(newRequest)

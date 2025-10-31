@@ -5,13 +5,15 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.m4ykey.albly.BuildConfig
 import com.m4ykey.albly.auth.network.AuthApi
+import com.m4ykey.albly.di.SpotiDataStore
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class SpotiTokenProvider @Inject constructor(
     private val api : AuthApi,
-    private val dataStore : DataStore<Preferences>
+    @param:SpotiDataStore private val dataStore : DataStore<Preferences>
 ) : TokenProvider {
 
     private val accessTokenKey = stringPreferencesKey("access_token")
@@ -28,8 +30,8 @@ class SpotiTokenProvider @Inject constructor(
             } else {
                 val newAccessToken = fetchAccessToken(
                     api = api,
-                    clientId = "",
-                    clientSecret = ""
+                    clientId = BuildConfig.SPOTIFY_CLIENT_ID,
+                    clientSecret = BuildConfig.SPOTIFY_CLIENT_SECRET
                 )
 
                 val newExpireTime = System.currentTimeMillis() + 3600 * 1000

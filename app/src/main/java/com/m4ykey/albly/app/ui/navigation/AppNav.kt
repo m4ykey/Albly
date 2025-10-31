@@ -1,8 +1,7 @@
-package com.m4ykey.albly
+package com.m4ykey.albly.app.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import com.m4ykey.albly.ui.navigation.AppNavHost
 
 @Composable
 fun AppNav() {

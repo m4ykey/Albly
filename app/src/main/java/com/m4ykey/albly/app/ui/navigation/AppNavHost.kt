@@ -1,4 +1,4 @@
-package com.m4ykey.albly.ui.navigation
+package com.m4ykey.albly.app.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

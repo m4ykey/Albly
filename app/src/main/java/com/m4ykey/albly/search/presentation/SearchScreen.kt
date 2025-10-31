@@ -7,8 +7,10 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,6 +23,8 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -39,10 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,8 +55,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.m4ykey.albly.R
+import com.m4ykey.albly.album.presentation.components.AlbumCard
 import com.m4ykey.albly.util.CenteredContent
 import com.m4ykey.albly.util.chip.ChipItem
 import kotlinx.coroutines.flow.collectLatest
@@ -65,10 +69,11 @@ import kotlinx.coroutines.flow.collectLatest
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onNavBack: () -> Unit,
-    viewModel : SearchViewModel = viewModel()
+    viewModel : SearchViewModel = hiltViewModel()
 ) {
-    var searchQuery by rememberSaveable { mutableStateOf("") }
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
+    val searchItems = viewModel.searchResults.collectAsLazyPagingItems()
 
     val targetWeight = if (searchQuery.isEmpty()) 1f else 0.8f
 
@@ -81,7 +86,7 @@ fun SearchScreen(
     val viewState by viewModel.searchType.collectAsState()
     val type by rememberUpdatedState(viewState.type)
 
-    val currentOnAction by rememberUpdatedState(newValue = viewModel::onAction)
+    val onAction by rememberUpdatedState(newValue = viewModel::onAction)
 
     LaunchedEffect(Unit) {
         viewModel.typeUiEvent.collectLatest { event ->
@@ -112,7 +117,9 @@ fun SearchScreen(
             }
             SearchBarTextField(
                 searchQuery = searchQuery,
-                onValueChange = { searchQuery = it },
+                onValueChange = { query ->
+                    onAction(SearchTypeAction.OnQueryChange(query))
+                },
                 modifier = Modifier
                     .weight(animatedWeight)
                     .padding(start = 8.dp)
@@ -133,7 +140,9 @@ fun SearchScreen(
                     targetOffsetX = { fullWidth -> fullWidth }
                 )
             ) {
-                IconButton(onClick = { searchQuery = "" }) {
+                IconButton(onClick = {
+                    onAction(SearchTypeAction.OnQueryChange(""))
+                }) {
                     Icon(
                         contentDescription = stringResource(R.string.clear),
                         imageVector = Icons.Outlined.Clear,
@@ -147,16 +156,28 @@ fun SearchScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth()
+            SearchTypeChipList(
+                modifier = Modifier.fillMaxWidth(),
+                onChipSelected = { selectedType ->
+                    onAction(SearchTypeAction.OnTypeClick(selectedType))
+                },
+                selectedChip = type
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                SearchTypeChipList(
-                    modifier = Modifier.fillMaxWidth(),
-                    onChipSelected = { selectedType ->
-                        currentOnAction(SearchTypeAction.OnTypeClick(selectedType))
-                    },
-                    selectedChip = type
-                )
+                items(searchItems.itemCount) { index ->
+                    searchItems[index]?.let { item ->
+                        AlbumCard(item = item)
+                    }
+                }
             }
         }
     }
@@ -191,7 +212,7 @@ fun SearchTypeChipList(
 @Composable
 fun SearchType.getLabel() : String {
     return when (this) {
-        SearchType.ALL -> stringResource(id = R.string.all)
+        //SearchType.ALL -> stringResource(id = R.string.all)
         SearchType.ALBUM -> stringResource(id = R.string.album)
         SearchType.ARTIST -> stringResource(id = R.string.artist)
     }

@@ -10,6 +10,9 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+val spotifyClientId = project.hasProperty("SPOTIFY_CLIENT_ID")
+val spotifyClientSecret = project.hasProperty("SPOTIFY_CLIENT_SECRET")
+
 android {
     namespace = "com.m4ykey.albly"
     compileSdk = 36
@@ -19,9 +22,12 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "0.0.1-alpha03"
+        versionName = "0.0.2-alpha03"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "SPOTIFY_CLIENT_ID" , "\"${spotifyClientId}\"")
+        buildConfigField("String", "SPOTIFY_CLIENT_SECRET" , "\"${spotifyClientSecret}\"")
     }
 
     buildTypes {
@@ -46,6 +52,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -83,7 +90,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.logging.interceptor)
 
     testImplementation(libs.junit)
 
