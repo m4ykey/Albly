@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -122,7 +124,8 @@ fun SearchScreen(
                 },
                 modifier = Modifier
                     .weight(animatedWeight)
-                    .padding(start = 8.dp)
+                    .padding(start = 8.dp),
+                onSearch = { onAction(SearchTypeAction.OnSearchClick) }
             )
             IconButton(onClick = { }) {
                 Icon(
@@ -165,7 +168,7 @@ fun SearchScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Fixed(3),
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -222,7 +225,8 @@ fun SearchType.getLabel() : String {
 fun SearchBarTextField(
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
-    searchQuery: String
+    searchQuery: String,
+    onSearch : () -> Unit
 ) {
     val searchFieldBackground = RoundedCornerShape(100.dp)
     val containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -271,7 +275,11 @@ fun SearchBarTextField(
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Search,
                     keyboardType = KeyboardType.Text
-                )
+                ),
+                keyboardActions = KeyboardActions(
+                    onSearch = { onSearch() }
+                ),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
             )
         }
     }
