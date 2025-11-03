@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -10,8 +11,12 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
-val spotifyClientId = project.hasProperty("SPOTIFY_CLIENT_ID")
-val spotifyClientSecret = project.hasProperty("SPOTIFY_CLIENT_SECRET")
+val localProps = Properties().apply {
+    load(rootProject.file("local.properties").inputStream())
+}
+
+val spotifyClientId : String = localProps.getProperty("SPOTIFY_CLIENT_ID")
+val spotifyClientSecret : String = localProps.getProperty("SPOTIFY_CLIENT_SECRET")
 
 android {
     namespace = "com.m4ykey.albly"
@@ -32,7 +37,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
