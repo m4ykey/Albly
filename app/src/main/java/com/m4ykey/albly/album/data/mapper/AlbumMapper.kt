@@ -1,11 +1,11 @@
 package com.m4ykey.albly.album.data.mapper
 
-import com.m4ykey.albly.album.data.network.AlbumItemDto
 import com.m4ykey.albly.album.data.network.AlbumArtistDto
+import com.m4ykey.albly.album.data.network.AlbumItemDto
 import com.m4ykey.albly.album.data.network.ExternalUrlsDto
 import com.m4ykey.albly.album.data.network.ImageDto
-import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.model.AlbumArtist
+import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.model.ExternalUrls
 import com.m4ykey.albly.album.domain.model.Image
 

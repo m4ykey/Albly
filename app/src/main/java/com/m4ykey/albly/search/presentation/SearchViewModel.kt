@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
@@ -35,6 +34,7 @@ class SearchViewModel @Inject constructor(
     val typeUiEvent = _typeUiEvent.asSharedFlow()
 
     private val _activeSearchQuery = MutableStateFlow("")
+    val activeSearchQuery = _activeSearchQuery.asStateFlow()
 
     fun updateType(type : SearchType) {
         _searchType.update { it.copy(type = type) }

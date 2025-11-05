@@ -2,7 +2,6 @@ package com.m4ykey.albly.util.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import java.lang.Exception
 
 abstract class BasePagingSource<Value : Any> : PagingSource<Int, Value>() {
 

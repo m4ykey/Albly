@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.gms)
+    alias(libs.plugins.crashlytics)
 }
 
 val localProps = Properties().apply {
@@ -80,9 +82,13 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.common)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
 
-    implementation(libs.coil3.compose)
-    implementation(libs.coil3.network.okhttp)
+    implementation(libs.landscapist)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter)
@@ -98,6 +104,9 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     implementation(libs.logging.interceptor)
 

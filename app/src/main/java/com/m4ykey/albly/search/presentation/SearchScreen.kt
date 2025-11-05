@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -36,9 +37,11 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,14 +67,15 @@ import com.m4ykey.albly.R
 import com.m4ykey.albly.album.presentation.components.AlbumCard
 import com.m4ykey.albly.util.CenteredContent
 import com.m4ykey.albly.util.chip.ChipItem
+import com.m4ykey.albly.util.paging.BasePagingList
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onNavBack: () -> Unit,
-    viewModel : SearchViewModel = hiltViewModel()
+    onBack: (() -> Unit),
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -88,7 +92,9 @@ fun SearchScreen(
     val viewState by viewModel.searchType.collectAsState()
     val type by rememberUpdatedState(viewState.type)
 
-    val onAction by rememberUpdatedState(newValue = viewModel::onAction)
+    val activeSearchQuery by viewModel.activeSearchQuery.collectAsStateWithLifecycle()
+
+    val onAction = viewModel::onAction
 
     LaunchedEffect(Unit) {
         viewModel.typeUiEvent.collectLatest { event ->
@@ -98,89 +104,107 @@ fun SearchScreen(
         }
     }
 
-    Column(
+    Surface(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 5.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = modifier
         ) {
-            IconButton(onClick = onNavBack) {
-                Icon(
-                    contentDescription = stringResource(R.string.back),
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    tint = isDarkTheme
-                )
-            }
-            SearchBarTextField(
-                searchQuery = searchQuery,
-                onValueChange = { query ->
-                    onAction(SearchTypeAction.OnQueryChange(query))
-                },
+            Row(
                 modifier = Modifier
-                    .weight(animatedWeight)
-                    .padding(start = 8.dp),
-                onSearch = { onAction(SearchTypeAction.OnSearchClick) }
-            )
-            IconButton(onClick = { }) {
-                Icon(
-                    contentDescription = stringResource(R.string.mic),
-                    imageVector = Icons.Outlined.Mic,
-                    tint = isDarkTheme
-                )
-            }
-            AnimatedVisibility(
-                visible = searchQuery.isNotEmpty(),
-                enter = slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth }
-                ),
-                exit = slideOutHorizontally(
-                    targetOffsetX = { fullWidth -> fullWidth }
-                )
+                    .fillMaxWidth()
+                    .padding(horizontal = 5.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = {
-                    onAction(SearchTypeAction.OnQueryChange(""))
-                }) {
+                IconButton(onClick = onBack) {
                     Icon(
-                        contentDescription = stringResource(R.string.clear),
-                        imageVector = Icons.Outlined.Clear,
+                        contentDescription = stringResource(R.string.back),
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         tint = isDarkTheme
                     )
                 }
-            }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            SearchTypeChipList(
-                modifier = Modifier.fillMaxWidth(),
-                onChipSelected = { selectedType ->
-                    onAction(SearchTypeAction.OnTypeClick(selectedType))
-                },
-                selectedChip = type
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentPadding = PaddingValues(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(searchItems.itemCount) { index ->
-                    searchItems[index]?.let { item ->
-                        AlbumCard(item = item)
+                SearchBarTextField(
+                    searchQuery = searchQuery,
+                    onValueChange = { query ->
+                        onAction(SearchTypeAction.OnQueryChange(query))
+                    },
+                    modifier = Modifier
+                        .weight(animatedWeight)
+                        .padding(start = 8.dp),
+                    onSearch = { onAction(SearchTypeAction.OnSearchClick) }
+                )
+                IconButton(onClick = { }) {
+                    Icon(
+                        contentDescription = stringResource(R.string.mic),
+                        imageVector = Icons.Outlined.Mic,
+                        tint = isDarkTheme
+                    )
+                }
+                AnimatedVisibility(
+                    visible = searchQuery.isNotEmpty(),
+                    enter = slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth }
+                    ),
+                    exit = slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth }
+                    )
+                ) {
+                    IconButton(onClick = {
+                        onAction(SearchTypeAction.OnQueryChange(""))
+                    }) {
+                        Icon(
+                            contentDescription = stringResource(R.string.clear),
+                            imageVector = Icons.Outlined.Clear,
+                            tint = isDarkTheme
+                        )
                     }
                 }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                SearchTypeChipList(
+                    modifier = Modifier.fillMaxWidth(),
+                    onChipSelected = { selectedType ->
+                        onAction(SearchTypeAction.OnTypeClick(selectedType))
+                    },
+                    selectedChip = type
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                BasePagingList(
+                    isActiveSearch = activeSearchQuery.isNotBlank(),
+                    items = searchItems,
+                    listContent = { items ->
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            contentPadding = PaddingValues(horizontal = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            state = rememberLazyGridState()
+                        ) {
+                            items(
+                                count = items.itemCount,
+                                contentType = { "album_item" },
+                                key = { index ->
+                                    val item = items[index]
+                                    item?.id ?: "placeholder_$index"
+                                }
+                            ) { index ->
+                                items[index]?.let { item ->
+                                    AlbumCard(item = item)
+                                }
+                            }
+                        }
+                    }
+                )
             }
         }
     }
@@ -189,8 +213,8 @@ fun SearchScreen(
 @Composable
 fun SearchTypeChipList(
     modifier: Modifier = Modifier,
-    onChipSelected : (SearchType) -> Unit,
-    selectedChip : SearchType
+    onChipSelected: (SearchType) -> Unit,
+    selectedChip: SearchType
 ) {
 
     val chipList = SearchType.entries.map { type -> type.getLabel() to type }
@@ -213,7 +237,7 @@ fun SearchTypeChipList(
 }
 
 @Composable
-fun SearchType.getLabel() : String {
+fun SearchType.getLabel(): String {
     return when (this) {
         //SearchType.ALL -> stringResource(id = R.string.all)
         SearchType.ALBUM -> stringResource(id = R.string.album)
@@ -226,7 +250,7 @@ fun SearchBarTextField(
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
     searchQuery: String,
-    onSearch : () -> Unit
+    onSearch: () -> Unit
 ) {
     val searchFieldBackground = RoundedCornerShape(100.dp)
     val containerColor = MaterialTheme.colorScheme.surfaceContainer
