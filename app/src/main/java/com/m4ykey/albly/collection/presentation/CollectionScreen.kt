@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
@@ -71,7 +72,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun CollectionScreen(
     modifier : Modifier = Modifier,
     onSearch : () -> Unit,
-    viewModel : CollectionViewModel = viewModel()
+    viewModel : CollectionViewModel = viewModel(),
+    onLinkClick : (String) -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -81,16 +83,15 @@ fun CollectionScreen(
     var showDialog by remember { mutableStateOf(false) }
     val state = rememberTextFieldState()
 
-    val currentOnAction by rememberUpdatedState(newValue = viewModel::onAction)
+    val onAction = viewModel::onAction
 
-    val listState = rememberSaveable(saver = LazyListState.Saver) {
-        LazyListState()
-    }
+    val listState = rememberLazyListState()
 
-    LaunchedEffect(Unit) {
-        viewModel.typeUiEvent.collectLatest { event ->
+    LaunchedEffect(viewModel) {
+        viewModel.collectionUiEvent.collectLatest { event ->
             when (event) {
                 is CollectionUiEvent.ChangeType -> viewModel.updateType(event.type)
+                is CollectionUiEvent.OnLinkClick -> onLinkClick(event.link)
             }
         }
     }
@@ -126,7 +127,7 @@ fun CollectionScreen(
     ) { padding ->
         CollectionScreenContent(
             type = type,
-            onAction = currentOnAction,
+            onAction = onAction,
             padding = padding,
             listState = listState
         )

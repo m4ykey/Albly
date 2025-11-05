@@ -30,8 +30,8 @@ class SearchViewModel @Inject constructor(
     private val _searchType = MutableStateFlow(SearchTypeState())
     val searchType = _searchType.asStateFlow()
 
-    private val _typeUiEvent = MutableSharedFlow<SearchUiEvent>()
-    val typeUiEvent = _typeUiEvent.asSharedFlow()
+    private val _searchUiEvent = MutableSharedFlow<SearchUiEvent>()
+    val searchUiEvent = _searchUiEvent.asSharedFlow()
 
     private val _activeSearchQuery = MutableStateFlow("")
     val activeSearchQuery = _activeSearchQuery.asStateFlow()
@@ -55,13 +55,16 @@ class SearchViewModel @Inject constructor(
             when (action) {
                 is SearchTypeAction.OnTypeClick -> {
                     updateType(action.type)
-                    _typeUiEvent.emit(SearchUiEvent.ChangeType(action.type))
+                    _searchUiEvent.emit(SearchUiEvent.ChangeType(action.type))
                 }
                 is SearchTypeAction.OnQueryChange -> {
                     _searchQuery.value = action.query
                 }
                 is SearchTypeAction.OnSearchClick -> {
                     _activeSearchQuery.value = _searchQuery.value
+                }
+                is SearchTypeAction.OnAlbumClick -> {
+                    _searchUiEvent.emit(SearchUiEvent.OnAlbumClick(action.id))
                 }
             }
         }

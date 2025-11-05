@@ -45,9 +45,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,13 +67,15 @@ import com.m4ykey.albly.util.CenteredContent
 import com.m4ykey.albly.util.chip.ChipItem
 import com.m4ykey.albly.util.paging.BasePagingList
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onBack: (() -> Unit),
-    viewModel: SearchViewModel = hiltViewModel()
+    onBack: () -> Unit,
+    viewModel: SearchViewModel = hiltViewModel(),
+    onAlbumClick : (String) -> Unit
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -89,17 +89,18 @@ fun SearchScreen(
         animationSpec = tween(durationMillis = 1000)
     )
 
-    val viewState by viewModel.searchType.collectAsState()
-    val type by rememberUpdatedState(viewState.type)
-
+    val type by viewModel.searchType.map { it.type }.collectAsStateWithLifecycle(initialValue = SearchType.ALBUM)
     val activeSearchQuery by viewModel.activeSearchQuery.collectAsStateWithLifecycle()
 
     val onAction = viewModel::onAction
 
-    LaunchedEffect(Unit) {
-        viewModel.typeUiEvent.collectLatest { event ->
+    val state = rememberLazyGridState()
+
+    LaunchedEffect(viewModel) {
+        viewModel.searchUiEvent.collectLatest { event ->
             when (event) {
                 is SearchUiEvent.ChangeType -> viewModel.updateType(event.type)
+                is SearchUiEvent.OnAlbumClick -> onAlbumClick(event.id)
             }
         }
     }
@@ -188,7 +189,7 @@ fun SearchScreen(
                             contentPadding = PaddingValues(horizontal = 8.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
-                            state = rememberLazyGridState()
+                            state = state
                         ) {
                             items(
                                 count = items.itemCount,
@@ -199,7 +200,10 @@ fun SearchScreen(
                                 }
                             ) { index ->
                                 items[index]?.let { item ->
-                                    AlbumCard(item = item)
+                                    AlbumCard(
+                                        item = item,
+                                        onAlbumClick = { onAction(SearchTypeAction.OnAlbumClick(item.id)) }
+                                    )
                                 }
                             }
                         }

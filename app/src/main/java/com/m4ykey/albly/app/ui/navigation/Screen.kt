@@ -9,9 +9,17 @@ sealed class Screen(val screen : String) {
     object CollectionScreen : Screen(screen = "collection_screen")
 
     @Serializable
-    object NewsScreen : Screen(screen = "news_screen")
+    object SearchScreen : Screen(screen = "search_screen")
 
     @Serializable
-    object SearchScreen : Screen(screen = "search_screen")
+    data class AlbumDetail(val albumId : String) : Screen("$routeBase/$albumId") {
+        companion object {
+            const val routeBase = "album_detail_screen"
+            const val ARG_ALBUM_ID = "albumId"
+
+            fun routeWithArgs(albumId: String) : String =
+                "$routeBase/$albumId"
+        }
+    }
 
 }

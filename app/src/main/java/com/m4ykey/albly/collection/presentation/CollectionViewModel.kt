@@ -17,8 +17,8 @@ class CollectionViewModel : ViewModel() {
     private val _albumType = MutableStateFlow(AlbumTypeState())
     val albumType = _albumType.asStateFlow()
 
-    private val _typeUiEvent = MutableSharedFlow<CollectionUiEvent>()
-    val typeUiEvent = _typeUiEvent.asSharedFlow()
+    private val _collectionUiEvent = MutableSharedFlow<CollectionUiEvent>()
+    val collectionUiEvent = _collectionUiEvent.asSharedFlow()
 
     fun updateType(type : AlbumType?) {
         _albumType.update { it.copy(type = type) }
@@ -26,10 +26,14 @@ class CollectionViewModel : ViewModel() {
 
     fun onAction(action : AlbumTypeAction) {
         viewModelScope.launch {
-            val event = when (action) {
-                is AlbumTypeAction.OnTypeClick -> CollectionUiEvent.ChangeType(action.type)
+            when (action) {
+                is AlbumTypeAction.OnTypeClick -> {
+                    _collectionUiEvent.emit(CollectionUiEvent.ChangeType(action.type))
+                }
+                is AlbumTypeAction.OnLinkClick -> {
+                    _collectionUiEvent.emit(CollectionUiEvent.OnLinkClick(action.link))
+                }
             }
-            _typeUiEvent.emit(event)
         }
     }
 

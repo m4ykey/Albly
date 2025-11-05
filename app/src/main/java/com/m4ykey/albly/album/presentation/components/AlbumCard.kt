@@ -1,5 +1,6 @@
 package com.m4ykey.albly.album.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,6 +9,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
@@ -20,13 +22,16 @@ import com.skydoves.landscapist.coil3.CoilImage
 
 @Composable
 fun AlbumCard(
-    item : AlbumItem
+    item : AlbumItem,
+    onAlbumClick : (String) -> Unit
 ) {
     val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
 
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
-    Column {
+    Column(
+        modifier = Modifier.clickable { onAlbumClick(item.id) }
+    ) {
         Card(
             shape = RoundedCornerShape(10.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
