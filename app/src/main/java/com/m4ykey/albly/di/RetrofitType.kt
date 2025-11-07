@@ -9,3 +9,7 @@ annotation class AuthRetrofit
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class SearchRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class AlbumRetrofit

@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.androidx.media3.common)
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
+    implementation(libs.androidx.palette)
 
     implementation(libs.landscapist)
 
@@ -100,6 +101,7 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation)

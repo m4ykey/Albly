@@ -1,6 +1,6 @@
 package com.m4ykey.albly.search.data.network
 
-import com.m4ykey.albly.album.data.network.AlbumListDto
+import com.m4ykey.albly.album.data.network.model.AlbumListDto
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query

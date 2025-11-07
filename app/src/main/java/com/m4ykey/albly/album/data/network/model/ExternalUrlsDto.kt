@@ -1,4 +1,4 @@
-package com.m4ykey.albly.album.data.network
+package com.m4ykey.albly.album.data.network.model
 
 import com.squareup.moshi.JsonClass
 
