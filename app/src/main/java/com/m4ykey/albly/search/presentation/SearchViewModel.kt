@@ -22,7 +22,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class SearchViewModel @Inject constructor(
     private val useCase: SearchUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
@@ -36,33 +36,37 @@ class SearchViewModel @Inject constructor(
     private val _activeSearchQuery = MutableStateFlow("")
     val activeSearchQuery = _activeSearchQuery.asStateFlow()
 
-    fun updateType(type : SearchType) {
+    fun updateType(type: SearchType) {
         _searchType.update { it.copy(type = type) }
     }
 
     val searchResults = combine(
         _activeSearchQuery,
         _searchType
-    ) { query, typeState ->
-        query to typeState.type
-    }.flatMapLatest { (query, type) ->
-        if (query.isBlank()) emptyFlow()
-        else useCase(q = query, type = type.name.lowercase()).cachedIn(viewModelScope)
+    ) { query, typeState -> query to typeState.type }.flatMapLatest { (query, type) ->
+        if (query.isBlank()) emptyFlow() else useCase(
+            q = query,
+            type = type.name.lowercase()
+        ).cachedIn(viewModelScope)
     }
 
-    fun onAction(action : SearchTypeAction) {
+
+    fun onAction(action: SearchTypeAction) {
         viewModelScope.launch {
             when (action) {
                 is SearchTypeAction.OnTypeClick -> {
                     updateType(action.type)
                     _searchUiEvent.emit(SearchUiEvent.ChangeType(action.type))
                 }
+
                 is SearchTypeAction.OnQueryChange -> {
                     _searchQuery.value = action.query
                 }
+
                 is SearchTypeAction.OnSearchClick -> {
                     _activeSearchQuery.value = _searchQuery.value
                 }
+
                 is SearchTypeAction.OnAlbumClick -> {
                     _searchUiEvent.emit(SearchUiEvent.OnAlbumClick(action.id))
                 }

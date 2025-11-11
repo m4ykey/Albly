@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
@@ -79,6 +80,7 @@ import com.m4ykey.albly.collection.presentation.type.components.chip.ViewTypeChi
 import com.m4ykey.albly.collection.presentation.type.list.ListSortType
 import com.m4ykey.albly.collection.presentation.type.list.ListType
 import com.m4ykey.albly.collection.presentation.type.list.ListViewType
+import com.m4ykey.albly.search.presentation.SearchBarTextField
 import com.m4ykey.albly.util.CenteredContent
 import com.m4ykey.albly.util.chip.ChipItem
 import kotlinx.coroutines.flow.collectLatest
@@ -327,6 +329,8 @@ fun CollectionScreenContent(
     var viewType by rememberSaveable { mutableStateOf(ListViewType.GRID) }
     var listType by rememberSaveable { mutableStateOf(ListType.ALBUM) }
 
+    var showSearch by rememberSaveable { mutableStateOf(false) }
+
     LazyColumn(
         modifier = modifier
             .padding(padding)
@@ -337,20 +341,62 @@ fun CollectionScreenContent(
             Column(
                 modifier = modifier.fillMaxWidth()
             ) {
-                AlbumTypeChipList(
-                    selectedChip = type,
-                    onChipSelected = { selectedType ->
-                        onAction(AlbumTypeAction.OnTypeClick(selectedType))
-                    },
+                Row(
                     modifier = Modifier.fillMaxWidth()
-                )
+                ) {
+                    AlbumTypeChipList(
+                        selectedChip = type,
+                        onChipSelected = { selectedType ->
+                            onAction(AlbumTypeAction.OnTypeClick(selectedType))
+                        }
+                    )
+                }
                 ListOptions(
                     modifier = modifier.padding(horizontal = 5.dp),
                     onSortChange = { sortType = it },
                     onViewChange = { viewType = it },
-                    onListTypeChange = { listType = it }
+                    onListTypeChange = { listType = it },
+                    onSearchClick = { showSearch = !showSearch }
                 )
+
+                if (showSearch) {
+                    SearchField(
+                        onValueChange = {},
+                        onSearch = {},
+                        searchQuery = "",
+                        onCloseClick = { showSearch = false }
+                    )
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun SearchField(
+    modifier: Modifier = Modifier,
+    onValueChange : (String) -> Unit,
+    onSearch: () -> Unit,
+    searchQuery : String,
+    onCloseClick : () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .padding(start = 10.dp, end = 10.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SearchBarTextField(
+            searchQuery = searchQuery,
+            onSearch = onSearch,
+            onValueChange = onValueChange,
+            modifier = Modifier.weight(1f)
+        )
+        IconButton(onClick = onCloseClick) {
+            Icon(
+                contentDescription = stringResource(R.string.clear),
+                imageVector = Icons.Default.Close
+            )
         }
     }
 }
@@ -361,17 +407,31 @@ fun ListOptions(
     onSortChange : (ListSortType) -> Unit,
     onListTypeChange : (ListType) -> Unit,
     onViewChange : (ListViewType) -> Unit,
+    onSearchClick : () -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 5.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         ListTypeChip(onChange = onListTypeChange)
+        Spacer(modifier = Modifier.width(10.dp))
         SortTypeChip(onChange = onSortChange)
+        Spacer(modifier = Modifier.width(10.dp))
         ViewTypeChip(onChange = onViewChange)
+        Spacer(modifier = Modifier.weight(1f))
+        FilterChip(
+            label = { Text(text = "") },
+            onClick = onSearchClick,
+            selected = false,
+            leadingIcon = {
+                Icon(
+                    contentDescription = null,
+                    imageVector = Icons.Default.Search
+                )
+            }
+        )
     }
 }
 
