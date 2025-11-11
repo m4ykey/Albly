@@ -1,5 +1,7 @@
 package com.m4ykey.albly.album.presentation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -45,14 +47,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.domain.model.AlbumDetail
+import com.m4ykey.albly.album.domain.model.TrackItem
+import com.m4ykey.albly.album.presentation.components.TrackListItem
 import com.m4ykey.albly.util.formatReleaseDate
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
@@ -66,11 +73,13 @@ fun AlbumDetailScreen(
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
+    val tracks = viewModel.trackResults.collectAsLazyPagingItems()
 
     val state = rememberLazyListState()
 
     LaunchedEffect(viewModel) {
         viewModel.getAlbumById(id)
+        viewModel.setAlbum(id)
     }
 
     Scaffold(
@@ -106,7 +115,8 @@ fun AlbumDetailScreen(
                     AlbumDetailContent(
                         item = albumDetail.item!!,
                         contentPadding = padding,
-                        state = state
+                        state = state,
+                        tracks = tracks
                     )
                 }
             }
@@ -118,7 +128,8 @@ fun AlbumDetailScreen(
 fun AlbumDetailContent(
     contentPadding : PaddingValues = PaddingValues(0.dp),
     item : AlbumDetail,
-    state : LazyListState
+    state : LazyListState,
+    tracks : LazyPagingItems<TrackItem>
 ) {
     val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -128,6 +139,11 @@ fun AlbumDetailContent(
 
     val albumInfo = "$albumType • ${formatReleaseDate(item.releaseDate)} • ${item.totalTracks} " +
             stringResource(R.string.tracks)
+
+    val albumUrl = item.externalUrls.spotify
+    val artistUrl = item.artists[0].externalUrls.spotify
+
+    val context = LocalContext.current
 
     LazyColumn(
         modifier = Modifier
@@ -184,19 +200,45 @@ fun AlbumDetailContent(
         }
 
         item {
-            AlbumButtonsRow()
+            AlbumButtonsRow(
+                onAlbumClick = {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(albumUrl)))
+                },
+                onArtistClick = {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(artistUrl)))
+                }
+            )
+        }
+
+        items(
+            count = tracks.itemCount,
+            key = { index ->
+                val item = tracks[index]
+                item?.id ?: "placeholder_$index"
+            },
+            contentType = { "track_item" }
+        ) { index ->
+            tracks[index]?.let { item ->
+                TrackListItem(
+                    item = item
+                )
+            }
         }
     }
 }
 
 @Composable
-fun AlbumButtonsRow(modifier: Modifier = Modifier) {
+fun AlbumButtonsRow(
+    modifier: Modifier = Modifier,
+    onArtistClick : () -> Unit,
+    onAlbumClick : () -> Unit
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Button(
-            onClick = {},
+            onClick = { onArtistClick() },
             modifier = modifier.weight(1f)
         ) {
             Icon(
@@ -207,7 +249,7 @@ fun AlbumButtonsRow(modifier: Modifier = Modifier) {
             Text(text = stringResource(R.string.artist))
         }
         Button(
-            onClick = {},
+            onClick = { onAlbumClick() },
             modifier = modifier.weight(1f)
         ) {
             Icon(

@@ -6,12 +6,26 @@ import com.m4ykey.albly.album.data.network.model.AlbumItemDto
 import com.m4ykey.albly.album.data.network.model.CopyrightDto
 import com.m4ykey.albly.album.data.network.model.ExternalUrlsDto
 import com.m4ykey.albly.album.data.network.model.ImageDto
+import com.m4ykey.albly.album.data.network.model.TrackItemDto
 import com.m4ykey.albly.album.domain.model.AlbumArtist
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.model.Copyright
 import com.m4ykey.albly.album.domain.model.ExternalUrls
 import com.m4ykey.albly.album.domain.model.Image
+import com.m4ykey.albly.album.domain.model.TrackItem
+
+fun TrackItemDto.toDomain() = TrackItem(
+    id = id.orEmpty(),
+    name = name.orEmpty(),
+    discNumber = disc_number ?: 0,
+    externalUrls = external_urls?.toDomain() ?: ExternalUrls.EMPTY,
+    previewUrl = preview_url.orEmpty(),
+    durationMs = duration_ms ?: 0,
+    explicit = explicit ?: false,
+    trackNumber = track_number ?: 0,
+    artists = artists?.map { it.toDomain() } ?: emptyList()
+)
 
 fun AlbumDetailDto.toDomain() = AlbumDetail(
     id = id.orEmpty(),
