@@ -1,5 +1,7 @@
 package com.m4ykey.albly.collection.presentation
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -60,6 +62,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -80,6 +83,9 @@ import com.m4ykey.albly.util.CenteredContent
 import com.m4ykey.albly.util.chip.ChipItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.net.MalformedURLException
+import java.net.URISyntaxException
+import java.net.URL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,15 +112,17 @@ fun CollectionScreen(
 
     var selectedItemIndex by rememberSaveable { mutableStateOf(-1) }
 
+    val context = LocalContext.current
+
     val items = listOf(
         DrawerItem(
-            title = "New release"
+            title = stringResource(R.string.new_release)
         ),
         DrawerItem(
-            title = "Listen later"
+            title = stringResource(R.string.listen_later)
         ),
         DrawerItem(
-            title = "Settings"
+            title = stringResource(R.string.settings)
         ),
     )
 
@@ -224,7 +232,22 @@ fun CollectionScreen(
                                 Text(stringResource(R.string.cancel))
                             }
                             TextButton(
-                                onClick = { showDialog = false }
+                                onClick = {
+                                    val url = state.text.toString()
+                                    if (isValidAlbumUrl(url)) {
+                                        val albumId = getAlbumFromIdUrl(url)
+                                        if (!albumId.isNullOrEmpty()) {
+                                            onLinkClick(albumId)
+                                            showDialog = false
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Invalid album url",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                }
                             ) {
                                 Text("Ok")
                             }
@@ -234,6 +257,25 @@ fun CollectionScreen(
             }
         }
     }
+}
+
+private fun isValidAlbumUrl(url : String) : Boolean {
+    try {
+        val uri = URL(url).toURI()
+        if (uri.host == "open.spotify.com" && uri.path.startsWith("/album/")) {
+            return true
+        }
+    } catch (e : MalformedURLException) {
+        Log.i("CollectionScreen", "Error: ${e.message.toString()}")
+    } catch (e : URISyntaxException) {
+        Log.i("CollectionScreen", "Error: ${e.message.toString()}")
+    }
+    return false
+}
+
+private fun getAlbumFromIdUrl(url : String) : String? {
+    val regex = Regex("/album/([^/?]+)")
+    return regex.find(url)?.groupValues?.getOrNull(1)
 }
 
 @Composable

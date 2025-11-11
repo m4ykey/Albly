@@ -8,6 +8,9 @@
     <string name="single">Single</string>
     <string name="compilation">Compilation</string>
 
+    <string name="new_release">New release</string>
+    <string name="settings">Settings</string>
+
     <string name="search">Search</string>
     <string name="enter_url">Enter URL</string>
 

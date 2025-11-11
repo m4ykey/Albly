@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Albly</string>
+
+    <string name="collection">Kolekcja</string>
+
+    <string name="album">Album</string>
+    <string name="ep">EP</string>
+    <string name="single">Single</string>
+    <string name="compilation">Kompilacja</string>
+
+    <string name="new_release">Nowe wydania</string>
+    <string name="settings">Ustawienia</string>
+
+    <string name="search">Szukaj</string>
+    <string name="enter_url">Wprowadź URL</string>
+
+    <string name="latest">Ostatnie</string>
+    <string name="oldest">Najstarsze</string>
+    <string name="alphabetical">Alfabetycznie</string>
+
+    <string name="cancel">Anuluj</string>
+    <string name="back">Wróć</string>
+    <string name="mic">Mikrofon</string>
+    <string name="clear">Wyczyść</string>
+
+    <string name="artist">Artysta</string>
+    <string name="all">Wszystko</string>
+
+    <string name="save">Zapisz</string>
+    <string name="listen_later">Posłuchaj później</string>
+    <string name="tracks">Utwory</string>
+</resources>
