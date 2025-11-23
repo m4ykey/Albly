@@ -3,10 +3,15 @@ package com.m4ykey.albly.collection.presentation
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -54,6 +59,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -114,7 +120,7 @@ fun CollectionScreen(
 
     val scope = rememberCoroutineScope()
 
-    var selectedItemIndex by rememberSaveable { mutableStateOf(-1) }
+    var selectedItemIndex by rememberSaveable { mutableIntStateOf(-1) }
 
     val context = LocalContext.current
 
@@ -361,7 +367,17 @@ fun CollectionScreenContent(
                     onSearchClick = { showSearch = !showSearch }
                 )
 
-                if (showSearch) {
+                AnimatedVisibility(
+                    visible = showSearch,
+                    enter = expandVertically(
+                        expandFrom = Alignment.Top,
+                        animationSpec = tween(300)
+                    ) + fadeIn(),
+                    exit = shrinkVertically(
+                        shrinkTowards = Alignment.Top,
+                        animationSpec = tween(300)
+                    ) + fadeOut()
+                ) {
                     SearchField(
                         onValueChange = {},
                         onSearch = {},
