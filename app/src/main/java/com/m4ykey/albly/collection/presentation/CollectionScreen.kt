@@ -64,6 +64,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -76,6 +77,7 @@ import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.collection.presentation.type.album.AlbumTypeAction
 import com.m4ykey.albly.collection.presentation.type.components.chip.ListTypeChip
 import com.m4ykey.albly.collection.presentation.type.components.chip.SortTypeChip
+import com.m4ykey.albly.collection.presentation.type.components.chip.TypeChip
 import com.m4ykey.albly.collection.presentation.type.components.chip.ViewTypeChip
 import com.m4ykey.albly.collection.presentation.type.list.ListSortType
 import com.m4ykey.albly.collection.presentation.type.list.ListType
@@ -421,16 +423,10 @@ fun ListOptions(
         Spacer(modifier = Modifier.width(10.dp))
         ViewTypeChip(onChange = onViewChange)
         Spacer(modifier = Modifier.weight(1f))
-        FilterChip(
-            label = { Text(text = "") },
+        TypeChip(
             onClick = onSearchClick,
-            selected = false,
-            leadingIcon = {
-                Icon(
-                    contentDescription = null,
-                    imageVector = Icons.Default.Search
-                )
-            }
+            icon = painterResource(R.drawable.ic_search),
+            label = null
         )
     }
 }
