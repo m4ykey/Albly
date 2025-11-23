@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Albly"
 include(":app")
+include(":auth")

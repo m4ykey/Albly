@@ -1,8 +1,5 @@
 package com.m4ykey.albly.album.data.network.model
 
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
 data class TrackItemDto(
     val artists: List<AlbumArtistDto>? = emptyList(),
     val disc_number: Int? = 0,

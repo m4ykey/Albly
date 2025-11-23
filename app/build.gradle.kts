@@ -1,40 +1,29 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.gms)
     alias(libs.plugins.crashlytics)
 }
 
-val localProps = Properties().apply {
-    load(rootProject.file("local.properties").inputStream())
-}
-
-val spotifyClientId : String = localProps.getProperty("SPOTIFY_CLIENT_ID")
-val spotifyClientSecret : String = localProps.getProperty("SPOTIFY_CLIENT_SECRET")
-
 android {
     namespace = "com.m4ykey.albly"
-    compileSdk = 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId = "com.m4ykey.albly"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "0.0.2-alpha03"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "SPOTIFY_CLIENT_ID" , "\"${spotifyClientId}\"")
-        buildConfigField("String", "SPOTIFY_CLIENT_SECRET" , "\"${spotifyClientSecret}\"")
     }
 
     buildTypes {
@@ -60,7 +49,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
@@ -91,26 +79,14 @@ dependencies {
 
     implementation(libs.landscapist)
 
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter)
-
-    implementation(libs.moshi.kotlin)
-    implementation(libs.moshi)
     implementation(libs.androidx.paging.compose)
-    ksp(libs.moshi.codegen)
 
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
 
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.navigation)
-    ksp(libs.hilt.compiler)
-
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
-
-    implementation(libs.logging.interceptor)
 
     testImplementation(libs.junit)
 
