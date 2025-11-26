@@ -21,6 +21,11 @@ android {
         version = release(36)
     }
 
+    packaging {
+        resources.excludes += "META-INF/LICENSE.md"
+        resources.excludes += "META-INF/LICENSE-notice.md"
+    }
+
     defaultConfig {
         minSdk = 26
 
@@ -69,6 +74,7 @@ dependencies {
     implementation(libs.ktor.logging)
     implementation(libs.ktor.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.auth)
 
     implementation(libs.kotlinx.datetime)
 
@@ -78,4 +84,6 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }

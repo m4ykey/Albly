@@ -29,6 +29,8 @@ palette = "1.0.0"
 koin = "4.1.1"
 ktor = "3.3.2"
 serialization-json = "1.9.0"
+mockk = "1.14.6"
+coroutines-test = "1.10.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -62,6 +64,7 @@ androidx-palette = { group = "androidx.palette", name = "palette", version.ref =
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
 
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -80,8 +83,11 @@ ktor-android = { group = "io.ktor", name = "ktor-client-android", version.ref = 
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor" }
 
 ktx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization-json" }
+
+mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
