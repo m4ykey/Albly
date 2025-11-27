@@ -27,7 +27,7 @@ landscapist = "2.6.1"
 kotlinx-datetime = "0.7.1"
 palette = "1.0.0"
 koin = "4.1.1"
-ktor = "3.3.2"
+ktor = "3.3.3"
 serialization-json = "1.9.0"
 mockk = "1.14.6"
 coroutines-test = "1.10.2"
@@ -75,6 +75,7 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 landscapist = { group = "com.github.skydoves", name = "landscapist-coil3", version.ref = "landscapist" }
 
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-jetpack-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 
 ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }

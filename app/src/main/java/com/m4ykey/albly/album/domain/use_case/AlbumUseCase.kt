@@ -5,9 +5,8 @@ import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.TrackItem
 import com.m4ykey.albly.album.domain.repository.AlbumRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class AlbumUseCase @Inject constructor(
+class AlbumUseCase (
     private val repository : AlbumRepository
 ) {
 

@@ -18,28 +18,28 @@ import com.m4ykey.albly.album.domain.model.TrackItem
 fun TrackItemDto.toDomain() = TrackItem(
     id = id.orEmpty(),
     name = name.orEmpty(),
-    discNumber = disc_number ?: 0,
-    externalUrls = external_urls?.toDomain() ?: ExternalUrls.EMPTY,
-    previewUrl = preview_url.orEmpty(),
-    durationMs = duration_ms ?: 0,
+    discNumber = discNumber ?: 0,
+    externalUrls = externalUrls?.toDomain() ?: ExternalUrls.EMPTY,
+    previewUrl = previewUrl.orEmpty(),
+    durationMs = durationMs ?: 0,
     explicit = explicit ?: false,
-    trackNumber = track_number ?: 0,
+    trackNumber = trackNumber ?: 0,
     artists = artists?.map { it.toDomain() } ?: emptyList()
 )
 
 fun AlbumDetailDto.toDomain() = AlbumDetail(
     id = id.orEmpty(),
-    albumType = album_type.orEmpty(),
+    albumType = albumType.orEmpty(),
     label = label.orEmpty(),
     type = type.orEmpty(),
     name = name.orEmpty(),
-    totalTracks = total_tracks ?: 0,
+    totalTracks = totalTracks ?: 0,
     popularity = popularity ?: 0,
-    releaseDate = release_date.orEmpty(),
+    releaseDate = releaseDate.orEmpty(),
     images = images?.map { it.toDomain() } ?: emptyList(),
     artists = artists?.map { it.toDomain() } ?: emptyList(),
     genres = genres ?: emptyList(),
-    externalUrls = external_urls?.toDomain() ?: ExternalUrls.EMPTY,
+    externalUrls = externalUrls?.toDomain() ?: ExternalUrls.EMPTY,
     copyright = copyrights?.map { it.toDomain() } ?: emptyList()
 )
 
@@ -55,14 +55,14 @@ fun ImageDto.toDomain() = Image(
 )
 
 fun AlbumItemDto.toDomain() = AlbumItem(
-    albumType = album_type.orEmpty(),
+    albumType = albumType.orEmpty(),
     id = id.orEmpty(),
     name = name.orEmpty(),
-    releaseDate = release_date.orEmpty(),
-    totalTracks = total_tracks ?: 0,
+    releaseDate = releaseDate.orEmpty(),
+    totalTracks = totalTracks ?: 0,
     type = type.orEmpty(),
     images = images?.map { it.toDomain() } ?: emptyList(),
-    externalUrls = external_urls?.toDomain() ?: ExternalUrls.EMPTY,
+    externalUrls = externalUrls?.toDomain() ?: ExternalUrls.EMPTY,
     artists = artists?.map { it.toDomain() } ?: emptyList()
 )
 
@@ -74,5 +74,5 @@ fun AlbumArtistDto.toDomain() = AlbumArtist(
     id = id.orEmpty(),
     name = name.orEmpty(),
     type = type.orEmpty(),
-    externalUrls = external_urls?.toDomain() ?: ExternalUrls.EMPTY
+    externalUrls = externalUrls?.toDomain() ?: ExternalUrls.EMPTY
 )

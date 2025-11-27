@@ -1,7 +1,10 @@
 package com.m4ykey.albly.album.data.network.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ImageDto(
-    val height: Int? = 0,
-    val url: String? = "",
-    val width: Int? = 0
+    val height: Int? = null,
+    val url: String? = null,
+    val width: Int? = null
 )

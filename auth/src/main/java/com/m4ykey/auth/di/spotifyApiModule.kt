@@ -3,6 +3,7 @@ package com.m4ykey.auth.di
 import com.m4ykey.auth.token.TokenProvider
 import com.m4ykey.auth.token.configureSpotifyAuth
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -10,13 +11,13 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val spotifyApiModule = module {
-
     single(named("SpotifyHttpClient")) {
-        HttpClient(get()) {
+        HttpClient(Android) {
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
@@ -27,7 +28,12 @@ val spotifyApiModule = module {
             }
 
             install(ContentNegotiation) {
-                json(get())
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        isLenient = true
+                    }
+                )
             }
 
             configureSpotifyAuth(get<TokenProvider>())
@@ -38,5 +44,4 @@ val spotifyApiModule = module {
             }
         }
     }
-
 }

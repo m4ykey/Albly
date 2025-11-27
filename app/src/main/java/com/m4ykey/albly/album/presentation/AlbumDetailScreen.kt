@@ -52,7 +52,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -63,13 +62,14 @@ import com.m4ykey.albly.album.presentation.components.TrackListItem
 import com.m4ykey.albly.util.formatReleaseDate
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AlbumDetailScreen(
     id : String,
     onBack : () -> Unit,
-    viewModel : AlbumDetailViewModel = hiltViewModel()
+    viewModel : AlbumDetailViewModel = koinViewModel()
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()

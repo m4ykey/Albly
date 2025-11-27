@@ -4,9 +4,8 @@ import androidx.paging.PagingData
 import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.search.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class SearchUseCase @Inject constructor(
+class SearchUseCase(
     private val repository: SearchRepository
 ) {
 

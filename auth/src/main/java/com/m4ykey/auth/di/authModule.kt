@@ -2,6 +2,8 @@ package com.m4ykey.auth.di
 
 import com.m4ykey.auth.service.AuthService
 import com.m4ykey.auth.service.RemoteAuthService
+import com.m4ykey.auth.token.SpotifyTokenProvider
+import com.m4ykey.auth.token.TokenProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -46,6 +48,13 @@ val authModule = module {
                 url.protocol = URLProtocol.HTTPS
             }
         }
+    }
+
+    single<TokenProvider> {
+        SpotifyTokenProvider(
+            service = get(),
+            dataStore = get()
+        )
     }
 
     single<RemoteAuthService> {

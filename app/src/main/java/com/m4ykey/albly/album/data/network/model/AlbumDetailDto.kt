@@ -1,17 +1,21 @@
 package com.m4ykey.albly.album.data.network.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class AlbumDetailDto(
-    val album_type: String? = "",
+    @SerialName("album_type") val albumType: String? = null,
     val artists: List<AlbumArtistDto>? = emptyList(),
     val copyrights: List<CopyrightDto>? = emptyList(),
-    val external_urls: ExternalUrlsDto? = null,
-    val genres: List<Any?>? = emptyList(),
-    val id: String? = "",
+    @SerialName("external_urls") val externalUrls: ExternalUrlsDto? = null,
+    val genres: List<String>? = emptyList(),
+    val id: String? = null,
     val images: List<ImageDto>? = emptyList(),
-    val label: String? = "",
-    val name: String? = "",
-    val popularity: Int? = 0,
-    val release_date: String? = "",
-    val total_tracks: Int? = 0,
-    val type: String? = ""
+    val label: String? = null,
+    val name: String? = null,
+    val popularity: Int? = null,
+    @SerialName("release_date") val releaseDate: String? = null,
+    @SerialName("total_tracks") val totalTracks: Int? = null,
+    val type: String? = null
 )

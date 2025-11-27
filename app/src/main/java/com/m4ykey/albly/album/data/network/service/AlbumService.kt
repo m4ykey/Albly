@@ -2,25 +2,27 @@ package com.m4ykey.albly.album.data.network.service
 
 import com.m4ykey.albly.album.data.network.model.AlbumDetailDto
 import com.m4ykey.albly.album.data.network.model.AlbumTracksDto
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 
-interface AlbumService {
+class AlbumService(
+    private val httpClient : HttpClient
+) : RemoteAlbumService {
 
-    @GET("albums/{id}")
-    suspend fun getAlbumById(
-        @Header("Authorization") token : String,
-        @Path("id") id : String
-    ) : AlbumDetailDto
+    override suspend fun getAlbumById(id: String): AlbumDetailDto {
+        return httpClient.get("albums/$id").body()
+    }
 
-    @GET("albums/{id}/tracks")
-    suspend fun getAlbumTracks(
-        @Header("Authorization") token : String,
-        @Path("id") id : String,
-        @Query("limit") limit : Int,
-        @Query("offset") offset : Int
-    ) : AlbumTracksDto
-
+    override suspend fun getAlbumTracks(
+        id: String,
+        limit: Int,
+        offset: Int
+    ): AlbumTracksDto {
+        return httpClient.get("albums/$id/tracks") {
+            parameter("offset", offset)
+            parameter("limit", limit)
+        }.body()
+    }
 }

@@ -1,12 +1,12 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.m4ykey.albly.search.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.m4ykey.albly.search.domain.use_case.SearchUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,11 +16,8 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-class SearchViewModel @Inject constructor(
+class SearchViewModel(
     private val useCase: SearchUseCase
 ) : ViewModel() {
 
