@@ -4,8 +4,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.m4ykey.albly.album.data.mapper.toDomain
 import com.m4ykey.albly.album.data.network.service.RemoteAlbumService
+import com.m4ykey.albly.album.data.paging.NewReleasePaging
 import com.m4ykey.albly.album.data.paging.TrackPagingSource
 import com.m4ykey.albly.album.domain.model.AlbumDetail
+import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.model.TrackItem
 import com.m4ykey.albly.album.domain.repository.AlbumRepository
 import com.m4ykey.albly.util.network.safeApi
@@ -30,6 +32,18 @@ class AlbumRepositoryImpl(
                 )
             },
             config = pagingConfig
+        ).flow
+    }
+
+    override fun getNewRelease(
+        offset: Int,
+        limit: Int
+    ): Flow<PagingData<AlbumItem>> {
+        return Pager(
+            config = pagingConfig,
+            pagingSourceFactory = {
+                NewReleasePaging(service = service)
+            }
         ).flow
     }
 

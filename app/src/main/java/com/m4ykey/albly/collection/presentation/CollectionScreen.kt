@@ -75,6 +75,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.m4ykey.albly.R
+import com.m4ykey.albly.app.ui.navigation.Screen
 import com.m4ykey.albly.collection.presentation.drawer.DrawerItem
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.collection.presentation.type.album.AlbumTypeAction
@@ -100,7 +101,8 @@ fun CollectionScreen(
     modifier : Modifier = Modifier,
     onSearch : () -> Unit,
     viewModel : CollectionViewModel = viewModel(),
-    onLinkClick : (String) -> Unit
+    onLinkClick : (String) -> Unit,
+    onNavigateTo : (String) -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -123,7 +125,8 @@ fun CollectionScreen(
 
     val items = listOf(
         DrawerItem(
-            title = stringResource(R.string.new_release)
+            title = stringResource(R.string.new_release),
+            route = Screen.NewReleaseScreen.screen
         ),
         DrawerItem(
             title = stringResource(R.string.listen_later)
@@ -154,6 +157,9 @@ fun CollectionScreen(
                         selected = index == selectedItemIndex,
                         onClick = {
                             selectedItemIndex = index
+                            item.route?.let { route ->
+                                onNavigateTo(route)
+                            }
                             scope.launch { drawerState.close() }
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)

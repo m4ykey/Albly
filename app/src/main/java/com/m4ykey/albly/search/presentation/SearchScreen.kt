@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.presentation.components.AlbumCard
 import com.m4ykey.albly.util.CenteredContent
@@ -191,10 +192,7 @@ fun SearchScreen(
                             items(
                                 count = items.itemCount,
                                 contentType = { "album_item" },
-                                key = { index ->
-                                    val item = items[index]
-                                    item?.id ?: "placeholder_$index"
-                                }
+                                key = items.itemKey { item -> item.id }
                             ) { index ->
                                 items[index]?.let { item ->
                                     AlbumCard(

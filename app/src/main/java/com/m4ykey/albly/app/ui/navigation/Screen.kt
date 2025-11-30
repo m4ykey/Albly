@@ -22,4 +22,7 @@ sealed class Screen(val screen : String) {
         }
     }
 
+    @Serializable
+    object NewReleaseScreen : Screen(screen = "new_release_screen")
+
 }

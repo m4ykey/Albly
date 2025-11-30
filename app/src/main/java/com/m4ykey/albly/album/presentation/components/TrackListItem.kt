@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,34 +46,36 @@ fun TrackListItem(
     Column(modifier = modifier.fillMaxWidth()) {
         Row {
             Column(
-                modifier = modifier.weight(1f)
+                modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = item.name,
                     color = textColor,
                     fontSize = 16.sp,
-                    modifier = modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Row(
-                    modifier = modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (item.explicit) Explicit()
+                    if (item.explicit) Explicit(
+                        modifier = Modifier.wrapContentWidth(Alignment.Start)
+                    )
                     Text(
                         text = item.artists.joinToString(", ") { it.name },
                         fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,
                         color = textColor2,
                         maxLines = 1,
-                        modifier = modifier.fillMaxWidth()
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
             Text(
                 text = trackDuration,
                 color = textColor,
-                modifier = modifier
+                modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(10.dp)
             )
@@ -99,6 +104,12 @@ fun Explicit(
 
 @Preview
 @Composable
+private fun ExplicitPrev() {
+    Explicit()
+}
+
+@Preview
+@Composable
 private fun TrackListItemPrev() {
     val externalUrls = ExternalUrls("")
     val artists = listOf(
@@ -106,25 +117,25 @@ private fun TrackListItemPrev() {
             externalUrls = externalUrls,
             id = "",
             type = "",
-            name = "Trey Songz"
-        ),
-        AlbumArtist(
+            name = $$"A$AP Rocky"
+        )
+    )
+    val trackItems = (1..15).map { index ->
+        TrackItem(
+            id = "id_$index",
+            name = "Bottoms Up $index",
+            previewUrl = "",
+            trackNumber = index,
+            durationMs = 402 * index,
+            discNumber = 2,
+            explicit = index % 2 == 0,
             externalUrls = externalUrls,
-            id = "",
-            type = "",
-            name = "Nicki Minaj"
-        ),
-    )
-    val item = TrackItem(
-        id = "",
-        name = "Bottoms Up",
-        previewUrl = "",
-        trackNumber = 1,
-        durationMs = 402,
-        discNumber = 1,
-        explicit = false,
-        externalUrls = externalUrls,
-        artists = artists
-    )
-    TrackListItem(item = item)
+            artists = artists
+        )
+    }
+    LazyColumn {
+        items(trackItems) { item ->
+            TrackListItem(item = item)
+        }
+    }
 }

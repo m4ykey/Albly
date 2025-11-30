@@ -1,4 +1,4 @@
-package com.m4ykey.albly.album.presentation
+package com.m4ykey.albly.album.presentation.detail
 
 import android.content.Intent
 import android.net.Uri
@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.TrackItem
@@ -143,6 +144,11 @@ fun AlbumDetailContent(
     val albumUrl = item.externalUrls.spotify
     val artistUrl = item.artists[0].externalUrls.spotify
 
+    val copyright = item.copyright
+        .map { it.text }
+        .distinct()
+        .joinToString(separator = "\n")
+
     val context = LocalContext.current
 
     LazyColumn(
@@ -212,17 +218,22 @@ fun AlbumDetailContent(
 
         items(
             count = tracks.itemCount,
-            key = { index ->
-                val item = tracks[index]
-                item?.id ?: "placeholder_$index"
-            },
+            key = tracks.itemKey { item -> item.id },
             contentType = { "track_item" }
         ) { index ->
-            tracks[index]?.let { item ->
+            val currentItem = tracks[index]
+            currentItem?.let { item ->
                 TrackListItem(
                     item = item
                 )
             }
+        }
+
+        item {
+            Text(
+                text = copyright,
+                color = textColor
+            )
         }
     }
 }

@@ -23,6 +23,7 @@ private val defaultEmpty : @Composable () -> Unit = { DefaultEmpty() }
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T: Any> BasePagingList(
+    modifier : Modifier = Modifier,
     items : LazyPagingItems<T>,
     loadingContent : @Composable () -> Unit = defaultLoading,
     errorContent : @Composable (Throwable?) -> Unit = defaultError,

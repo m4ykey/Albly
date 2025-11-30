@@ -1,4 +1,4 @@
-package com.m4ykey.albly.album.presentation
+package com.m4ykey.albly.album.presentation.detail
 
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 
