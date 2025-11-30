@@ -1,12 +1,12 @@
 package com.m4ykey.albly.album.data.mapper
 
-import com.m4ykey.albly.album.data.network.model.AlbumArtistDto
-import com.m4ykey.albly.album.data.network.model.AlbumDetailDto
-import com.m4ykey.albly.album.data.network.model.AlbumItemDto
-import com.m4ykey.albly.album.data.network.model.CopyrightDto
-import com.m4ykey.albly.album.data.network.model.ExternalUrlsDto
-import com.m4ykey.albly.album.data.network.model.ImageDto
-import com.m4ykey.albly.album.data.network.model.TrackItemDto
+import com.m4ykey.albly.album.data.network.dto.AlbumArtistDto
+import com.m4ykey.albly.album.data.network.dto.AlbumDetailDto
+import com.m4ykey.albly.album.data.network.dto.AlbumItemDto
+import com.m4ykey.albly.album.data.network.dto.CopyrightDto
+import com.m4ykey.albly.album.data.network.dto.ExternalUrlsDto
+import com.m4ykey.albly.album.data.network.dto.ImageDto
+import com.m4ykey.albly.album.data.network.dto.TrackItemDto
 import com.m4ykey.albly.album.domain.model.AlbumArtist
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.AlbumItem

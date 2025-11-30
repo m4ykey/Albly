@@ -1,6 +1,6 @@
 package com.m4ykey.albly.search.data.network.service
 
-import com.m4ykey.albly.album.data.network.model.AlbumListDto
+import com.m4ykey.albly.album.data.network.dto.AlbumListDto
 
 interface RemoteSearchService {
 

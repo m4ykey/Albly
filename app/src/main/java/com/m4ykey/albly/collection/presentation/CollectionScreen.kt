@@ -129,11 +129,9 @@ fun CollectionScreen(
             route = Screen.NewReleaseScreen.screen
         ),
         DrawerItem(
-            title = stringResource(R.string.listen_later)
-        ),
-        DrawerItem(
-            title = stringResource(R.string.settings)
-        ),
+            title = stringResource(R.string.listen_later),
+            route = Screen.ListenLaterScreen.screen
+        )
     )
 
     LaunchedEffect(viewModel) {

@@ -8,6 +8,6 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { SearchViewModel(get()) }
-    viewModel { AlbumDetailViewModel(get()) }
+    viewModel { AlbumDetailViewModel(get(), get()) }
     viewModel { NewReleaseViewModel(get()) }
 }

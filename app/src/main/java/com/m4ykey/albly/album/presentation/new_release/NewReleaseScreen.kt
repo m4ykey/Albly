@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,22 +27,34 @@ import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.presentation.components.AlbumCard
 import com.m4ykey.albly.util.paging.BasePagingList
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AlbumNewReleaseScreen(
     onBack : () -> Unit,
-    viewModel: NewReleaseViewModel = koinViewModel()
+    viewModel: NewReleaseViewModel = koinViewModel(),
+    onAlbumClick : (String) -> Unit
 ) {
 
     val newRelease = viewModel.newRelease.collectAsLazyPagingItems()
 
     val state = rememberLazyGridState()
 
+    val onAction = viewModel::onAction
+
+    LaunchedEffect(viewModel) {
+        viewModel.uiEvent.collectLatest { event ->
+            when (event) {
+                is NewReleaseUiEvent.OnAlbumClick -> onAlbumClick(event.id)
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("New Release") },
+                title = { Text(stringResource(R.string.discover_new_release)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -74,7 +87,7 @@ fun AlbumNewReleaseScreen(
                         items[index]?.let { item ->
                             AlbumCard(
                                 item = item,
-                                onAlbumClick = {  }
+                                onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.id)) }
                             )
                         }
                     }

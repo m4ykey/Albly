@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 class SearchUseCase(
     private val repository: SearchRepository
 ) {
-
     operator fun invoke(limit : Int = 20, offset : Int = 0, q : String, type : String) : Flow<PagingData<AlbumItem>> {
         return repository.search(
             limit = limit,
@@ -17,5 +16,4 @@ class SearchUseCase(
             type = type
         )
     }
-
 }

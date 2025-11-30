@@ -25,4 +25,7 @@ sealed class Screen(val screen : String) {
     @Serializable
     object NewReleaseScreen : Screen(screen = "new_release_screen")
 
+    @Serializable
+    object ListenLaterScreen : Screen(screen = "listen_later_screen")
+
 }

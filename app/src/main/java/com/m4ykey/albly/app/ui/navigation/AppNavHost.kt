@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.m4ykey.albly.album.presentation.detail.AlbumDetailScreen
+import com.m4ykey.albly.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.albly.album.presentation.new_release.AlbumNewReleaseScreen
 import com.m4ykey.albly.collection.presentation.CollectionScreen
 import com.m4ykey.albly.search.presentation.SearchScreen
@@ -77,6 +78,22 @@ fun AppNavHost(
             AlbumNewReleaseScreen(
                 onBack = {
                     navHostController.navigateUp()
+                },
+                onAlbumClick = { albumId ->
+                    navHostController.navigate(Screen.AlbumDetail.routeWithArgs(albumId = albumId))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.ListenLaterScreen.screen
+        ) {
+            ListenLaterScreen(
+                onBack = {
+                    navHostController.navigateUp()
+                },
+                onSearchClick = {
+                    navHostController.navigate(Screen.SearchScreen.screen)
                 }
             )
         }
