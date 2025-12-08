@@ -1,5 +1,8 @@
 package com.m4ykey.albly.album.domain.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class TrackItem(
     val artists : List<AlbumArtist>,
     val discNumber : Int,

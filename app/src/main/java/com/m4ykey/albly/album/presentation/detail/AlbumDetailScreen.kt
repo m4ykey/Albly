@@ -20,12 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccessTimeFilled
-import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -60,7 +54,7 @@ import com.m4ykey.albly.R
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.TrackItem
 import com.m4ykey.albly.album.presentation.components.TrackListItem
-import com.m4ykey.albly.util.formatReleaseDate
+import com.m4ykey.core.formatReleaseDate
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import org.koin.androidx.compose.koinViewModel
@@ -70,7 +64,8 @@ import org.koin.androidx.compose.koinViewModel
 fun AlbumDetailScreen(
     id : String,
     onBack : () -> Unit,
-    viewModel : AlbumDetailViewModel = koinViewModel()
+    viewModel : AlbumDetailViewModel = koinViewModel(),
+    onTrackClick : (String, String) -> Unit
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
@@ -91,7 +86,7 @@ fun AlbumDetailScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             contentDescription = stringResource(id = R.string.back),
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack
+                            painter = painterResource(R.drawable.ic_arrow_left)
                         )
                     }
                 }
@@ -286,20 +281,20 @@ fun SaveButtonsRow(
     ) {
         Icon(
             contentDescription = stringResource(R.string.save),
-            imageVector = if (isSaveClicked) {
-                Icons.Outlined.Favorite
+            painter = if (isSaveClicked) {
+                painterResource(R.drawable.ic_favorite)
             } else {
-                Icons.Outlined.FavoriteBorder
+                painterResource(R.drawable.ic_favorite_border)
             },
             modifier = modifier.clickable { isSaveClicked = !isSaveClicked }
         )
 
         Icon(
             contentDescription = stringResource(R.string.listen_later),
-            imageVector = if (isListenLaterClicked) {
-                Icons.Default.AccessTimeFilled
+            painter = if (isListenLaterClicked) {
+                painterResource(R.drawable.ic_access_time)
             } else {
-                Icons.Outlined.AccessTime
+                painterResource(R.drawable.ic_access_time_outline)
             },
             modifier = modifier.clickable { isListenLaterClicked = !isListenLaterClicked }
         )

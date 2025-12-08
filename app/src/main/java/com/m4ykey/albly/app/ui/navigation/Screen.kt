@@ -28,4 +28,18 @@ sealed class Screen(val screen : String) {
     @Serializable
     object ListenLaterScreen : Screen(screen = "listen_later_screen")
 
+    @Serializable
+    data class LyricsScreen(val trackName : String, val artistName : String) : Screen(
+        "$routeBase/$trackName&$artistName"
+    ) {
+        companion object {
+            const val routeBase = "lyrics_screen"
+            const val ARG_ARTIST_NAME = "artist_name"
+            const val ARG_TRACK_NAME = "track_name"
+
+            fun routeWithArgs(artistName: String, trackName: String) =
+                "$routeBase/$artistName&$trackName"
+        }
+    }
+
 }

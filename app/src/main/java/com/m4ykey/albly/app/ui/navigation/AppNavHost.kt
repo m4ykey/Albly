@@ -13,6 +13,7 @@ import com.m4ykey.albly.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.albly.album.presentation.new_release.AlbumNewReleaseScreen
 import com.m4ykey.albly.collection.presentation.CollectionScreen
 import com.m4ykey.albly.search.presentation.SearchScreen
+import com.m4ykey.lyrics.presentation.LyricsScreen
 
 @Composable
 fun AppNavHost(
@@ -68,7 +69,12 @@ fun AppNavHost(
             val albumId = backStack.arguments?.getString(Screen.AlbumDetail.ARG_ALBUM_ID)
             AlbumDetailScreen(
                 onBack = { navHostController.navigateUp() },
-                id = albumId.orEmpty()
+                id = albumId.orEmpty(),
+                onTrackClick = { trackName, artistName ->
+                    navHostController.navigate(
+                        Screen.LyricsScreen.routeWithArgs(trackName = trackName, artistName = artistName)
+                    )
+                }
             )
         }
 
@@ -95,6 +101,21 @@ fun AppNavHost(
                 onSearchClick = {
                     navHostController.navigate(Screen.SearchScreen.screen)
                 }
+            )
+        }
+
+        composable(
+            route = "${Screen.LyricsScreen.routeBase}/{${Screen.LyricsScreen.ARG_TRACK_NAME}}/{${Screen.LyricsScreen.ARG_ARTIST_NAME}}",
+            arguments = listOf(
+                navArgument(Screen.LyricsScreen.ARG_ARTIST_NAME) { type = NavType.StringType },
+                navArgument(Screen.LyricsScreen.ARG_TRACK_NAME) { type = NavType.StringType }
+            )
+        ) { backStack ->
+            val artistName = backStack.arguments?.getString(Screen.LyricsScreen.ARG_ARTIST_NAME)
+            val trackName = backStack.arguments?.getString(Screen.LyricsScreen.ARG_TRACK_NAME)
+            LyricsScreen(
+                artistName = artistName.orEmpty(),
+                trackName = trackName.orEmpty()
             )
         }
     }

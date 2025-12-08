@@ -6,7 +6,7 @@ import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.search.data.network.service.RemoteSearchService
 import com.m4ykey.albly.search.data.paging.SearchPagingSource
 import com.m4ykey.albly.search.domain.repository.SearchRepository
-import com.m4ykey.albly.util.paging.pagingConfig
+import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.flow.Flow
 
 class SearchRepositoryImpl(

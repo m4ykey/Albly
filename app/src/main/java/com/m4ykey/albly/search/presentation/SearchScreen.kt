@@ -31,11 +31,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Clear
-import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -61,9 +57,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.presentation.components.AlbumCard
-import com.m4ykey.albly.util.CenteredContent
-import com.m4ykey.albly.util.chip.ChipItem
-import com.m4ykey.albly.util.paging.BasePagingList
+import com.m4ykey.core.CenteredContent
+import com.m4ykey.core.chip.ChipItem
+import com.m4ykey.core.paging.BasePagingList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import org.koin.compose.viewmodel.koinViewModel
@@ -121,7 +117,7 @@ fun SearchScreen(
                 IconButton(onClick = onBack) {
                     Icon(
                         contentDescription = stringResource(R.string.back),
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        painter = painterResource(R.drawable.ic_arrow_left),
                         tint = isDarkTheme
                     )
                 }
@@ -138,7 +134,7 @@ fun SearchScreen(
                 IconButton(onClick = { }) {
                     Icon(
                         contentDescription = stringResource(R.string.mic),
-                        imageVector = Icons.Outlined.Mic,
+                        painter = painterResource(R.drawable.ic_mic),
                         tint = isDarkTheme
                     )
                 }
@@ -156,7 +152,7 @@ fun SearchScreen(
                     }) {
                         Icon(
                             contentDescription = stringResource(R.string.clear),
-                            imageVector = Icons.Outlined.Clear,
+                            painter = painterResource(R.drawable.ic_close),
                             tint = isDarkTheme
                         )
                     }
@@ -263,7 +259,7 @@ fun SearchBarTextField(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Default.Search,
+            painter = painterResource(R.drawable.ic_search),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )

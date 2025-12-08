@@ -3,8 +3,8 @@ package com.m4ykey.albly.album.data.paging
 import com.m4ykey.albly.album.data.mapper.toDomain
 import com.m4ykey.albly.album.data.network.service.RemoteAlbumService
 import com.m4ykey.albly.album.domain.model.TrackItem
-import com.m4ykey.albly.util.network.safeApi
-import com.m4ykey.albly.util.paging.BasePagingSource
+import com.m4ykey.core.network.safeApi
+import com.m4ykey.core.paging.BasePagingSource
 
 class TrackPagingSource(
     private val id : String,

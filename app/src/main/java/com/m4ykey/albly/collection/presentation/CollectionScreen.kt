@@ -30,11 +30,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -87,8 +82,8 @@ import com.m4ykey.albly.collection.presentation.type.list.ListSortType
 import com.m4ykey.albly.collection.presentation.type.list.ListType
 import com.m4ykey.albly.collection.presentation.type.list.ListViewType
 import com.m4ykey.albly.search.presentation.SearchBarTextField
-import com.m4ykey.albly.util.CenteredContent
-import com.m4ykey.albly.util.chip.ChipItem
+import com.m4ykey.core.CenteredContent
+import com.m4ykey.core.chip.ChipItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.MalformedURLException
@@ -178,7 +173,7 @@ fun CollectionScreen(
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(
                                 contentDescription = "Menu",
-                                imageVector = Icons.Default.Menu
+                                painter = painterResource(R.drawable.ic_menu)
                             )
                         }
                     },
@@ -188,7 +183,7 @@ fun CollectionScreen(
                         ) {
                             Icon(
                                 contentDescription = stringResource(R.string.search),
-                                imageVector = Icons.Default.Search
+                                painter = painterResource(R.drawable.ic_search)
                             )
                         }
                         IconButton(
@@ -198,7 +193,7 @@ fun CollectionScreen(
                         ) {
                             Icon(
                                 contentDescription = stringResource(R.string.enter_url),
-                                imageVector = Icons.Default.Link
+                                painter = painterResource(R.drawable.ic_link)
                             )
                         }
                     },
@@ -301,7 +296,7 @@ fun UrlInputField(
         leadingIcon = {
             Icon(
                 contentDescription = null,
-                imageVector = Icons.Default.Link
+                painter = painterResource(R.drawable.ic_link)
             )
         },
         label = { Text(stringResource(R.string.enter_url)) },
@@ -313,7 +308,7 @@ fun UrlInputField(
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        painter = painterResource(R.drawable.ic_close),
                         contentDescription = null
                     )
                 }
@@ -414,7 +409,7 @@ fun SearchField(
         IconButton(onClick = onCloseClick) {
             Icon(
                 contentDescription = stringResource(R.string.clear),
-                imageVector = Icons.Default.Close
+                painter = painterResource(R.drawable.ic_close)
             )
         }
     }

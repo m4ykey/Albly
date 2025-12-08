@@ -9,8 +9,20 @@ import com.m4ykey.auth.di.authModule
 import com.m4ykey.auth.di.dataStoreModule
 import com.m4ykey.auth.di.scopeModule
 import com.m4ykey.auth.di.spotifyApiModule
+import com.m4ykey.lyrics.di.lyricsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+
+val modules = listOf(
+    repositoryModule,
+    viewModelModule,
+    serviceModule,
+    useCaseModule,
+    authModule,
+    spotifyApiModule,
+    dataStoreModule,
+    scopeModule
+) + lyricsModule
 
 class AlblyApp : Application() {
     override fun onCreate() {
@@ -18,16 +30,7 @@ class AlblyApp : Application() {
 
         startKoin {
             androidContext(this@AlblyApp)
-            modules(
-                repositoryModule,
-                viewModelModule,
-                serviceModule,
-                useCaseModule,
-                authModule,
-                spotifyApiModule,
-                dataStoreModule,
-                scopeModule
-            )
+            modules(modules)
         }
     }
 }

@@ -10,14 +10,14 @@ import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.model.TrackItem
 import com.m4ykey.albly.album.domain.repository.AlbumRepository
-import com.m4ykey.albly.util.network.safeApi
-import com.m4ykey.albly.util.paging.pagingConfig
+import com.m4ykey.core.network.safeApi
+import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class AlbumRepositoryImpl(
-    private val service : RemoteAlbumService,
-)  : AlbumRepository {
+    private val service : RemoteAlbumService
+) : AlbumRepository {
 
     override fun getAlbumTracks(
         id: String,
