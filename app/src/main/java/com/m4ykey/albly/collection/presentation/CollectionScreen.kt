@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -119,11 +120,13 @@ fun CollectionScreen(
     val items = listOf(
         DrawerItem(
             title = stringResource(R.string.new_release),
-            route = Screen.NewReleaseScreen.screen
+            route = Screen.NewReleaseScreen.screen,
+            icon = R.drawable.ic_new_release
         ),
         DrawerItem(
             title = stringResource(R.string.listen_later),
-            route = Screen.ListenLaterScreen.screen
+            route = Screen.ListenLaterScreen.screen,
+            icon = R.drawable.ic_clock
         )
     )
 
@@ -148,12 +151,16 @@ fun CollectionScreen(
                         selected = index == selectedItemIndex,
                         onClick = {
                             selectedItemIndex = index
-                            item.route?.let { route ->
-                                onNavigateTo(route)
-                            }
+                            onNavigateTo(item.route)
                             scope.launch { drawerState.close() }
                         },
-                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                        icon = {
+                            Image(
+                                painterResource(item.icon),
+                                contentDescription = item.title
+                            )
+                        }
                     )
                 }
             }
