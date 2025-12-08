@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -11,6 +12,14 @@ plugins {
     alias(libs.plugins.serialization)
 }
 
+val versionProperties = Properties().apply {
+    load(rootProject.file("version.properties").inputStream())
+}
+
+val versionMajor = versionProperties["versionMajor"].toString().toInt()
+val versionMinor = versionProperties["versionMinor"].toString().toInt()
+val versionPatch = versionProperties["versionPatch"].toString().toInt()
+
 android {
     namespace = "com.m4ykey.albly"
     compileSdk {
@@ -21,8 +30,8 @@ android {
         applicationId = "com.m4ykey.albly"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.0.2-alpha04"
+        versionCode = versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100
+        versionName = "$versionMajor.$versionMinor.$versionPatch"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

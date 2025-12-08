@@ -1,4 +1,4 @@
-package com.m4ykey.core
+package com.m4ykey.core.ext
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth

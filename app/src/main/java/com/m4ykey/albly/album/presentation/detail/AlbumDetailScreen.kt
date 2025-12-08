@@ -54,10 +54,12 @@ import com.m4ykey.albly.R
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.TrackItem
 import com.m4ykey.albly.album.presentation.components.TrackListItem
-import com.m4ykey.core.formatReleaseDate
+import com.m4ykey.core.ext.copyText
+import com.m4ykey.core.ext.formatReleaseDate
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import org.koin.androidx.compose.koinViewModel
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -180,7 +182,10 @@ fun AlbumDetailContent(
                 Text(
                     text = item.name,
                     fontSize = 25.sp,
-                    color = textColor
+                    color = textColor,
+                    modifier = Modifier.clickable {
+                        copyText(text = item.name, context)
+                    }
                 )
                 Text(
                     text = item.artists.joinToString(", ") { it.name },
@@ -203,10 +208,10 @@ fun AlbumDetailContent(
         item {
             AlbumButtonsRow(
                 onAlbumClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(albumUrl)))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, albumUrl.toUri()))
                 },
                 onArtistClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(artistUrl)))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, artistUrl.toUri()))
                 }
             )
         }

@@ -53,7 +53,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -73,7 +72,6 @@ import com.m4ykey.albly.R
 import com.m4ykey.albly.app.ui.navigation.Screen
 import com.m4ykey.albly.collection.presentation.drawer.DrawerItem
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
-import com.m4ykey.albly.collection.presentation.type.album.AlbumTypeAction
 import com.m4ykey.albly.collection.presentation.type.components.chip.ListTypeChip
 import com.m4ykey.albly.collection.presentation.type.components.chip.SortTypeChip
 import com.m4ykey.albly.collection.presentation.type.components.chip.TypeChip
@@ -82,8 +80,8 @@ import com.m4ykey.albly.collection.presentation.type.list.ListSortType
 import com.m4ykey.albly.collection.presentation.type.list.ListType
 import com.m4ykey.albly.collection.presentation.type.list.ListViewType
 import com.m4ykey.albly.search.presentation.SearchBarTextField
-import com.m4ykey.core.CenteredContent
 import com.m4ykey.core.chip.ChipItem
+import com.m4ykey.core.ext.CenteredContent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.MalformedURLException
@@ -104,7 +102,7 @@ fun CollectionScreen(
     val viewState by viewModel.albumType.collectAsState()
     val type by rememberUpdatedState(viewState.type)
 
-    var showDialog by remember { mutableStateOf(false) }
+    val isDialogVisible by viewModel.isLinkDialogVisible.collectAsState()
     val state = rememberTextFieldState()
 
     val onAction = viewModel::onAction
@@ -188,7 +186,7 @@ fun CollectionScreen(
                         }
                         IconButton(
                             onClick = {
-                                showDialog = true
+                                viewModel.showLinkDialog()
                             }
                         ) {
                             Icon(
@@ -205,19 +203,20 @@ fun CollectionScreen(
                 type = type,
                 onAction = onAction,
                 padding = padding,
-                listState = listState
+                listState = listState,
+                viewModel = viewModel
             )
         }
     }
 
-    if (showDialog) {
+    if (isDialogVisible) {
         AnimatedVisibility(
-            visible = showDialog,
+            visible = isDialogVisible,
             enter = scaleIn() + fadeIn(),
             exit = scaleOut() + fadeOut()
         ) {
             BasicAlertDialog(
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = { viewModel.hideLinkDialog() },
                 properties = DialogProperties(dismissOnBackPress = true)
             ) {
                 Surface(
@@ -233,7 +232,7 @@ fun CollectionScreen(
                             horizontalArrangement = Arrangement.End
                         ) {
                             TextButton(
-                                onClick = { showDialog = false }
+                                onClick = { viewModel.hideLinkDialog() }
                             ) {
                                 Text(stringResource(R.string.cancel))
                             }
@@ -244,7 +243,7 @@ fun CollectionScreen(
                                         val albumId = getAlbumFromIdUrl(url)
                                         if (!albumId.isNullOrEmpty()) {
                                             onLinkClick(albumId)
-                                            showDialog = false
+                                            viewModel.hideLinkDialog()
                                         } else {
                                             Toast.makeText(
                                                 context,
@@ -325,15 +324,19 @@ fun UrlInputField(
 fun CollectionScreenContent(
     modifier: Modifier = Modifier,
     type : AlbumType?,
-    onAction : (AlbumTypeAction) -> Unit,
+    onAction : (CollectionTypeAction) -> Unit,
     padding : PaddingValues,
-    listState: LazyListState
+    listState: LazyListState,
+    viewModel: CollectionViewModel
 ) {
     var sortType by rememberSaveable { mutableStateOf(ListSortType.LATEST) }
     var viewType by rememberSaveable { mutableStateOf(ListViewType.GRID) }
     var listType by rememberSaveable { mutableStateOf(ListType.ALBUM) }
 
-    var showSearch by rememberSaveable { mutableStateOf(false) }
+    val isSearchVisible by viewModel.isSearchVisible.collectAsState()
+    val isSortDialogVisible by viewModel.isSortDialogVisible.collectAsState()
+
+    val searchQuery by viewModel.searchQuery.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -351,7 +354,7 @@ fun CollectionScreenContent(
                     AlbumTypeChipList(
                         selectedChip = type,
                         onChipSelected = { selectedType ->
-                            onAction(AlbumTypeAction.OnTypeClick(selectedType))
+                            onAction(CollectionTypeAction.OnTypeClick(selectedType))
                         }
                     )
                 }
@@ -360,11 +363,14 @@ fun CollectionScreenContent(
                     onSortChange = { sortType = it },
                     onViewChange = { viewType = it },
                     onListTypeChange = { listType = it },
-                    onSearchClick = { showSearch = !showSearch }
+                    onSearchClick = { viewModel.showSearch() },
+                    isSortDialogVisible = isSortDialogVisible,
+                    onShowSortDialog = { viewModel.showSortDialog() },
+                    onDismissSortDialog = { viewModel.hideSortDialog() }
                 )
 
                 AnimatedVisibility(
-                    visible = showSearch,
+                    visible = isSearchVisible,
                     enter = expandVertically(
                         expandFrom = Alignment.Top,
                         animationSpec = tween(300)
@@ -375,10 +381,17 @@ fun CollectionScreenContent(
                     ) + fadeOut()
                 ) {
                     SearchField(
-                        onValueChange = {},
-                        onSearch = {},
-                        searchQuery = "",
-                        onCloseClick = { showSearch = false }
+                        onValueChange = { query ->
+                            onAction(CollectionTypeAction.OnQueryChange(query))
+                        },
+                        onSearch = {
+
+                        },
+                        searchQuery = searchQuery,
+                        onCloseClick = {
+                            viewModel.hideSearch()
+                            viewModel.clearTextField()
+                        }
                     )
                 }
             }
@@ -421,7 +434,10 @@ fun ListOptions(
     onSortChange : (ListSortType) -> Unit,
     onListTypeChange : (ListType) -> Unit,
     onViewChange : (ListViewType) -> Unit,
-    onSearchClick : () -> Unit
+    onSearchClick : () -> Unit,
+    isSortDialogVisible : Boolean,
+    onShowSortDialog : () -> Unit,
+    onDismissSortDialog : () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -431,7 +447,12 @@ fun ListOptions(
     ) {
         ListTypeChip(onChange = onListTypeChange)
         Spacer(modifier = Modifier.width(10.dp))
-        SortTypeChip(onChange = onSortChange)
+        SortTypeChip(
+            onChange = onSortChange,
+            isDialogVisible = isSortDialogVisible,
+            onShowDialog = onShowSortDialog,
+            onDismissDialog = onDismissSortDialog
+        )
         Spacer(modifier = Modifier.width(10.dp))
         ViewTypeChip(onChange = onViewChange)
         Spacer(modifier = Modifier.weight(1f))

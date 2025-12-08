@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -114,26 +115,28 @@ private fun TypeChipPrev() {
 @Composable
 fun SortTypeChip(
     modifier: Modifier = Modifier,
-    onChange : (ListSortType) -> Unit
+    onChange : (ListSortType) -> Unit,
+    onShowDialog : () -> Unit,
+    onDismissDialog : () -> Unit,
+    isDialogVisible : Boolean
 ) {
     var currentType by remember { mutableStateOf(ListSortType.LATEST) }
-    var showDialog by remember { mutableStateOf(false) }
 
     TypeChip(
-        onClick = { showDialog = true },
+        onClick = onShowDialog,
         icon = painterResource(R.drawable.ic_arrow_sort),
         label = currentType.label(),
         iconSize = 16.dp
     )
 
-    if (showDialog) {
+    if (isDialogVisible) {
         AnimatedVisibility(
-            visible = showDialog,
+            visible = isDialogVisible,
             enter = scaleIn() + fadeIn(),
             exit = scaleOut() + fadeOut()
         ) {
             BasicAlertDialog(
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = onDismissDialog,
                 properties = DialogProperties(dismissOnClickOutside = true)
             ) {
                 Surface(
@@ -143,7 +146,7 @@ fun SortTypeChip(
                 ) {
                     Column(modifier = modifier.padding(16.dp)) {
                         Text(
-                            text = "Sort by",
+                            text = stringResource(R.string.sort_by),
                             modifier = modifier.padding(bottom = 8.dp),
                             fontSize = 20.sp
                         )
@@ -155,7 +158,7 @@ fun SortTypeChip(
                                     .clickable {
                                         currentType = type
                                         onChange(type)
-                                        showDialog = false
+                                        onDismissDialog()
                                     }
                                     .padding(vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
@@ -165,7 +168,7 @@ fun SortTypeChip(
                                     onClick = {
                                         currentType = type
                                         onChange(type)
-                                        showDialog = false
+                                        onDismissDialog()
                                     }
                                 )
                                 Text(

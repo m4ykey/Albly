@@ -24,4 +24,5 @@
     <string name="tracks">Tracks</string>
     <string name="album_count">Album Count</string>
     <string name="random_album">Random album</string>
+    <string name="sort_by">Sort by</string>
 </resources>

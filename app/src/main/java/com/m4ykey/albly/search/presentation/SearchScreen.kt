@@ -57,7 +57,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.presentation.components.AlbumCard
-import com.m4ykey.core.CenteredContent
+import com.m4ykey.core.ext.CenteredContent
 import com.m4ykey.core.chip.ChipItem
 import com.m4ykey.core.paging.BasePagingList
 import kotlinx.coroutines.flow.collectLatest
