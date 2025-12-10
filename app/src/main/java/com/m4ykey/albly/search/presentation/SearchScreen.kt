@@ -32,7 +32,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -57,8 +56,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.presentation.components.AlbumCard
-import com.m4ykey.core.ext.CenteredContent
 import com.m4ykey.core.chip.ChipItem
+import com.m4ykey.core.ext.ActionIconButton
+import com.m4ykey.core.ext.CenteredContent
 import com.m4ykey.core.paging.BasePagingList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -114,13 +114,12 @@ fun SearchScreen(
                     .padding(horizontal = 5.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        contentDescription = stringResource(R.string.back),
-                        painter = painterResource(R.drawable.ic_arrow_left),
-                        tint = isDarkTheme
-                    )
-                }
+                ActionIconButton(
+                    tint = isDarkTheme,
+                    onClick = onBack,
+                    textRes = R.string.back,
+                    iconRes = R.drawable.ic_arrow_left
+                )
                 SearchBarTextField(
                     searchQuery = searchQuery,
                     onValueChange = { query ->
@@ -131,13 +130,12 @@ fun SearchScreen(
                         .padding(start = 8.dp),
                     onSearch = { onAction(SearchTypeAction.OnSearchClick) }
                 )
-                IconButton(onClick = { }) {
-                    Icon(
-                        contentDescription = stringResource(R.string.mic),
-                        painter = painterResource(R.drawable.ic_mic),
-                        tint = isDarkTheme
-                    )
-                }
+                ActionIconButton(
+                    tint = isDarkTheme,
+                    onClick = {},
+                    textRes = R.string.mic,
+                    iconRes = R.drawable.ic_mic
+                )
                 AnimatedVisibility(
                     visible = searchQuery.isNotEmpty(),
                     enter = slideInHorizontally(
@@ -147,15 +145,12 @@ fun SearchScreen(
                         targetOffsetX = { fullWidth -> fullWidth }
                     )
                 ) {
-                    IconButton(onClick = {
-                        onAction(SearchTypeAction.OnQueryChange(""))
-                    }) {
-                        Icon(
-                            contentDescription = stringResource(R.string.clear),
-                            painter = painterResource(R.drawable.ic_close),
-                            tint = isDarkTheme
-                        )
-                    }
+                    ActionIconButton(
+                        onClick = { onAction(SearchTypeAction.OnQueryChange("")) },
+                        tint = isDarkTheme,
+                        textRes = R.string.clear,
+                        iconRes = R.drawable.ic_close
+                    )
                 }
             }
             Column(

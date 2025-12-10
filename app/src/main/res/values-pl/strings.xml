@@ -24,4 +24,6 @@
     <string name="listen_later">Posłuchaj później</string>
     <string name="tracks">Utwory</string>
     <string name="sort_by">Sortuj według</string>
+    <string name="menu">Menu</string>
+    <string name="empty"> </string>
 </resources>

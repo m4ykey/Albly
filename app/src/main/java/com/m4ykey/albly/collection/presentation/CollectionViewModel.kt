@@ -3,7 +3,6 @@ package com.m4ykey.albly.collection.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
-import com.m4ykey.albly.collection.presentation.CollectionTypeAction
 import com.m4ykey.albly.collection.presentation.type.album.AlbumTypeState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

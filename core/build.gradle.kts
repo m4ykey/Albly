@@ -57,6 +57,9 @@ dependencies {
     implementation(libs.androidx.paging.common)
     implementation(libs.androidx.paging.compose)
 
+    implementation(libs.landscapist)
+    implementation(libs.landscapist.animation)
+
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.junit)

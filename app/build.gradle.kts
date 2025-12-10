@@ -88,9 +88,9 @@ dependencies {
     implementation(libs.androidx.media3.common)
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
-    implementation(libs.androidx.palette)
 
     implementation(libs.landscapist)
+    implementation(libs.landscapist.palette)
 
     implementation(libs.androidx.paging.compose)
 

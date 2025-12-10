@@ -1,9 +1,8 @@
 package com.m4ykey.albly.album.presentation.components
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,11 +11,11 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,14 +35,23 @@ fun formatTrackDuration(seconds : Int) : String {
 @Composable
 fun TrackListItem(
     modifier: Modifier = Modifier,
-    item : TrackItem
+    item : TrackItem,
+    onTrackClick : (String, String) -> Unit
 ) {
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
     val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
 
     val trackDuration = formatTrackDuration(item.durationMs / 1000)
 
-    Column(modifier = modifier.fillMaxWidth()) {
+    val artists = item.artists.joinToString(", ") { it.name }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+                onTrackClick(item.name, artists)
+            }
+    ) {
         Row {
             Column(
                 modifier = Modifier.weight(1f)
@@ -63,7 +71,7 @@ fun TrackListItem(
                         modifier = Modifier.wrapContentWidth(Alignment.Start)
                     )
                     Text(
-                        text = item.artists.joinToString(", ") { it.name },
+                        text = artists,
                         fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,
                         color = textColor2,
@@ -87,17 +95,16 @@ fun TrackListItem(
 fun Explicit(
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(3.dp))
-            .background(Color(0xFF525252))
-            .padding(horizontal = 5.dp, vertical = 1.dp),
-        contentAlignment = Alignment.Center
+    Surface(
+        color = Color(0xFF525252),
+        shape = RoundedCornerShape(3.dp),
+        contentColor = Color.White
     ) {
         Text(
             text = "E",
             color = Color.White,
-            fontSize = 10.sp
+            fontSize = 10.sp,
+            modifier = modifier.padding(horizontal = 5.dp, vertical = 1.dp)
         )
     }
 }
@@ -135,7 +142,12 @@ private fun TrackListItemPrev() {
     }
     LazyColumn {
         items(trackItems) { item ->
-            TrackListItem(item = item)
+            TrackListItem(
+                item = item,
+                onTrackClick = { item1, item2 ->
+
+                }
+            )
         }
     }
 }

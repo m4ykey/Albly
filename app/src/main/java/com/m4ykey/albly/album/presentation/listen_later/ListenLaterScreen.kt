@@ -4,78 +4,73 @@ package com.m4ykey.albly.album.presentation.listen_later
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.m4ykey.albly.R
+import com.m4ykey.core.ext.ActionIconButton
+import com.m4ykey.core.ext.AppScaffold
 
 @Composable
 fun ListenLaterScreen(
-    modifier: Modifier = Modifier,
     onBack : () -> Unit,
     onSearchClick : () -> Unit
 ) {
-
-    var showSearch by rememberSaveable { mutableStateOf(false) }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {  },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            contentDescription = stringResource(id = R.string.back),
-                            painter = painterResource(R.drawable.ic_arrow_left)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onSearchClick) {
-                        Icon(
-                            contentDescription = null,
-                            painter = painterResource(R.drawable.ic_add)
-                        )
-                    }
-                }
+    AppScaffold(
+        navigation = {
+            ActionIconButton(
+                onClick = onBack,
+                iconRes = R.drawable.ic_arrow_left,
+                textRes = R.string.back
+            )
+        },
+        actions = {
+            ActionIconButton(
+                onClick = onSearchClick,
+                textRes = R.string.empty,
+                iconRes = R.drawable.ic_add
+            )
+        },
+        content = { padding ->
+            ListenLaterContent(
+                modifier = Modifier.padding(padding),
+                onRandomAlbumClick = {}
             )
         }
-    ) { innerPadding ->
-        Column(
-            modifier = modifier.padding(innerPadding)
+    )
+}
+
+@Composable
+fun ListenLaterContent(
+    modifier: Modifier = Modifier,
+    onRandomAlbumClick : () -> Unit
+) {
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
+        Text(
+            text = "${stringResource(R.string.album_count)}: ",
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
+                .fillMaxWidth()
         ) {
-            Text(
-                text = "${stringResource(R.string.album_count)}: ",
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .fillMaxWidth()
+            Button(
+                onClick = { onRandomAlbumClick() },
+                modifier = Modifier.weight(1f)
             ) {
-                Button(
-                    onClick = {},
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = stringResource(R.string.random_album))
-                }
+                Text(text = stringResource(R.string.random_album))
             }
         }
     }

@@ -25,4 +25,6 @@
     <string name="album_count">Album Count</string>
     <string name="random_album">Random album</string>
     <string name="sort_by">Sort by</string>
+    <string name="menu">Menu</string>
+    <string name="empty"> </string>
 </resources>

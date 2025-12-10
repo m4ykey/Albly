@@ -7,24 +7,22 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
+import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.presentation.components.AlbumCard
+import com.m4ykey.core.ext.ActionIconButton
+import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.paging.BasePagingList
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -50,48 +48,60 @@ fun AlbumNewReleaseScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.discover_new_release)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            contentDescription = stringResource(id = R.string.back),
-                            painter = painterResource(R.drawable.ic_arrow_left)
+    AppScaffold(
+        title = R.string.discover_new_release,
+        navigation = {
+            ActionIconButton(
+                onClick = onBack,
+                iconRes = R.drawable.ic_arrow_left,
+                textRes = R.string.back
+            )
+        },
+        content = { padding ->
+            NewReleaseContent(
+                paddingValues = padding,
+                state = state,
+                newRelease = newRelease,
+                onAction = onAction
+            )
+        }
+    )
+}
+
+@Composable
+fun NewReleaseContent(
+    modifier: Modifier = Modifier,
+    paddingValues: PaddingValues,
+    state : LazyGridState,
+    newRelease : LazyPagingItems<AlbumItem>,
+    onAction : (NewReleaseAction) -> Unit
+) {
+    BasePagingList(
+        items = newRelease,
+        listContent = { items ->
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = modifier
+                    .padding(paddingValues)
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                state = state
+            ) {
+                items(
+                    count = items.itemCount,
+                    contentType = { "album_item" },
+                    key = items.itemKey { item -> item.id }
+                ) { index ->
+                    items[index]?.let { item ->
+                        AlbumCard(
+                            item = item,
+                            onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.id)) }
                         )
                     }
                 }
-            )
-        }
-    ) { innerPadding ->
-        BasePagingList(
-            items = newRelease,
-            listContent = { items ->
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    state = state
-                ) {
-                    items(
-                        count = items.itemCount,
-                        contentType = { "album_item" },
-                        key = items.itemKey { item -> item.id }
-                    ) { index ->
-                        items[index]?.let { item ->
-                            AlbumCard(
-                                item = item,
-                                onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.id)) }
-                            )
-                        }
-                    }
-                }
             }
-        )
-    }
+        }
+    )
 }

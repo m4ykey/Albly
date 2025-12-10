@@ -35,17 +35,14 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -82,6 +79,8 @@ import com.m4ykey.albly.collection.presentation.type.list.ListType
 import com.m4ykey.albly.collection.presentation.type.list.ListViewType
 import com.m4ykey.albly.search.presentation.SearchBarTextField
 import com.m4ykey.core.chip.ChipItem
+import com.m4ykey.core.ext.ActionIconButton
+import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.CenteredContent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -167,53 +166,41 @@ fun CollectionScreen(
         },
         drawerState = drawerState
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    modifier = modifier
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .statusBarsPadding(),
-                    title = { Text(text = stringResource(id = R.string.collection)) },
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(
-                                contentDescription = "Menu",
-                                painter = painterResource(R.drawable.ic_menu)
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(
-                            onClick = { onSearch() }
-                        ) {
-                            Icon(
-                                contentDescription = stringResource(R.string.search),
-                                painter = painterResource(R.drawable.ic_search)
-                            )
-                        }
-                        IconButton(
-                            onClick = {
-                                viewModel.showLinkDialog()
-                            }
-                        ) {
-                            Icon(
-                                contentDescription = stringResource(R.string.enter_url),
-                                painter = painterResource(R.drawable.ic_link)
-                            )
-                        }
-                    },
-                    scrollBehavior = scrollBehavior
+        AppScaffold(
+            modifier = modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .statusBarsPadding(),
+            navigation = {
+                ActionIconButton(
+                    textRes = R.string.menu,
+                    iconRes = R.drawable.ic_menu,
+                    onClick = { scope.launch { drawerState.open() } }
                 )
-            }
-        ) { padding ->
-            CollectionScreenContent(
-                type = type,
-                onAction = onAction,
-                padding = padding,
-                listState = listState,
-                viewModel = viewModel
-            )
-        }
+            },
+            actions = {
+                ActionIconButton(
+                    onClick = { onSearch() },
+                    iconRes = R.drawable.ic_search,
+                    textRes = R.string.search
+                )
+                ActionIconButton(
+                    onClick = { viewModel.showLinkDialog() },
+                    iconRes = R.drawable.ic_link,
+                    textRes = R.string.enter_url
+                )
+            },
+            title = R.string.collection,
+            content = { padding ->
+                CollectionScreenContent(
+                    type = type,
+                    onAction = onAction,
+                    padding = padding,
+                    listState = listState,
+                    viewModel = viewModel
+                )
+            },
+            scrollBehavior = scrollBehavior
+        )
     }
 
     if (isDialogVisible) {
@@ -308,16 +295,11 @@ fun UrlInputField(
         label = { Text(stringResource(R.string.enter_url)) },
         trailingIcon = {
             if (state.text.isNotEmpty()) {
-                IconButton(
-                    onClick = {
-                        state.edit { replace(0, state.text.length, "") }
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_close),
-                        contentDescription = null
-                    )
-                }
+                ActionIconButton(
+                    onClick = { state.edit { replace(0, state.text.length, "") } },
+                    iconRes = R.drawable.ic_close,
+                    textRes = R.string.empty
+                )
             }
         },
         keyboardOptions = KeyboardOptions(
@@ -426,12 +408,11 @@ fun SearchField(
             onValueChange = onValueChange,
             modifier = Modifier.weight(1f)
         )
-        IconButton(onClick = onCloseClick) {
-            Icon(
-                contentDescription = stringResource(R.string.clear),
-                painter = painterResource(R.drawable.ic_close)
-            )
-        }
+        ActionIconButton(
+            onClick = onCloseClick,
+            iconRes = R.drawable.ic_close,
+            textRes = R.string.clear
+        )
     }
 }
 
