@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -21,7 +23,8 @@ fun AppScaffold(
     actions : @Composable RowScope.() -> Unit = {},
     navigation : @Composable () -> Unit = {},
     content : @Composable (PaddingValues) -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior? = null
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    snackbarHostState: SnackbarHostState? = null
 ) {
     Scaffold(
         modifier = modifier,
@@ -36,6 +39,9 @@ fun AppScaffold(
                 },
                 scrollBehavior = scrollBehavior
             )
+        },
+        snackbarHost = {
+            snackbarHostState?.let { SnackbarHost(hostState = it) }
         }
     ) { padding ->
         content(padding)

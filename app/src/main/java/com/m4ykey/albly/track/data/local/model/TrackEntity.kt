@@ -16,5 +16,6 @@ data class TrackEntity(
     @PrimaryKey(autoGenerate = false) @ColumnInfo(name = "id") val id : String,
     @ColumnInfo(name = "name") val name : String,
     @ColumnInfo(name = "preview_url") val previewUrl : String?,
-    @ColumnInfo(name = "track_number") val trackNumber : Int
+    @ColumnInfo(name = "track_number") val trackNumber : Int,
+    @ColumnInfo(name = "albumId") val albumId : String
 )

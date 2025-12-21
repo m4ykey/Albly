@@ -25,11 +25,13 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +49,7 @@ import com.m4ykey.albly.R
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.core.mapper.toEntity
+import com.m4ykey.albly.track.data.local.model.TrackEntity
 import com.m4ykey.albly.track.domain.model.TrackItem
 import com.m4ykey.albly.track.presentation.TrackListItem
 import com.m4ykey.albly.track.presentation.TrackViewModel
@@ -55,6 +58,7 @@ import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.LoadImage
 import com.m4ykey.core.ext.copyText
 import com.m4ykey.core.ext.formatReleaseDate
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -76,7 +80,10 @@ fun AlbumDetailScreen(
         trackViewModel.setAlbum(id)
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         navigation = {
             ActionIconButton(
                 onClick = onBack,
@@ -86,16 +93,23 @@ fun AlbumDetailScreen(
         },
         content = { padding ->
             AlbumDetailDisplay(
+                snackbarHostState = snackbarHostState,
                 onTrackClick = onTrackClick,
                 state = state,
                 tracks = tracks,
                 albumDetail = albumDetail,
                 paddingValues = padding,
-                onSaveToggle = { entity ->
-                    viewModel.toggleSave(entity)
+                onSaveToggle = { entity, track ->
+                    viewModel.toggleSave(
+                        album = entity,
+                        tracks = track
+                    )
                 },
-                onListenLaterToggle = { entity ->
-                    viewModel.toggleListenLater(entity)
+                onListenLaterToggle = { entity, track ->
+                    viewModel.toggleListenLater(
+                        album = entity,
+                        tracks = track
+                    )
                 }
             )
         }
@@ -110,8 +124,9 @@ fun AlbumDetailDisplay(
     onTrackClick: (String, String) -> Unit,
     state : LazyListState,
     tracks: LazyPagingItems<TrackItem>,
-    onSaveToggle: (AlbumEntity) -> Unit,
-    onListenLaterToggle: (AlbumEntity) -> Unit
+    onSaveToggle: (AlbumEntity, List<TrackEntity>) -> Unit,
+    onListenLaterToggle: (AlbumEntity, List<TrackEntity>) -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     when {
         albumDetail.loading -> Box(
@@ -137,7 +152,8 @@ fun AlbumDetailDisplay(
                     onSaveToggle = onSaveToggle,
                     onListenLaterToggle = onListenLaterToggle,
                     isSaved = albumDetail.isSaved,
-                    isListenLaterSaved = albumDetail.isListenLaterSaved
+                    isListenLaterSaved = albumDetail.isListenLaterSaved,
+                    snackbarHostState = snackbarHostState
                 )
             }
         }
@@ -151,12 +167,15 @@ fun AlbumDetailContent(
     state : LazyListState,
     tracks : LazyPagingItems<TrackItem>,
     onTrackClick : (String, String) -> Unit,
-    onSaveToggle : (AlbumEntity) -> Unit,
-    onListenLaterToggle : (AlbumEntity) -> Unit,
+    onSaveToggle : (AlbumEntity, List<TrackEntity>) -> Unit,
+    onListenLaterToggle : (AlbumEntity, List<TrackEntity>) -> Unit,
     isSaved : Boolean,
-    isListenLaterSaved : Boolean
+    isListenLaterSaved : Boolean,
+    snackbarHostState: SnackbarHostState
 ) {
     val albumEntity = remember(item) { item.toEntity() }
+
+    val isAllTracksLoaded = tracks.itemCount >= item.totalTracks
 
     val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -176,6 +195,9 @@ fun AlbumDetailContent(
         .joinToString(separator = "\n")
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val trackEntities = tracks.itemSnapshotList.items.map { it.toEntity(item.id) }
 
     LazyColumn(
         modifier = Modifier
@@ -219,8 +241,28 @@ fun AlbumDetailContent(
             SaveButtonsRow(
                 isSaved = isSaved,
                 isListenLaterSaved = isListenLaterSaved,
-                onSaveClick = { onSaveToggle(albumEntity) },
-                onListenLaterClick = { onListenLaterToggle(albumEntity) }
+                onSaveClick = {
+                    if (isAllTracksLoaded) {
+                        onSaveToggle(albumEntity, trackEntities)
+                    } else {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = context.getString(R.string.please_wait_until_all_tracks_are_loaded)
+                            )
+                        }
+                    }
+                },
+                onListenLaterClick = {
+                    if (isAllTracksLoaded) {
+                        onListenLaterToggle(albumEntity, trackEntities)
+                    } else {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = context.getString(R.string.please_wait_until_all_tracks_are_loaded)
+                            )
+                        }
+                    }
+                }
             )
         }
 

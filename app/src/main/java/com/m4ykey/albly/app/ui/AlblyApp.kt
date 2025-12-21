@@ -1,10 +1,12 @@
 package com.m4ykey.albly.app.ui
 
 import android.app.Application
+import com.m4ykey.albly.di.albumUseCaseModule
 import com.m4ykey.albly.di.databaseModule
 import com.m4ykey.albly.di.repositoryModule
+import com.m4ykey.albly.di.searchUseCaseModule
 import com.m4ykey.albly.di.serviceModule
-import com.m4ykey.albly.di.useCaseModule
+import com.m4ykey.albly.di.trackUseCaseModule
 import com.m4ykey.albly.di.viewModelModule
 import com.m4ykey.auth.di.authModule
 import com.m4ykey.auth.di.dataStoreModule
@@ -18,12 +20,14 @@ val modules = listOf(
     repositoryModule,
     viewModelModule,
     serviceModule,
-    useCaseModule,
+    searchUseCaseModule,
     authModule,
     spotifyApiModule,
     dataStoreModule,
     scopeModule,
-    databaseModule
+    databaseModule,
+    albumUseCaseModule,
+    trackUseCaseModule
 ) + lyricsModule
 
 class AlblyApp : Application() {

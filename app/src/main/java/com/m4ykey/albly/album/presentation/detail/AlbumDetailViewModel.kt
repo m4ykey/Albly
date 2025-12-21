@@ -9,6 +9,7 @@ import com.m4ykey.albly.album.domain.use_case.AlbumUseCase
 import com.m4ykey.albly.album.domain.use_case.GetAlbumStateUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleAlbumSavedUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleListenLaterSavedUseCase
+import com.m4ykey.albly.track.data.local.model.TrackEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,22 +51,29 @@ class AlbumDetailViewModel(
         }
     }
 
-    fun toggleSave(album : AlbumEntity) {
+    fun toggleSave(album : AlbumEntity, tracks : List<TrackEntity>) {
         viewModelScope.launch {
             val currentState = _detail.value.isSaved
-            toggleAlbumSavedUseCase.invoke(album, currentState)
+            toggleAlbumSavedUseCase(
+                album = album,
+                isCurrentlySaved = currentState,
+                tracks = tracks
+            )
 
             _detail.value = _detail.value.copy(isSaved = !currentState)
         }
     }
 
-    fun toggleListenLater(album : AlbumEntity) {
+    fun toggleListenLater(album : AlbumEntity, tracks : List<TrackEntity>) {
         viewModelScope.launch {
             val currentState = _detail.value.isListenLaterSaved
-            toggleListenLaterSavedUseCase.invoke(album, currentState)
+            toggleListenLaterSavedUseCase.invoke(
+                album = album,
+                isCurrentlySaved = currentState,
+                tracks = tracks
+            )
 
             _detail.value = _detail.value.copy(isListenLaterSaved = !currentState)
         }
     }
-
 }

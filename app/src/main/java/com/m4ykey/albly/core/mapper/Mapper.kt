@@ -17,8 +17,22 @@ import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.model.Copyright
 import com.m4ykey.albly.album.domain.model.ExternalUrls
 import com.m4ykey.albly.album.domain.model.Image
+import com.m4ykey.albly.track.data.local.model.TrackEntity
 import com.m4ykey.albly.track.data.network.dto.TrackItemDto
 import com.m4ykey.albly.track.domain.model.TrackItem
+
+fun TrackItem.toEntity(albumId : String) = TrackEntity(
+    id = id,
+    name = name,
+    trackNumber = trackNumber,
+    externalUrls = externalUrls.toEntity(),
+    discNumber = discNumber,
+    durationMs = durationMs,
+    explicit = explicit,
+    previewUrl = previewUrl,
+    albumId = albumId,
+    artists = artists.map { it.toEntity() }
+)
 
 fun ExternalUrls.toEntity() = ExternalUrlsEntity(
     spotify = spotify
