@@ -34,7 +34,7 @@ interface AlbumDao {
 
     @Transaction
     @Query("SELECT * FROM album_table WHERE id = :id")
-    fun getAlbumWithStates(id : String) : AlbumWithStates?
+    suspend fun getAlbumWithStates(id : String) : AlbumWithStates?
 
     @Query("DELETE FROM album_table WHERE id = :id")
     suspend fun deleteAlbum(id : String)
@@ -64,6 +64,6 @@ interface AlbumDao {
         INNER JOIN is_listen_later_saved_table ON album_table.id = is_listen_later_saved_table.id
         WHERE is_listen_later_saved_table.isListenLater = 1 ORDER BY RANDOM() LIMIT 1
     """)
-    suspend fun getRandomAlbum() : Flow<AlbumEntity>
+    fun getRandomAlbum() : Flow<AlbumEntity>
 
 }

@@ -20,7 +20,7 @@ interface AlbumRepository {
     fun getLocalAlbumById(id : String) : AlbumEntity?
     fun getSavedAlbumState(id : String) : IsAlbumSaved?
     fun getSavedListenLaterState(id : String) : IsListenLaterSaved?
-    fun getAlbumWithStates(id : String) : AlbumWithStates?
+    suspend fun getAlbumWithStates(id : String) : AlbumWithStates?
     suspend fun deleteAlbum(id : String)
     suspend fun deleteSavedListenLaterState(id : String)
     suspend fun deleteSavedAlbumState(id : String)

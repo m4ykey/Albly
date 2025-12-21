@@ -1,6 +1,7 @@
 package com.m4ykey.albly.app.ui
 
 import android.app.Application
+import com.m4ykey.albly.di.databaseModule
 import com.m4ykey.albly.di.repositoryModule
 import com.m4ykey.albly.di.serviceModule
 import com.m4ykey.albly.di.useCaseModule
@@ -21,7 +22,8 @@ val modules = listOf(
     authModule,
     spotifyApiModule,
     dataStoreModule,
-    scopeModule
+    scopeModule,
+    databaseModule
 ) + lyricsModule
 
 class AlblyApp : Application() {

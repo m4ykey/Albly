@@ -72,7 +72,7 @@ class AlbumRepositoryImpl(
         return dao.getSavedListenLaterState(id)
     }
 
-    override fun getAlbumWithStates(id: String): AlbumWithStates? {
+    override suspend fun getAlbumWithStates(id: String): AlbumWithStates? {
         return dao.getAlbumWithStates(id)
     }
 

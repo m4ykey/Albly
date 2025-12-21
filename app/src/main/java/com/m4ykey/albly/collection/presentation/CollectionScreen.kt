@@ -65,7 +65,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.m4ykey.albly.R
 import com.m4ykey.albly.app.ui.navigation.Screen
 import com.m4ykey.albly.collection.presentation.drawer.DrawerItem
@@ -84,6 +83,7 @@ import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.CenteredContent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import java.net.MalformedURLException
 import java.net.URISyntaxException
 import java.net.URL
@@ -93,7 +93,7 @@ import java.net.URL
 fun CollectionScreen(
     modifier : Modifier = Modifier,
     onSearch : () -> Unit,
-    viewModel : CollectionViewModel = viewModel(),
+    viewModel : CollectionViewModel = koinViewModel(),
     onLinkClick : (String) -> Unit,
     onNavigateTo : (String) -> Unit
 ) {

@@ -29,9 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,9 +44,12 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
+import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.domain.model.AlbumDetail
+import com.m4ykey.albly.core.mapper.toEntity
 import com.m4ykey.albly.track.domain.model.TrackItem
 import com.m4ykey.albly.track.presentation.TrackListItem
+import com.m4ykey.albly.track.presentation.TrackViewModel
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.LoadImage
@@ -61,17 +62,18 @@ fun AlbumDetailScreen(
     id : String,
     onBack : () -> Unit,
     viewModel : AlbumDetailViewModel = koinViewModel(),
-    onTrackClick : (String, String) -> Unit
+    onTrackClick : (String, String) -> Unit,
+    trackViewModel : TrackViewModel = koinViewModel()
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
-    val tracks = viewModel.trackResults.collectAsLazyPagingItems()
+    val tracks = trackViewModel.trackResults.collectAsLazyPagingItems()
 
     val state = rememberLazyListState()
 
     LaunchedEffect(viewModel) {
         viewModel.getAlbumById(id)
-        viewModel.setAlbum(id)
+        trackViewModel.setAlbum(id)
     }
 
     AppScaffold(
@@ -88,7 +90,13 @@ fun AlbumDetailScreen(
                 state = state,
                 tracks = tracks,
                 albumDetail = albumDetail,
-                paddingValues = padding
+                paddingValues = padding,
+                onSaveToggle = { entity ->
+                    viewModel.toggleSave(entity)
+                },
+                onListenLaterToggle = { entity ->
+                    viewModel.toggleListenLater(entity)
+                }
             )
         }
     )
@@ -101,7 +109,9 @@ fun AlbumDetailDisplay(
     paddingValues: PaddingValues,
     onTrackClick: (String, String) -> Unit,
     state : LazyListState,
-    tracks: LazyPagingItems<TrackItem>
+    tracks: LazyPagingItems<TrackItem>,
+    onSaveToggle: (AlbumEntity) -> Unit,
+    onListenLaterToggle: (AlbumEntity) -> Unit
 ) {
     when {
         albumDetail.loading -> Box(
@@ -123,7 +133,11 @@ fun AlbumDetailDisplay(
                     contentPadding = paddingValues,
                     state = state,
                     tracks = tracks,
-                    onTrackClick = onTrackClick
+                    onTrackClick = onTrackClick,
+                    onSaveToggle = onSaveToggle,
+                    onListenLaterToggle = onListenLaterToggle,
+                    isSaved = albumDetail.isSaved,
+                    isListenLaterSaved = albumDetail.isListenLaterSaved
                 )
             }
         }
@@ -136,8 +150,14 @@ fun AlbumDetailContent(
     item : AlbumDetail,
     state : LazyListState,
     tracks : LazyPagingItems<TrackItem>,
-    onTrackClick : (String, String) -> Unit
+    onTrackClick : (String, String) -> Unit,
+    onSaveToggle : (AlbumEntity) -> Unit,
+    onListenLaterToggle : (AlbumEntity) -> Unit,
+    isSaved : Boolean,
+    isListenLaterSaved : Boolean
 ) {
+    val albumEntity = remember(item) { item.toEntity() }
+
     val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
     val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
@@ -195,7 +215,14 @@ fun AlbumDetailContent(
             }
         }
 
-        item { SaveButtonsRow() }
+        item {
+            SaveButtonsRow(
+                isSaved = isSaved,
+                isListenLaterSaved = isListenLaterSaved,
+                onSaveClick = { onSaveToggle(albumEntity) },
+                onListenLaterClick = { onListenLaterToggle(albumEntity) }
+            )
+        }
 
         item {
             Text(
@@ -276,33 +303,34 @@ fun AlbumButtonsRow(
 
 @Composable
 fun SaveButtonsRow(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSaved : Boolean,
+    isListenLaterSaved : Boolean,
+    onSaveClick : () -> Unit,
+    onListenLaterClick : () -> Unit
 ) {
-    var isSaveClicked by remember { mutableStateOf(false) }
-    var isListenLaterClicked by remember { mutableStateOf(false) }
-
     Row(
         modifier = modifier.wrapContentWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Icon(
             contentDescription = stringResource(R.string.save),
-            painter = if (isSaveClicked) {
+            painter = if (isSaved) {
                 painterResource(R.drawable.ic_favorite)
             } else {
                 painterResource(R.drawable.ic_favorite_border)
             },
-            modifier = modifier.clickable { isSaveClicked = !isSaveClicked }
+            modifier = modifier.clickable { onSaveClick() }
         )
 
         Icon(
             contentDescription = stringResource(R.string.listen_later),
-            painter = if (isListenLaterClicked) {
+            painter = if (isListenLaterSaved) {
                 painterResource(R.drawable.ic_access_time)
             } else {
                 painterResource(R.drawable.ic_access_time_outline)
             },
-            modifier = modifier.clickable { isListenLaterClicked = !isListenLaterClicked }
+            modifier = modifier.clickable { onListenLaterClick() }
         )
     }
 }

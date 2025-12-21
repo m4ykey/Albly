@@ -2,6 +2,7 @@ package com.m4ykey.albly.collection.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.m4ykey.albly.album.domain.use_case.GetSavedAlbumsUseCase
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.collection.presentation.type.album.AlbumTypeState
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,7 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CollectionViewModel : ViewModel() {
+class CollectionViewModel(
+    private val getSavedAlbumsUseCase: GetSavedAlbumsUseCase
+) : ViewModel() {
 
     private val _isLinkDialogVisible = MutableStateFlow(false)
     val isLinkDialogVisible = _isLinkDialogVisible.asStateFlow()
