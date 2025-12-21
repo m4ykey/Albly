@@ -15,9 +15,9 @@ class NewReleaseViewModel(
     private val useCase: NewReleaseUseCase
 ) : ViewModel() {
 
-    val newRelease : Flow<PagingData<AlbumItem>> = useCase
-        .invoke()
-        .cachedIn(viewModelScope)
+    val newRelease : Flow<PagingData<AlbumItem>> =
+        useCase.invoke()
+            .cachedIn(viewModelScope)
 
     private val _uiEvent = MutableSharedFlow<NewReleaseUiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()

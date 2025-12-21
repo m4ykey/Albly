@@ -1,6 +1,8 @@
-package com.m4ykey.albly.album.domain.model
+package com.m4ykey.albly.track.domain.model
 
 import androidx.compose.runtime.Immutable
+import com.m4ykey.albly.album.domain.model.AlbumArtist
+import com.m4ykey.albly.album.domain.model.ExternalUrls
 
 @Immutable
 data class TrackItem(

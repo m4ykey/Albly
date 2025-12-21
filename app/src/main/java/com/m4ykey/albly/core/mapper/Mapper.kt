@@ -1,4 +1,4 @@
-package com.m4ykey.albly.album.data.mapper
+package com.m4ykey.albly.core.mapper
 
 import com.m4ykey.albly.album.data.network.dto.AlbumArtistDto
 import com.m4ykey.albly.album.data.network.dto.AlbumDetailDto
@@ -6,14 +6,14 @@ import com.m4ykey.albly.album.data.network.dto.AlbumItemDto
 import com.m4ykey.albly.album.data.network.dto.CopyrightDto
 import com.m4ykey.albly.album.data.network.dto.ExternalUrlsDto
 import com.m4ykey.albly.album.data.network.dto.ImageDto
-import com.m4ykey.albly.album.data.network.dto.TrackItemDto
 import com.m4ykey.albly.album.domain.model.AlbumArtist
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.model.Copyright
 import com.m4ykey.albly.album.domain.model.ExternalUrls
 import com.m4ykey.albly.album.domain.model.Image
-import com.m4ykey.albly.album.domain.model.TrackItem
+import com.m4ykey.albly.track.data.network.dto.TrackItemDto
+import com.m4ykey.albly.track.domain.model.TrackItem
 
 fun TrackItemDto.toDomain() = TrackItem(
     id = id.orEmpty(),

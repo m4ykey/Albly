@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.m4ykey.albly.album.domain.use_case.AlbumUseCase
-import com.m4ykey.albly.album.domain.use_case.TrackUseCase
+import com.m4ykey.albly.track.domain.use_case.TrackUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

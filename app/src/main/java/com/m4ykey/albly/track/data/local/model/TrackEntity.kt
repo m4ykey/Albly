@@ -1,0 +1,19 @@
+package com.m4ykey.albly.track.data.local.model
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import com.m4ykey.albly.album.data.local.model.ArtistEntity
+import com.m4ykey.albly.album.data.local.model.ExternalUrlsEntity
+
+@Entity(tableName = "track_table")
+data class TrackEntity(
+    @ColumnInfo(name = "artists") val artists : List<ArtistEntity>,
+    @ColumnInfo(name = "disc_number") val discNumber : Int,
+    @ColumnInfo(name = "duration_ms") val durationMs : Int,
+    @ColumnInfo(name = "explicit") val explicit : Boolean,
+    @ColumnInfo(name = "external_urls") val externalUrls : ExternalUrlsEntity,
+    @ColumnInfo(name = "id") val id : String,
+    @ColumnInfo(name = "name") val name : String,
+    @ColumnInfo(name = "preview_url") val previewUrl : String?,
+    @ColumnInfo(name = "track_number") val trackNumber : Int
+)

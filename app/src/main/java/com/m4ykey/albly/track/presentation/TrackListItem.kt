@@ -1,4 +1,4 @@
-package com.m4ykey.albly.album.presentation.components
+package com.m4ykey.albly.track.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.m4ykey.albly.album.domain.model.AlbumArtist
 import com.m4ykey.albly.album.domain.model.ExternalUrls
-import com.m4ykey.albly.album.domain.model.TrackItem
+import com.m4ykey.albly.track.domain.model.TrackItem
 import java.util.Locale
 
 fun formatTrackDuration(seconds : Int) : String {

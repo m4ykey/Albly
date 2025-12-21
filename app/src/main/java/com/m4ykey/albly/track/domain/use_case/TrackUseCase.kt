@@ -1,12 +1,12 @@
-package com.m4ykey.albly.album.domain.use_case
+package com.m4ykey.albly.track.domain.use_case
 
 import androidx.paging.PagingData
-import com.m4ykey.albly.album.domain.model.TrackItem
-import com.m4ykey.albly.album.domain.repository.AlbumRepository
+import com.m4ykey.albly.track.domain.model.TrackItem
+import com.m4ykey.albly.track.domain.repository.TrackRepository
 import kotlinx.coroutines.flow.Flow
 
 class TrackUseCase(
-    private val repository: AlbumRepository
+    private val repository: TrackRepository
 ) {
 
     operator fun invoke(id : String, limit : Int = 20, offset : Int = 0) : Flow<PagingData<TrackItem>> {

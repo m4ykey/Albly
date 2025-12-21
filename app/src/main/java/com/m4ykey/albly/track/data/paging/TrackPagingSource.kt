@@ -1,14 +1,14 @@
-package com.m4ykey.albly.album.data.paging
+package com.m4ykey.albly.track.data.paging
 
-import com.m4ykey.albly.album.data.mapper.toDomain
-import com.m4ykey.albly.album.data.network.service.RemoteAlbumService
-import com.m4ykey.albly.album.domain.model.TrackItem
+import com.m4ykey.albly.core.mapper.toDomain
+import com.m4ykey.albly.track.data.network.service.RemoteTrackService
+import com.m4ykey.albly.track.domain.model.TrackItem
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.BasePagingSource
 
 class TrackPagingSource(
     private val id : String,
-    private val service : RemoteAlbumService
+    private val service : RemoteTrackService
 ) : BasePagingSource<TrackItem>() {
 
     override suspend fun loadData(

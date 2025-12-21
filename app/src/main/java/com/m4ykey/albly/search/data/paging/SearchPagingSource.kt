@@ -1,7 +1,7 @@
 package com.m4ykey.albly.search.data.paging
 
-import com.m4ykey.albly.album.data.mapper.toDomain
 import com.m4ykey.albly.album.domain.model.AlbumItem
+import com.m4ykey.albly.core.mapper.toDomain
 import com.m4ykey.albly.search.data.network.service.RemoteSearchService
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.BasePagingSource

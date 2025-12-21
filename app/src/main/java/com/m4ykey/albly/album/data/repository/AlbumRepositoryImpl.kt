@@ -2,38 +2,26 @@ package com.m4ykey.albly.album.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.m4ykey.albly.album.data.mapper.toDomain
+import com.m4ykey.albly.album.data.local.dao.AlbumDao
+import com.m4ykey.albly.album.data.local.model.AlbumEntity
+import com.m4ykey.albly.album.data.local.model.AlbumWithStates
+import com.m4ykey.albly.album.data.local.model.IsAlbumSaved
+import com.m4ykey.albly.album.data.local.model.IsListenLaterSaved
 import com.m4ykey.albly.album.data.network.service.RemoteAlbumService
 import com.m4ykey.albly.album.data.paging.NewReleasePaging
-import com.m4ykey.albly.album.data.paging.TrackPagingSource
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.AlbumItem
-import com.m4ykey.albly.album.domain.model.TrackItem
 import com.m4ykey.albly.album.domain.repository.AlbumRepository
+import com.m4ykey.albly.core.mapper.toDomain
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class AlbumRepositoryImpl(
-    private val service : RemoteAlbumService
+    private val service : RemoteAlbumService,
+    private val dao : AlbumDao
 ) : AlbumRepository {
-
-    override fun getAlbumTracks(
-        id: String,
-        offset: Int,
-        limit: Int
-    ): Flow<PagingData<TrackItem>> {
-        return Pager(
-            pagingSourceFactory = {
-                TrackPagingSource(
-                    id = id,
-                    service = service
-                )
-            },
-            config = pagingConfig
-        ).flow
-    }
 
     override fun getNewRelease(
         offset: Int,
@@ -58,5 +46,57 @@ class AlbumRepositoryImpl(
                 onFailure = { throw it }
             )
         }
+    }
+
+    override suspend fun insertAlbum(album: AlbumEntity) {
+        dao.insertAlbum(album)
+    }
+
+    override suspend fun insertSavedAlbum(isAlbumSaved: IsAlbumSaved) {
+        dao.insertSavedAlbum(isAlbumSaved)
+    }
+
+    override suspend fun insertListenLaterSaved(isListenLaterSaved: IsListenLaterSaved) {
+        dao.insertListenLaterSaved(isListenLaterSaved)
+    }
+
+    override fun getLocalAlbumById(id: String): AlbumEntity? {
+        return dao.getAlbumById(id)
+    }
+
+    override fun getSavedAlbumState(id: String): IsAlbumSaved? {
+        return dao.getSavedAlbumState(id)
+    }
+
+    override fun getSavedListenLaterState(id: String): IsListenLaterSaved? {
+        return dao.getSavedListenLaterState(id)
+    }
+
+    override fun getAlbumWithStates(id: String): AlbumWithStates? {
+        return dao.getAlbumWithStates(id)
+    }
+
+    override suspend fun deleteAlbum(id: String) {
+        dao.deleteAlbum(id)
+    }
+
+    override suspend fun deleteSavedListenLaterState(id: String) {
+        dao.deleteSavedListenLaterState(id)
+    }
+
+    override suspend fun deleteSavedAlbumState(id: String) {
+        dao.deleteSavedAlbumState(id)
+    }
+
+    override suspend fun getAlbums(): List<AlbumEntity> {
+        return dao.getAlbums()
+    }
+
+    override suspend fun getListenLaterAlbums(): List<AlbumEntity> {
+        return dao.getListenLaterAlbums()
+    }
+
+    override suspend fun getRandomAlbum(): Flow<AlbumEntity> {
+        return dao.getRandomAlbum()
     }
 }

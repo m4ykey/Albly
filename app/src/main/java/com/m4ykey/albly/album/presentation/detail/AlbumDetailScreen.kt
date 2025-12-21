@@ -47,8 +47,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.domain.model.AlbumDetail
-import com.m4ykey.albly.album.domain.model.TrackItem
-import com.m4ykey.albly.album.presentation.components.TrackListItem
+import com.m4ykey.albly.track.domain.model.TrackItem
+import com.m4ykey.albly.track.presentation.TrackListItem
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.LoadImage
