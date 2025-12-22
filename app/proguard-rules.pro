@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.m4ykey.auth.di.AuthModuleKt { *; }
+-keep class com.m4ykey.auth.di.DataStoreModuleKt { *; }
+-keep class com.m4ykey.auth.di.ScopeModuleKt { *; }
+-keep class com.m4ykey.auth.di.SpotifyApiModuleKt { *; }
+-keep class com.m4ykey.lyrics.presentation.LyricsScreenKt { *; }
+
+-keepclassmembers class * {
+    @org.koin.core.annotation.KoinInternalApi *;
+}
+
+-keepnames class com.m4ykey.** { *; }

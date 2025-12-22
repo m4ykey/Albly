@@ -36,15 +36,6 @@ android {
         buildConfigField("String", "SPOTIFY_CLIENT_SECRET" , "\"${spotifyClientSecret}\"")
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_18
         targetCompatibility = JavaVersion.VERSION_18
