@@ -2,6 +2,7 @@ package com.m4ykey.albly.collection.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.domain.use_case.GetSavedAlbumsUseCase
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.collection.presentation.type.album.AlbumTypeState
@@ -15,6 +16,9 @@ import kotlinx.coroutines.launch
 class CollectionViewModel(
     private val getSavedAlbumsUseCase: GetSavedAlbumsUseCase
 ) : ViewModel() {
+
+    private val _albums = MutableStateFlow<List<AlbumEntity>>(emptyList())
+    val albums = _albums.asStateFlow()
 
     private val _isLinkDialogVisible = MutableStateFlow(false)
     val isLinkDialogVisible = _isLinkDialogVisible.asStateFlow()
@@ -33,6 +37,24 @@ class CollectionViewModel(
 
     private val _collectionUiEvent = MutableSharedFlow<CollectionUiEvent>()
     val collectionUiEvent = _collectionUiEvent.asSharedFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+    fun loadAlbums() {
+        viewModelScope.launch {
+            _isLoading.value = true
+
+            try {
+                val result = getSavedAlbumsUseCase()
+                _albums.value = result
+            } catch (e : Exception) {
+
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 
     fun hideSortDialog() = hide(_isSortDialogVisible)
     fun showSortDialog() = show(_isSortDialogVisible)

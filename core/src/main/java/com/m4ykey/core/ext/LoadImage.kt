@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
@@ -22,12 +23,13 @@ import com.skydoves.landscapist.crossfade.CrossfadePlugin
 @Composable
 fun LoadImage(
     modifier: Modifier = Modifier,
-    imageUrl : String
+    imageUrl : String,
+    size : Dp = 120.dp
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = modifier
+        modifier = modifier.size(size)
     ) {
         CoilImage(
             component = rememberImageComponent {

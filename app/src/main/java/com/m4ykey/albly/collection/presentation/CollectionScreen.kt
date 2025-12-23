@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+
 package com.m4ykey.albly.collection.presentation
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -12,6 +15,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,23 +27,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -61,26 +63,25 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.albly.R
+import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.app.ui.navigation.Screen
+import com.m4ykey.albly.collection.presentation.components.AlbumGridCard
+import com.m4ykey.albly.collection.presentation.components.AlbumListRow
+import com.m4ykey.albly.collection.presentation.components.AlbumTypeChipList
+import com.m4ykey.albly.collection.presentation.components.ListOptions
+import com.m4ykey.albly.collection.presentation.components.SearchField
+import com.m4ykey.albly.collection.presentation.components.UrlInputField
 import com.m4ykey.albly.collection.presentation.drawer.DrawerItem
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
-import com.m4ykey.albly.collection.presentation.type.components.chip.ListTypeChip
-import com.m4ykey.albly.collection.presentation.type.components.chip.SortTypeChip
-import com.m4ykey.albly.collection.presentation.type.components.chip.TypeChip
-import com.m4ykey.albly.collection.presentation.type.components.chip.ViewTypeChip
 import com.m4ykey.albly.collection.presentation.type.list.ListSortType
 import com.m4ykey.albly.collection.presentation.type.list.ListType
 import com.m4ykey.albly.collection.presentation.type.list.ListViewType
-import com.m4ykey.albly.search.presentation.SearchBarTextField
-import com.m4ykey.core.chip.ChipItem
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
-import com.m4ykey.core.ext.CenteredContent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -88,7 +89,6 @@ import java.net.MalformedURLException
 import java.net.URISyntaxException
 import java.net.URL
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionScreen(
     modifier : Modifier = Modifier,
@@ -101,6 +101,13 @@ fun CollectionScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val viewState by viewModel.albumType.collectAsState()
     val type by rememberUpdatedState(viewState.type)
+
+    val isSortDialogVisible by viewModel.isSortDialogVisible.collectAsState()
+    val isSearchVisible by viewModel.isSearchVisible.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
+    val albums by viewModel.albums.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     val isDialogVisible by viewModel.isLinkDialogVisible.collectAsState()
     val state = rememberTextFieldState()
@@ -128,6 +135,10 @@ fun CollectionScreen(
             icon = R.drawable.ic_clock
         )
     )
+
+    LaunchedEffect(viewModel) {
+        viewModel.loadAlbums()
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.collectionUiEvent.collectLatest { event ->
@@ -195,7 +206,17 @@ fun CollectionScreen(
                     onAction = onAction,
                     padding = padding,
                     listState = listState,
-                    viewModel = viewModel
+                    onSearchClick = { viewModel.showSearch() },
+                    onShowSortDialog = { viewModel.showSortDialog() },
+                    onDismissSortDialog = { viewModel.hideSortDialog() },
+                    isSortDialogVisible = isSortDialogVisible,
+                    isSearchVisible = isSearchVisible,
+                    searchQuery = searchQuery,
+                    onHideSearchClick = { viewModel.hideSearch() },
+                    clearTextField = { viewModel.clearTextField() },
+                    albums = albums,
+                    onAlbumClick = {},
+                    isLoading = isLoading
                 )
             },
             scrollBehavior = scrollBehavior
@@ -212,45 +233,60 @@ fun CollectionScreen(
                 onDismissRequest = { viewModel.hideLinkDialog() },
                 properties = DialogProperties(dismissOnBackPress = true)
             ) {
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    tonalElevation = 6.dp,
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Column {
-                        UrlInputField(state = state)
+                AlertDialogBody(
+                    state = state,
+                    onHideLinkDialogClick = { viewModel.hideLinkDialog() },
+                    onLinkClick = onLinkClick,
+                    context = context
+                )
+            }
+        }
+    }
+}
 
-                        Row(
-                            modifier = modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            TextButton(
-                                onClick = { viewModel.hideLinkDialog() }
-                            ) {
-                                Text(stringResource(R.string.cancel))
-                            }
-                            TextButton(
-                                onClick = {
-                                    val url = state.text.toString()
-                                    if (isValidAlbumUrl(url)) {
-                                        val albumId = getAlbumFromIdUrl(url)
-                                        if (!albumId.isNullOrEmpty()) {
-                                            onLinkClick(albumId)
-                                            viewModel.hideLinkDialog()
-                                        } else {
-                                            Toast.makeText(
-                                                context,
-                                                "Invalid album url",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    }
-                                }
-                            ) {
-                                Text("Ok")
+@Composable
+fun AlertDialogBody(
+    modifier: Modifier = Modifier,
+    state : TextFieldState,
+    onHideLinkDialogClick : () -> Unit,
+    onLinkClick : (String) -> Unit,
+    context : Context
+) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 6.dp,
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Column {
+            UrlInputField(state = state)
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = { onHideLinkDialogClick() }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+                TextButton(
+                    onClick = {
+                        val url = state.text.toString()
+                        if (isValidAlbumUrl(url)) {
+                            val albumId = getAlbumFromIdUrl(url)
+                            if (!albumId.isNullOrEmpty()) {
+                                onLinkClick(albumId)
+                                onHideLinkDialogClick()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Invalid album url",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     }
+                ) {
+                    Text("Ok")
                 }
             }
         }
@@ -260,7 +296,7 @@ fun CollectionScreen(
 private fun isValidAlbumUrl(url : String) : Boolean {
     try {
         val uri = URL(url).toURI()
-        if (uri.host == "open.spotify.com" && uri.path.startsWith("/album/")) {
+        if (uri.host?.contains("spotify.com") == true && uri.path.startsWith("/album/")) {
             return true
         }
     } catch (e : MalformedURLException) {
@@ -277,218 +313,142 @@ private fun getAlbumFromIdUrl(url : String) : String? {
 }
 
 @Composable
-fun UrlInputField(
-    state : TextFieldState
-) {
-    OutlinedTextField(
-        state = state,
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        leadingIcon = {
-            Icon(
-                contentDescription = null,
-                painter = painterResource(R.drawable.ic_link)
-            )
-        },
-        label = { Text(stringResource(R.string.enter_url)) },
-        trailingIcon = {
-            if (state.text.isNotEmpty()) {
-                ActionIconButton(
-                    onClick = { state.edit { replace(0, state.text.length, "") } },
-                    iconRes = R.drawable.ic_close,
-                    textRes = R.string.empty
-                )
-            }
-        },
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Search,
-            keyboardType = KeyboardType.Uri
-        )
-    )
-}
-
-@Composable
 fun CollectionScreenContent(
     modifier: Modifier = Modifier,
     type : AlbumType?,
     onAction : (CollectionTypeAction) -> Unit,
     padding : PaddingValues,
     listState: LazyListState,
-    viewModel: CollectionViewModel
+    onSearchClick : () -> Unit,
+    onShowSortDialog : () -> Unit,
+    onDismissSortDialog : () -> Unit,
+    isSortDialogVisible : Boolean,
+    isSearchVisible : Boolean,
+    searchQuery : String,
+    onHideSearchClick : () -> Unit,
+    clearTextField : () -> Unit,
+    albums : List<AlbumEntity>,
+    onAlbumClick : (String) -> Unit,
+    isLoading : Boolean
 ) {
     var sortType by rememberSaveable { mutableStateOf(ListSortType.LATEST) }
     var viewType by rememberSaveable { mutableStateOf(ListViewType.GRID) }
     var listType by rememberSaveable { mutableStateOf(ListType.ALBUM) }
 
-    val isSearchVisible by viewModel.isSearchVisible.collectAsState()
-    val isSortDialogVisible by viewModel.isSortDialogVisible.collectAsState()
-
-    val searchQuery by viewModel.searchQuery.collectAsState()
-
-    LazyColumn(
-        modifier = modifier
-            .padding(padding)
-            .fillMaxSize(),
-        state = listState
-    ) {
-        item {
-            Column(
-                modifier = modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AlbumTypeChipList(
-                        selectedChip = type,
-                        onChipSelected = { selectedType ->
-                            onAction(CollectionTypeAction.OnTypeClick(selectedType))
-                        }
-                    )
-                }
-                ListOptions(
-                    modifier = modifier.padding(horizontal = 5.dp),
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = modifier
+                .padding(padding)
+                .fillMaxSize(),
+            state = listState
+        ) {
+            item(key = "header") {
+                CollectionHeader(
+                    onSearchClick = onSearchClick,
+                    onAction = onAction,
+                    type = type,
+                    onShowSortDialog = onShowSortDialog,
+                    clearTextField = clearTextField,
+                    onHideSearchClick = onHideSearchClick,
+                    searchQuery = searchQuery,
+                    isSearchVisible = isSearchVisible,
+                    onDismissSortDialog = onDismissSortDialog,
+                    isSortDialogVisible = isSortDialogVisible,
                     onSortChange = { sortType = it },
                     onViewChange = { viewType = it },
-                    onListTypeChange = { listType = it },
-                    onSearchClick = { viewModel.showSearch() },
-                    isSortDialogVisible = isSortDialogVisible,
-                    onShowSortDialog = { viewModel.showSortDialog() },
-                    onDismissSortDialog = { viewModel.hideSortDialog() }
+                    onListTypeChange = { listType = it }
                 )
-
-                AnimatedVisibility(
-                    visible = isSearchVisible,
-                    enter = expandVertically(
-                        expandFrom = Alignment.Top,
-                        animationSpec = tween(300)
-                    ) + fadeIn(),
-                    exit = shrinkVertically(
-                        shrinkTowards = Alignment.Top,
-                        animationSpec = tween(300)
-                    ) + fadeOut()
-                ) {
-                    SearchField(
-                        onValueChange = { query ->
-                            onAction(CollectionTypeAction.OnQueryChange(query))
-                        },
-                        onSearch = {
-
-                        },
-                        searchQuery = searchQuery,
-                        onCloseClick = {
-                            viewModel.hideSearch()
-                            viewModel.clearTextField()
-                        }
+            }
+            items(
+                items = albums,
+                key = { it.id },
+                contentType = { "album_item" }
+            ) { item ->
+                if (viewType == ListViewType.GRID) {
+                    AlbumGridCard(
+                        item = item,
+                        onAlbumClick = onAlbumClick
+                    )
+                } else {
+                    AlbumListRow(
+                        item = item,
+                        onAlbumClick = onAlbumClick
                     )
                 }
             }
+        }
+
+        if (isLoading && albums.isEmpty()) {
+            ContainedLoadingIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 }
 
 @Composable
-fun SearchField(
+fun CollectionHeader(
     modifier: Modifier = Modifier,
-    onValueChange : (String) -> Unit,
-    onSearch: () -> Unit,
-    searchQuery : String,
-    onCloseClick : () -> Unit
-) {
-    Row(
-        modifier = modifier
-            .padding(start = 10.dp, end = 10.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        SearchBarTextField(
-            searchQuery = searchQuery,
-            onSearch = onSearch,
-            onValueChange = onValueChange,
-            modifier = Modifier.weight(1f)
-        )
-        ActionIconButton(
-            onClick = onCloseClick,
-            iconRes = R.drawable.ic_close,
-            textRes = R.string.clear
-        )
-    }
-}
-
-@Composable
-fun ListOptions(
-    modifier: Modifier = Modifier,
+    onAction: (CollectionTypeAction) -> Unit,
+    isSearchVisible : Boolean,
+    type : AlbumType?,
     onSortChange : (ListSortType) -> Unit,
-    onListTypeChange : (ListType) -> Unit,
     onViewChange : (ListViewType) -> Unit,
+    onListTypeChange: (ListType) -> Unit,
     onSearchClick : () -> Unit,
+    onShowSortDialog: () -> Unit,
+    onDismissSortDialog: () -> Unit,
     isSortDialogVisible : Boolean,
-    onShowSortDialog : () -> Unit,
-    onDismissSortDialog : () -> Unit
+    searchQuery: String,
+    clearTextField: () -> Unit,
+    onHideSearchClick : () -> Unit
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 5.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = modifier.fillMaxWidth()
     ) {
-        ListTypeChip(onChange = onListTypeChange)
-        Spacer(modifier = Modifier.width(10.dp))
-        SortTypeChip(
-            onChange = onSortChange,
-            isDialogVisible = isSortDialogVisible,
-            onShowDialog = onShowSortDialog,
-            onDismissDialog = onDismissSortDialog
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            AlbumTypeChipList(
+                selectedChip = type,
+                onChipSelected = { selectedType ->
+                    onAction(CollectionTypeAction.OnTypeClick(selectedType))
+                }
+            )
+        }
+        ListOptions(
+            modifier = modifier.padding(horizontal = 5.dp),
+            onSortChange = onSortChange,
+            onViewChange = onViewChange,
+            onListTypeChange = onListTypeChange,
+            onSearchClick = onSearchClick,
+            isSortDialogVisible = isSortDialogVisible,
+            onShowSortDialog = onShowSortDialog,
+            onDismissSortDialog = onDismissSortDialog
         )
-        Spacer(modifier = Modifier.width(10.dp))
-        ViewTypeChip(onChange = onViewChange)
-        Spacer(modifier = Modifier.weight(1f))
-        TypeChip(
-            onClick = onSearchClick,
-            icon = painterResource(R.drawable.ic_search),
-            label = null
-        )
-    }
-}
 
-@Composable
-fun AlbumType.getLabel() : String {
-    return when (this) {
-        AlbumType.ALBUM -> stringResource(id = R.string.album)
-        AlbumType.EP -> stringResource(id = R.string.ep)
-        AlbumType.SINGLE -> stringResource(id = R.string.single)
-        AlbumType.COMPILATION -> stringResource(id = R.string.compilation)
-        AlbumType.EMPTY -> ""
-    }
-}
-
-@Composable
-fun AlbumTypeChipList(
-    modifier : Modifier = Modifier,
-    onChipSelected : (AlbumType?) -> Unit,
-    selectedChip : AlbumType?
-) {
-    val chipList = AlbumType.entries
-        .filter { it != AlbumType.EMPTY }
-        .map { type -> type.getLabel() to type }
-
-    CenteredContent(modifier = modifier) { contentModifier ->
-        LazyRow(modifier = contentModifier.padding(horizontal = 5.dp)) {
-            items(chipList) { (label, sortKey) ->
-                ChipItem(
-                    modifier = Modifier.padding(horizontal = 5.dp),
-                    selected = selectedChip == sortKey,
-                    label = label,
-                    onSelect = {
-                        if (selectedChip == sortKey) {
-                            onChipSelected(null)
-                        } else {
-                            onChipSelected(sortKey)
-                        }
-                    },
-                    isLeadingIcon = true
-                )
-            }
+        AnimatedVisibility(
+            visible = isSearchVisible,
+            enter = expandVertically(
+                expandFrom = Alignment.Top,
+                animationSpec = tween(300)
+            ) + fadeIn(),
+            exit = shrinkVertically(
+                shrinkTowards = Alignment.Top,
+                animationSpec = tween(300)
+            ) + fadeOut()
+        ) {
+            SearchField(
+                onValueChange = { query ->
+                    onAction(CollectionTypeAction.OnQueryChange(query))
+                },
+                onSearch = {  },
+                searchQuery = searchQuery,
+                onCloseClick = {
+                    onHideSearchClick()
+                    clearTextField()
+                }
+            )
         }
     }
 }
