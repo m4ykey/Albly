@@ -1,6 +1,7 @@
 package com.m4ykey.albly.di
 
 import com.m4ykey.albly.album.presentation.detail.AlbumDetailViewModel
+import com.m4ykey.albly.album.presentation.listen_later.ListenLaterViewModel
 import com.m4ykey.albly.album.presentation.new_release.NewReleaseViewModel
 import com.m4ykey.albly.collection.presentation.CollectionViewModel
 import com.m4ykey.albly.search.presentation.SearchViewModel
@@ -18,4 +19,5 @@ val viewModelModule = module {
     viewModel { NewReleaseViewModel(get()) }
     viewModel { CollectionViewModel(get()) }
     viewModel { TrackViewModel(get()) }
+    viewModel { ListenLaterViewModel(get(), get()) }
 }
