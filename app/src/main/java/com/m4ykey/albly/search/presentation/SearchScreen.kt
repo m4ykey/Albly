@@ -1,5 +1,13 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package com.m4ykey.albly.search.presentation
 
+import android.app.Activity
+import android.content.Intent
+import android.speech.RecognizerIntent
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -39,11 +47,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -55,6 +66,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.presentation.components.AlbumCard
 import com.m4ykey.core.chip.ChipItem
@@ -64,6 +79,7 @@ import com.m4ykey.core.paging.BasePagingList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import org.koin.compose.viewmodel.koinViewModel
+import java.util.Locale
 
 @Composable
 fun SearchScreen(
@@ -91,11 +107,51 @@ fun SearchScreen(
 
     val state = rememberLazyGridState()
 
+    val context = LocalContext.current
+
     LaunchedEffect(viewModel) {
         viewModel.searchUiEvent.collectLatest { event ->
             when (event) {
                 is SearchUiEvent.ChangeType -> viewModel.updateType(event.type)
                 is SearchUiEvent.OnAlbumClick -> onAlbumClick(event.id)
+            }
+        }
+    }
+
+    val permissionState = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val matches = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val spokenText = matches?.getOrNull(0) ?: ""
+
+            if (!matches.isNullOrEmpty()) {
+                onAction(SearchTypeAction.OnQueryChange(spokenText))
+            }
+        }
+    }
+
+    val startSpeechRecognition = {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+            putExtra(RecognizerIntent.EXTRA_PROMPT, context.getString(R.string.enter_album_name))
+        }
+        try {
+            launcher.launch(intent)
+        } catch (e : Exception) {
+            Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val handleMick = {
+        when {
+            permissionState.status.isGranted -> {
+                startSpeechRecognition()
+            }
+            else -> {
+                permissionState.launchPermissionRequest()
             }
         }
     }
@@ -133,7 +189,9 @@ fun SearchScreen(
                 )
                 ActionIconButton(
                     tint = isDarkTheme,
-                    onClick = {},
+                    onClick = {
+                        handleMick()
+                    },
                     textRes = R.string.mic,
                     iconRes = R.drawable.ic_mic
                 )

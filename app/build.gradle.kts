@@ -97,6 +97,8 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.androidx.constraint.layout)
 
+    implementation(libs.accompanist.permissions)
+
     implementation(libs.landscapist)
     implementation(libs.landscapist.palette)
 

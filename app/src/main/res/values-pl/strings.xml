@@ -30,4 +30,5 @@
     <string name="album_count">Ilość Albumów</string>
     <string name="random_album">Losowy album</string>
     <string name="invalid_album_url">Nieprawidłowy adres URL albumu</string>
+    <string name="enter_album_name">Wprowadź nazwę albumu</string>
 </resources>

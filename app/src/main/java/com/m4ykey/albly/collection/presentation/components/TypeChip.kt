@@ -58,7 +58,6 @@ fun TypeChip(
     iconSize : Dp = 18.dp
 ) {
     val shape = RoundedCornerShape(8.dp)
-    val colors = FilterChipDefaults.filterChipColors()
 
     val backgroundColor = Color.Transparent
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
