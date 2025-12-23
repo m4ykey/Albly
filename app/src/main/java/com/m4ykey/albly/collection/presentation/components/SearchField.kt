@@ -34,7 +34,7 @@ fun SearchField(
         ActionIconButton(
             onClick = onCloseClick,
             iconRes = R.drawable.ic_close,
-            textRes = R.string.clear
+            textRes = R.string.clear,
         )
     }
 }

@@ -23,13 +23,12 @@ import com.skydoves.landscapist.crossfade.CrossfadePlugin
 @Composable
 fun LoadImage(
     modifier: Modifier = Modifier,
-    imageUrl : String,
-    size : Dp = 120.dp
+    imageUrl : String
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = modifier.size(size)
+        modifier = modifier
     ) {
         CoilImage(
             component = rememberImageComponent {

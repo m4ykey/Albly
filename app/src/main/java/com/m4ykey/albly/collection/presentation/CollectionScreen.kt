@@ -27,8 +27,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -60,6 +67,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -115,6 +123,7 @@ fun CollectionScreen(
     val onAction = viewModel::onAction
 
     val listState = rememberLazyListState()
+    val gridState = rememberLazyStaggeredGridState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val scope = rememberCoroutineScope()
@@ -216,7 +225,8 @@ fun CollectionScreen(
                     clearTextField = { viewModel.clearTextField() },
                     albums = albums,
                     onAlbumClick = {},
-                    isLoading = isLoading
+                    isLoading = isLoading,
+                    gridState = gridState
                 )
             },
             scrollBehavior = scrollBehavior
@@ -329,51 +339,108 @@ fun CollectionScreenContent(
     clearTextField : () -> Unit,
     albums : List<AlbumEntity>,
     onAlbumClick : (String) -> Unit,
-    isLoading : Boolean
+    isLoading : Boolean,
+    gridState : LazyStaggeredGridState
 ) {
     var sortType by rememberSaveable { mutableStateOf(ListSortType.LATEST) }
     var viewType by rememberSaveable { mutableStateOf(ListViewType.GRID) }
     var listType by rememberSaveable { mutableStateOf(ListType.ALBUM) }
 
     Box(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = modifier
-                .padding(padding)
-                .fillMaxSize(),
-            state = listState
-        ) {
-            item(key = "header") {
-                CollectionHeader(
-                    onSearchClick = onSearchClick,
-                    onAction = onAction,
-                    type = type,
-                    onShowSortDialog = onShowSortDialog,
-                    clearTextField = clearTextField,
-                    onHideSearchClick = onHideSearchClick,
-                    searchQuery = searchQuery,
-                    isSearchVisible = isSearchVisible,
-                    onDismissSortDialog = onDismissSortDialog,
-                    isSortDialogVisible = isSortDialogVisible,
-                    onSortChange = { sortType = it },
-                    onViewChange = { viewType = it },
-                    onListTypeChange = { listType = it }
-                )
-            }
-            items(
-                items = albums,
-                key = { it.id },
-                contentType = { "album_item" }
-            ) { item ->
-                if (viewType == ListViewType.GRID) {
+        if (viewType == ListViewType.GRID) {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(3),
+                modifier = modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+                verticalItemSpacing = 8.dp,
+                state = gridState,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(bottom = 10.dp, start = 10.dp, end = 10.dp)
+            ) {
+                item(key = "header", span = StaggeredGridItemSpan.FullLine) {
+                    CollectionHeader(
+                        onSearchClick = onSearchClick,
+                        onAction = onAction,
+                        type = type,
+                        onShowSortDialog = onShowSortDialog,
+                        clearTextField = clearTextField,
+                        onHideSearchClick = onHideSearchClick,
+                        searchQuery = searchQuery,
+                        isSearchVisible = isSearchVisible,
+                        onDismissSortDialog = onDismissSortDialog,
+                        isSortDialogVisible = isSortDialogVisible,
+                        onSortChange = { sortType = it },
+                        onViewChange = { viewType = it },
+                        onListTypeChange = { listType = it },
+                        modifier = Modifier.layout { measurable, constraints ->
+                            val placeable = measurable.measure(constraints.copy(
+                                maxWidth = constraints.maxWidth + 20.dp.roundToPx()
+                            ))
+                            layout(placeable.width, placeable.height) {
+                                placeable.place(-10.dp.roundToPx(), 0)
+                            }
+                        }
+                    )
+                }
+                items(
+                    items = albums,
+                    key = { it.id },
+                    contentType = { "album_item" }
+                ) { item ->
                     AlbumGridCard(
                         item = item,
                         onAlbumClick = onAlbumClick
                     )
-                } else {
-                    AlbumListRow(
-                        item = item,
-                        onAlbumClick = onAlbumClick
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier
+                    .padding(padding)
+                    .fillMaxSize(),
+                state = listState,
+                contentPadding = PaddingValues(bottom = 10.dp, start = 10.dp, end = 10.dp)
+            ) {
+                item(key = "header") {
+                    CollectionHeader(
+                        onSearchClick = onSearchClick,
+                        onAction = onAction,
+                        type = type,
+                        onShowSortDialog = onShowSortDialog,
+                        clearTextField = clearTextField,
+                        onHideSearchClick = onHideSearchClick,
+                        searchQuery = searchQuery,
+                        isSearchVisible = isSearchVisible,
+                        onDismissSortDialog = onDismissSortDialog,
+                        isSortDialogVisible = isSortDialogVisible,
+                        onSortChange = { sortType = it },
+                        onViewChange = { viewType = it },
+                        onListTypeChange = { listType = it },
+                        modifier = Modifier.layout { measurable, constraints ->
+                            val placeable = measurable.measure(constraints.copy(
+                                maxWidth = constraints.maxWidth + 20.dp.roundToPx()
+                            ))
+                            layout(placeable.width, placeable.height) {
+                                placeable.place(-10.dp.roundToPx(), 0)
+                            }
+                        }
                     )
+                }
+                item {
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+                items(
+                    items = albums,
+                    key = { it.id },
+                    contentType = { "album_item" }
+                ) { item ->
+                    Box(modifier = Modifier.padding(bottom = 5.dp)) {
+                        AlbumListRow(
+                            item = item,
+                            onAlbumClick = onAlbumClick
+                        )
+                    }
                 }
             }
         }
@@ -404,7 +471,9 @@ fun CollectionHeader(
     onHideSearchClick : () -> Unit
 ) {
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -417,7 +486,6 @@ fun CollectionHeader(
             )
         }
         ListOptions(
-            modifier = modifier.padding(horizontal = 5.dp),
             onSortChange = onSortChange,
             onViewChange = onViewChange,
             onListTypeChange = onListTypeChange,

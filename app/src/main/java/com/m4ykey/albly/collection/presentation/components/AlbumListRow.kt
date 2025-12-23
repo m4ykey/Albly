@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.data.local.model.ArtistEntity
 import com.m4ykey.albly.album.data.local.model.ExternalUrlsEntity
@@ -41,7 +43,7 @@ fun AlbumListRow(
     ) {
         LoadImage(
             imageUrl = largestImageUrl.orEmpty(),
-            size = 90.dp
+            modifier = Modifier.size(90.dp)
         )
         Column(
             modifier = Modifier
@@ -54,14 +56,16 @@ fun AlbumListRow(
                 text = item.name,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 17.sp
             )
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(3.dp))
             Text(
                 text = artists,
                 modifier = Modifier.fillMaxWidth(),
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 2
+                maxLines = 2,
+                fontSize = 13.sp
             )
         }
     }
