@@ -72,6 +72,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
@@ -345,7 +347,15 @@ fun CollectionScreenContent(
     var viewType by rememberSaveable { mutableStateOf(ListViewType.GRID) }
     var listType by rememberSaveable { mutableStateOf(ListType.ALBUM) }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        val headerModifier = Modifier.layout { measurable, constraints ->
+            val width = constraints.maxWidth + 20.dp.roundToPx()
+            val placeable = measurable.measure(constraints.copy(maxWidth = width))
+            layout(placeable.width, placeable.height) {
+                placeable.place(-10.dp.roundToPx(), 0)
+            }
+        }
+
         if (viewType == ListViewType.GRID) {
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(3),
@@ -355,10 +365,11 @@ fun CollectionScreenContent(
                 verticalItemSpacing = 8.dp,
                 state = gridState,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(bottom = 10.dp, start = 10.dp, end = 10.dp)
+                contentPadding = PaddingValues(start = 10.dp, end = 10.dp, bottom = 10.dp)
             ) {
                 item(key = "header", span = StaggeredGridItemSpan.FullLine) {
                     CollectionHeader(
+                        modifier = headerModifier,
                         onSearchClick = onSearchClick,
                         onAction = onAction,
                         type = type,
@@ -372,14 +383,6 @@ fun CollectionScreenContent(
                         onSortChange = { sortType = it },
                         onViewChange = { viewType = it },
                         onListTypeChange = { listType = it },
-                        modifier = Modifier.layout { measurable, constraints ->
-                            val placeable = measurable.measure(constraints.copy(
-                                maxWidth = constraints.maxWidth + 20.dp.roundToPx()
-                            ))
-                            layout(placeable.width, placeable.height) {
-                                placeable.place(-10.dp.roundToPx(), 0)
-                            }
-                        },
                         viewType = viewType
                     )
                 }
@@ -404,6 +407,7 @@ fun CollectionScreenContent(
             ) {
                 item(key = "header") {
                     CollectionHeader(
+                        modifier = headerModifier,
                         onSearchClick = onSearchClick,
                         onAction = onAction,
                         type = type,
@@ -417,14 +421,6 @@ fun CollectionScreenContent(
                         onSortChange = { sortType = it },
                         onViewChange = { viewType = it },
                         onListTypeChange = { listType = it },
-                        modifier = Modifier.layout { measurable, constraints ->
-                            val placeable = measurable.measure(constraints.copy(
-                                maxWidth = constraints.maxWidth + 20.dp.roundToPx()
-                            ))
-                            layout(placeable.width, placeable.height) {
-                                placeable.place(-10.dp.roundToPx(), 0)
-                            }
-                        },
                         viewType = viewType
                     )
                 }
@@ -472,14 +468,20 @@ fun CollectionHeader(
     onHideSearchClick : () -> Unit,
     viewType: ListViewType
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp)
+    ConstraintLayout(
+        modifier = modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        val (chips, options, search) = createRefs()
+
+        val startGuideline = createGuidelineFromStart(10.dp)
+        val endGuideline = createGuidelineFromEnd(0.dp)
+
+        Box(modifier = Modifier.constrainAs(chips) {
+            top.linkTo(parent.top, margin = 8.dp)
+            start.linkTo(startGuideline)
+            end.linkTo(endGuideline)
+            width = Dimension.fillToConstraints
+        }) {
             AlbumTypeChipList(
                 selectedChip = type,
                 onChipSelected = { selectedType ->
@@ -487,39 +489,57 @@ fun CollectionHeader(
                 }
             )
         }
-        ListOptions(
-            onSortChange = onSortChange,
-            onViewChange = onViewChange,
-            onListTypeChange = onListTypeChange,
-            onSearchClick = onSearchClick,
-            isSortDialogVisible = isSortDialogVisible,
-            onShowSortDialog = onShowSortDialog,
-            onDismissSortDialog = onDismissSortDialog,
-            viewType = viewType
-        )
 
-        AnimatedVisibility(
-            visible = isSearchVisible,
-            enter = expandVertically(
-                expandFrom = Alignment.Top,
-                animationSpec = tween(300)
-            ) + fadeIn(),
-            exit = shrinkVertically(
-                shrinkTowards = Alignment.Top,
-                animationSpec = tween(300)
-            ) + fadeOut()
-        ) {
-            SearchField(
-                onValueChange = { query ->
-                    onAction(CollectionTypeAction.OnQueryChange(query))
-                },
-                onSearch = {  },
-                searchQuery = searchQuery,
-                onCloseClick = {
-                    onHideSearchClick()
-                    clearTextField()
-                }
+        Box(modifier = Modifier.constrainAs(options) {
+            top.linkTo(chips.bottom, margin = 8.dp)
+            start.linkTo(startGuideline)
+            end.linkTo(endGuideline)
+            width = Dimension.fillToConstraints
+        }) {
+            ListOptions(
+                onSortChange = onSortChange,
+                onViewChange = onViewChange,
+                onListTypeChange = onListTypeChange,
+                onSearchClick = onSearchClick,
+                isSortDialogVisible = isSortDialogVisible,
+                onShowSortDialog = onShowSortDialog,
+                onDismissSortDialog = onDismissSortDialog,
+                viewType = viewType
             )
+        }
+
+        Box(modifier = Modifier.constrainAs(search){
+            start.linkTo(startGuideline)
+            end.linkTo(endGuideline)
+            top.linkTo(options.bottom, margin = 8.dp)
+            width = Dimension.fillToConstraints
+        }) {
+            AnimatedVisibility(
+                visible = isSearchVisible,
+                enter = expandVertically(
+                    expandFrom = Alignment.Top,
+                    animationSpec = tween(300)
+                ) + fadeIn(),
+                exit = shrinkVertically(
+                    shrinkTowards = Alignment.Top,
+                    animationSpec = tween(300)
+                ) + fadeOut()
+            ) {
+                SearchField(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .fillMaxWidth(),
+                    onValueChange = { query ->
+                        onAction(CollectionTypeAction.OnQueryChange(query))
+                    },
+                    onSearch = {  },
+                    searchQuery = searchQuery,
+                    onCloseClick = {
+                        onHideSearchClick()
+                        clearTextField()
+                    }
+                )
+            }
         }
     }
 }

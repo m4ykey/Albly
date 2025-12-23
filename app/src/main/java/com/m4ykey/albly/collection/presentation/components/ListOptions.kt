@@ -30,7 +30,7 @@ fun ListOptions(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 10.dp, end = 10.dp),
+            .padding(start = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         ListTypeChip(onChange = onListTypeChange)

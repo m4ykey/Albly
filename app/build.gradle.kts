@@ -95,6 +95,7 @@ dependencies {
     implementation(libs.androidx.media3.common)
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
+    implementation(libs.androidx.constraint.layout)
 
     implementation(libs.landscapist)
     implementation(libs.landscapist.palette)

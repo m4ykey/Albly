@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -57,10 +58,11 @@ fun TypeChip(
     iconSize : Dp = 18.dp
 ) {
     val shape = RoundedCornerShape(8.dp)
+    val colors = FilterChipDefaults.filterChipColors()
 
     val backgroundColor = Color.Transparent
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val borderColor = MaterialTheme.colorScheme.outline
+    val borderColor = MaterialTheme.colorScheme.outlineVariant
     val borderWidth = 1.dp
 
     Box(

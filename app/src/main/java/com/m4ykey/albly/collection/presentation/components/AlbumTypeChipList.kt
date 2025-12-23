@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.core.chip.ChipItem
-import com.m4ykey.core.ext.CenteredContent
 
 @Composable
 fun AlbumTypeChipList(
@@ -20,23 +19,21 @@ fun AlbumTypeChipList(
         .filter { it != AlbumType.EMPTY }
         .map { type -> type.getLabel() to type }
 
-    CenteredContent(modifier = modifier) { contentModifier ->
-        LazyRow(modifier = contentModifier.padding(horizontal = 5.dp)) {
-            items(chipList) { (label, sortKey) ->
-                ChipItem(
-                    modifier = Modifier.padding(horizontal = 5.dp),
-                    selected = selectedChip == sortKey,
-                    label = label,
-                    onSelect = {
-                        if (selectedChip == sortKey) {
-                            onChipSelected(null)
-                        } else {
-                            onChipSelected(sortKey)
-                        }
-                    },
-                    isLeadingIcon = true
-                )
-            }
+    LazyRow(modifier = modifier.padding(horizontal = 5.dp)) {
+        items(chipList) { (label, sortKey) ->
+            ChipItem(
+                modifier = Modifier.padding(horizontal = 5.dp),
+                selected = selectedChip == sortKey,
+                label = label,
+                onSelect = {
+                    if (selectedChip == sortKey) {
+                        onChipSelected(null)
+                    } else {
+                        onChipSelected(sortKey)
+                    }
+                },
+                isLeadingIcon = true
+            )
         }
     }
 }
