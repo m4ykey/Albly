@@ -27,4 +27,7 @@
     <string name="menu">Menu</string>
     <string name="empty"> </string>
     <string name="please_wait_until_all_tracks_are_loaded">Proszę czekać aż wszystkie utwory się załadują</string>
+    <string name="album_count">Ilość Albumów</string>
+    <string name="random_album">Losowy album</string>
+    <string name="invalid_album_url">Nieprawidłowy adres URL albumu</string>
 </resources>

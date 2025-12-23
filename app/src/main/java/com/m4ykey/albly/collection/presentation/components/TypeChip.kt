@@ -1,4 +1,4 @@
-package com.m4ykey.albly.collection.presentation.type.components.chip
+package com.m4ykey.albly.collection.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -186,26 +186,22 @@ fun SortTypeChip(
 
 @Composable
 fun ViewTypeChip(
-    onChange : (ListViewType) -> Unit
+    onChange : (ListViewType) -> Unit,
+    viewType: ListViewType
 ) {
-    var currentType by remember { mutableStateOf(ListViewType.GRID) }
-
-    fun nextType(type : ListViewType) : ListViewType = when (type) {
+    val nextType = when (viewType) {
         ListViewType.GRID -> ListViewType.LIST
         ListViewType.LIST -> ListViewType.GRID
     }
 
-    val icon = when (currentType) {
+    val icon = when (viewType) {
         ListViewType.GRID -> painterResource(id = R.drawable.ic_grid)
         ListViewType.LIST -> painterResource(id = R.drawable.ic_list)
     }
 
     TypeChip(
         label = null,
-        onClick = {
-            currentType = nextType(currentType)
-            onChange(currentType)
-        },
+        onClick = { onChange(nextType) },
         icon = icon
     )
 }

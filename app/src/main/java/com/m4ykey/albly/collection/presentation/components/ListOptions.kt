@@ -11,10 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.m4ykey.albly.R
-import com.m4ykey.albly.collection.presentation.type.components.chip.ListTypeChip
-import com.m4ykey.albly.collection.presentation.type.components.chip.SortTypeChip
-import com.m4ykey.albly.collection.presentation.type.components.chip.TypeChip
-import com.m4ykey.albly.collection.presentation.type.components.chip.ViewTypeChip
 import com.m4ykey.albly.collection.presentation.type.list.ListSortType
 import com.m4ykey.albly.collection.presentation.type.list.ListType
 import com.m4ykey.albly.collection.presentation.type.list.ListViewType
@@ -28,7 +24,8 @@ fun ListOptions(
     onSearchClick : () -> Unit,
     isSortDialogVisible : Boolean,
     onShowSortDialog : () -> Unit,
-    onDismissSortDialog : () -> Unit
+    onDismissSortDialog : () -> Unit,
+    viewType: ListViewType
 ) {
     Row(
         modifier = modifier
@@ -45,7 +42,10 @@ fun ListOptions(
             onDismissDialog = onDismissSortDialog
         )
         Spacer(modifier = Modifier.width(10.dp))
-        ViewTypeChip(onChange = onViewChange)
+        ViewTypeChip(
+            onChange = onViewChange,
+            viewType = viewType
+        )
         Spacer(modifier = Modifier.weight(1f))
         TypeChip(
             onClick = onSearchClick,

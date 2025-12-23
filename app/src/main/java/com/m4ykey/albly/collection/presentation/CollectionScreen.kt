@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
@@ -289,7 +288,7 @@ fun AlertDialogBody(
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Invalid album url",
+                                    context.getString(R.string.invalid_album_url),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -380,7 +379,8 @@ fun CollectionScreenContent(
                             layout(placeable.width, placeable.height) {
                                 placeable.place(-10.dp.roundToPx(), 0)
                             }
-                        }
+                        },
+                        viewType = viewType
                     )
                 }
                 items(
@@ -424,7 +424,8 @@ fun CollectionScreenContent(
                             layout(placeable.width, placeable.height) {
                                 placeable.place(-10.dp.roundToPx(), 0)
                             }
-                        }
+                        },
+                        viewType = viewType
                     )
                 }
                 item {
@@ -468,7 +469,8 @@ fun CollectionHeader(
     isSortDialogVisible : Boolean,
     searchQuery: String,
     clearTextField: () -> Unit,
-    onHideSearchClick : () -> Unit
+    onHideSearchClick : () -> Unit,
+    viewType: ListViewType
 ) {
     Column(
         modifier = modifier
@@ -492,7 +494,8 @@ fun CollectionHeader(
             onSearchClick = onSearchClick,
             isSortDialogVisible = isSortDialogVisible,
             onShowSortDialog = onShowSortDialog,
-            onDismissSortDialog = onDismissSortDialog
+            onDismissSortDialog = onDismissSortDialog,
+            viewType = viewType
         )
 
         AnimatedVisibility(

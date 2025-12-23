@@ -28,4 +28,5 @@
     <string name="menu">Menu</string>
     <string name="empty"> </string>
     <string name="please_wait_until_all_tracks_are_loaded">Please wait until all tracks are loaded</string>
+    <string name="invalid_album_url">Invalid album url</string>
 </resources>
