@@ -3,6 +3,7 @@ package com.m4ykey.albly.di
 import com.m4ykey.albly.album.domain.use_case.AlbumUseCase
 import com.m4ykey.albly.album.domain.use_case.GetAlbumStateUseCase
 import com.m4ykey.albly.album.domain.use_case.GetListenLaterAlbumsUseCase
+import com.m4ykey.albly.album.domain.use_case.GetLocalAlbumUseCase
 import com.m4ykey.albly.album.domain.use_case.GetRandomAlbumUseCase
 import com.m4ykey.albly.album.domain.use_case.GetSavedAlbumsUseCase
 import com.m4ykey.albly.album.domain.use_case.NewReleaseUseCase
@@ -36,6 +37,7 @@ val albumUseCaseModule = module {
         saveTracksUseCase = get(),
         deleteTracksUseCase = get()
     ) }
+    single { GetLocalAlbumUseCase(get()) }
 }
 
 val trackUseCaseModule = module {

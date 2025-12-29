@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.domain.use_case.AlbumUseCase
 import com.m4ykey.albly.album.domain.use_case.GetAlbumStateUseCase
+import com.m4ykey.albly.album.domain.use_case.GetLocalAlbumUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleAlbumSavedUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleListenLaterSavedUseCase
+import com.m4ykey.albly.core.mapper.toDomain
 import com.m4ykey.albly.track.data.local.model.TrackEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +24,8 @@ class AlbumDetailViewModel(
     private val useCase: AlbumUseCase,
     private val toggleAlbumSavedUseCase: ToggleAlbumSavedUseCase,
     private val toggleListenLaterSavedUseCase: ToggleListenLaterSavedUseCase,
-    private val getAlbumStateUseCase: GetAlbumStateUseCase
+    private val getAlbumStateUseCase: GetAlbumStateUseCase,
+    private val getLocalAlbumUseCase : GetLocalAlbumUseCase
 ) : ViewModel() {
 
     private val _detail = MutableStateFlow(DetailUiState())
@@ -38,7 +41,20 @@ class AlbumDetailViewModel(
 
             useCase.invoke(id)
                 .catch { e ->
-                    _detail.value = DetailUiState(error = e.localizedMessage)
+                    val localAlbum = withContext(Dispatchers.IO) {
+                        getLocalAlbumUseCase(id)
+                    }
+
+                    if (localAlbum != null) {
+                        _detail.value = DetailUiState(
+                            item = localAlbum.toDomain(),
+                            loading = false,
+                            isSaved = localState?.isAlbumSaved != null,
+                            isListenLaterSaved = localState?.isListenLaterSaved != null
+                        )
+                    } else {
+                        _detail.value = DetailUiState(error = e.localizedMessage)
+                    }
                 }
                 .collect { result ->
                     _detail.value = DetailUiState(

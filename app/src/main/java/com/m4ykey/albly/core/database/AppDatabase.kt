@@ -8,7 +8,7 @@ import com.m4ykey.albly.album.data.local.dao.AlbumDao
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.data.local.model.IsAlbumSaved
 import com.m4ykey.albly.album.data.local.model.IsListenLaterSaved
-import com.m4ykey.albly.track.data.local.dto.TrackDao
+import com.m4ykey.albly.track.data.local.dao.TrackDao
 import com.m4ykey.albly.track.data.local.model.TrackEntity
 
 @Database(

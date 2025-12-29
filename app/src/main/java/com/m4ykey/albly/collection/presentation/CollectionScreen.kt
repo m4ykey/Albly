@@ -3,7 +3,6 @@
 package com.m4ykey.albly.collection.presentation
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -27,14 +26,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -91,11 +90,10 @@ import com.m4ykey.albly.collection.presentation.type.list.ListType
 import com.m4ykey.albly.collection.presentation.type.list.ListViewType
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
+import com.m4ykey.core.ext.showToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import java.net.MalformedURLException
-import java.net.URISyntaxException
 import java.net.URL
 
 @Composable
@@ -104,7 +102,8 @@ fun CollectionScreen(
     onSearch : () -> Unit,
     viewModel : CollectionViewModel = koinViewModel(),
     onLinkClick : (String) -> Unit,
-    onNavigateTo : (String) -> Unit
+    onNavigateTo : (String) -> Unit,
+    onAlbumClick : (String) -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -124,7 +123,7 @@ fun CollectionScreen(
     val onAction = viewModel::onAction
 
     val listState = rememberLazyListState()
-    val gridState = rememberLazyStaggeredGridState()
+    val gridState = rememberLazyGridState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val scope = rememberCoroutineScope()
@@ -143,6 +142,10 @@ fun CollectionScreen(
             title = stringResource(R.string.listen_later),
             route = Screen.ListenLaterScreen.screen,
             icon = R.drawable.ic_clock
+        ),
+        DrawerItem(
+            title = stringResource(R.string.settings),
+            icon = R.drawable.ic_settings
         )
     )
 
@@ -171,7 +174,7 @@ fun CollectionScreen(
                         selected = index == selectedItemIndex,
                         onClick = {
                             selectedItemIndex = index
-                            onNavigateTo(item.route)
+                            onNavigateTo(item.route.toString())
                             scope.launch { drawerState.close() }
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
@@ -225,7 +228,7 @@ fun CollectionScreen(
                     onHideSearchClick = { viewModel.hideSearch() },
                     clearTextField = { viewModel.clearTextField() },
                     albums = albums,
-                    onAlbumClick = {},
+                    onAlbumClick = onAlbumClick,
                     isLoading = isLoading,
                     gridState = gridState
                 )
@@ -282,7 +285,7 @@ fun AlertDialogBody(
                 TextButton(
                     onClick = {
                         val url = state.text.toString()
-                        if (isValidAlbumUrl(url)) {
+                        if (isValidAlbumUrl(url, context)) {
                             val albumId = getAlbumFromIdUrl(url)
                             if (!albumId.isNullOrEmpty()) {
                                 onLinkClick(albumId)
@@ -304,18 +307,21 @@ fun AlertDialogBody(
     }
 }
 
-private fun isValidAlbumUrl(url : String) : Boolean {
-    try {
+private fun isValidAlbumUrl(url : String, context : Context) : Boolean {
+    if (url.isBlank()) return false
+
+    return try {
         val uri = URL(url).toURI()
-        if (uri.host?.contains("spotify.com") == true && uri.path.startsWith("/album/")) {
-            return true
-        }
-    } catch (e : MalformedURLException) {
-        Log.i("CollectionScreen", "Error: ${e.message.toString()}")
-    } catch (e : URISyntaxException) {
-        Log.i("CollectionScreen", "Error: ${e.message.toString()}")
+        val host = uri.host ?: ""
+
+        val isCorrectHost = host.contains("spotify.com")
+        val isAlbumPath = uri.path?.startsWith("/album/") == true
+
+        isCorrectHost && isAlbumPath
+    } catch (e : Exception) {
+        showToast(context, e.message.toString())
+        false
     }
-    return false
 }
 
 private fun getAlbumFromIdUrl(url : String) : String? {
@@ -341,7 +347,7 @@ fun CollectionScreenContent(
     albums : List<AlbumEntity>,
     onAlbumClick : (String) -> Unit,
     isLoading : Boolean,
-    gridState : LazyStaggeredGridState
+    gridState : LazyGridState
 ) {
     var sortType by rememberSaveable { mutableStateOf(ListSortType.LATEST) }
     var viewType by rememberSaveable { mutableStateOf(ListViewType.GRID) }
@@ -357,17 +363,17 @@ fun CollectionScreenContent(
         }
 
         if (viewType == ListViewType.GRID) {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(3),
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
                 modifier = modifier
                     .padding(padding)
                     .fillMaxSize(),
-                verticalItemSpacing = 8.dp,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 state = gridState,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(start = 10.dp, end = 10.dp, bottom = 10.dp)
             ) {
-                item(key = "header", span = StaggeredGridItemSpan.FullLine) {
+                item(key = "header", span = { GridItemSpan(maxLineSpan) }) {
                     CollectionHeader(
                         modifier = headerModifier,
                         onSearchClick = onSearchClick,

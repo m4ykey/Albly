@@ -2,7 +2,7 @@ package com.m4ykey.albly.track.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.m4ykey.albly.track.data.local.dto.TrackDao
+import com.m4ykey.albly.track.data.local.dao.TrackDao
 import com.m4ykey.albly.track.data.local.model.TrackEntity
 import com.m4ykey.albly.track.data.network.service.RemoteTrackService
 import com.m4ykey.albly.track.data.paging.TrackPagingSource

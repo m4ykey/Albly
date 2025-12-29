@@ -7,6 +7,7 @@ import com.m4ykey.albly.album.domain.use_case.GetListenLaterAlbumsUseCase
 import com.m4ykey.albly.album.domain.use_case.GetRandomAlbumUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ListenLaterViewModel(
@@ -19,6 +20,30 @@ class ListenLaterViewModel(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+
+    private val _randomAlbum = MutableStateFlow<AlbumEntity?>(null)
+    val randomAlbum = _randomAlbum.asStateFlow()
+
+    fun getRandomAlbum() {
+        viewModelScope.launch {
+            _isLoading.value = true
+
+            try {
+                getRandomAlbumUseCase().collectLatest { album ->
+                    _randomAlbum.value = album
+                    _isLoading.value = false
+                }
+            } catch (e : Exception) {
+
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearAlbum() {
+        _randomAlbum.value = null
+    }
 
     fun loadAlbums() {
         viewModelScope.launch {
@@ -34,5 +59,4 @@ class ListenLaterViewModel(
             }
         }
     }
-
 }

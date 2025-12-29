@@ -12,6 +12,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel { SearchViewModel(get()) }
     viewModel { AlbumDetailViewModel(
+        getLocalAlbumUseCase = get(),
         useCase = get(),
         toggleAlbumSavedUseCase = get(),
         toggleListenLaterSavedUseCase = get(),

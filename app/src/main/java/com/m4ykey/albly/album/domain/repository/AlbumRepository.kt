@@ -27,5 +27,4 @@ interface AlbumRepository {
     suspend fun getAlbums() : List<AlbumEntity>
     suspend fun getListenLaterAlbums() : List<AlbumEntity>
     suspend fun getRandomAlbum() : Flow<AlbumEntity>
-
 }

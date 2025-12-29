@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.gms) apply false
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.about.libraries) apply false
 }

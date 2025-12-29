@@ -2,6 +2,7 @@
 
 package com.m4ykey.albly.album.presentation.listen_later
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,11 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,15 +40,24 @@ import org.koin.androidx.compose.koinViewModel
 fun ListenLaterScreen(
     onBack : () -> Unit,
     onSearchClick : () -> Unit,
-    viewModel: ListenLaterViewModel = koinViewModel()
+    viewModel: ListenLaterViewModel = koinViewModel(),
+    onAlbumClick : (String) -> Unit
 ) {
     val albums by viewModel.albums.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val randomAlbum by viewModel.randomAlbum.collectAsStateWithLifecycle()
 
-    val state = rememberLazyStaggeredGridState()
+    val state = rememberLazyGridState()
 
     LaunchedEffect(viewModel) {
         viewModel.loadAlbums()
+    }
+
+    LaunchedEffect(randomAlbum) {
+        randomAlbum?.let { item ->
+            onAlbumClick(item.id)
+            viewModel.clearAlbum()
+        }
     }
 
     AppScaffold(
@@ -68,10 +78,11 @@ fun ListenLaterScreen(
         content = { padding ->
             ListenLaterContent(
                 modifier = Modifier.padding(padding),
-                onRandomAlbumClick = {},
+                onRandomAlbumClick = { viewModel.getRandomAlbum() },
                 albums = albums,
                 isLoading = isLoading,
-                state = state
+                state = state,
+                onAlbumClick = onAlbumClick
             )
         }
     )
@@ -83,13 +94,14 @@ fun ListenLaterContent(
     onRandomAlbumClick : () -> Unit,
     isLoading : Boolean,
     albums : List<AlbumEntity>,
-    state : LazyStaggeredGridState
+    state : LazyGridState,
+    onAlbumClick: (String) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         Text(
-            text = "${stringResource(R.string.album_count)}: ",
+            text = "${stringResource(R.string.album_count)}: ${albums.size}",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -111,11 +123,13 @@ fun ListenLaterContent(
                 .padding(top = 10.dp)
                 .weight(1f)
         ) {
-            LazyVerticalStaggeredGrid(
+            LazyVerticalGrid(
                 state = state,
                 modifier = Modifier.fillMaxSize(),
-                columns = StaggeredGridCells.Fixed(3),
-                contentPadding = PaddingValues(bottom = 10.dp, start = 10.dp, end = 10.dp)
+                columns = GridCells.Fixed(3),
+                contentPadding = PaddingValues(bottom = 10.dp, start = 10.dp, end = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
                     items = albums,
@@ -123,7 +137,7 @@ fun ListenLaterContent(
                 ) { item ->
                     AlbumGridCard(
                         item = item,
-                        onAlbumClick = {}
+                        onAlbumClick = { onAlbumClick(item.id) }
                     )
                 }
             }

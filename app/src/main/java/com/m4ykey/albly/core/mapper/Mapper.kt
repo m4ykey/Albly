@@ -54,6 +54,44 @@ fun Image.toEntity() = ImageEntity(
     width = width
 )
 
+fun ImageEntity.toDomain() = Image(
+    height = height,
+    url = url,
+    width = width
+)
+
+fun ExternalUrlsEntity.toDomain() = ExternalUrls(
+    spotify = spotify
+)
+
+fun ArtistEntity.toDomain() = AlbumArtist(
+    id = id,
+    name = name,
+    externalUrls = externalUrls.toDomain(),
+    type = ""
+)
+
+fun CopyrightEntity.toDomain() = Copyright(
+    text = text,
+    type = ""
+)
+
+fun AlbumEntity.toDomain() = AlbumDetail(
+    id = id,
+    name = name,
+    albumType = albumType,
+    totalTracks = totalTracks,
+    releaseDate = releaseDate,
+    type = albumType,
+    images = images.map { it.toDomain() },
+    externalUrls = externalUrls.toDomain(),
+    artists = artists.map { it.toDomain() },
+    label = label,
+    popularity = 0,
+    copyright = copyrights.map { it.toDomain() },
+    genres = emptyList()
+)
+
 fun AlbumDetail.toEntity() = AlbumEntity(
     id = id,
     label = label,

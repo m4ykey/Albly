@@ -3,10 +3,10 @@ package com.m4ykey.albly.app.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.m4ykey.albly.album.presentation.detail.AlbumDetailScreen
 import com.m4ykey.albly.album.presentation.listen_later.ListenLaterScreen
@@ -17,9 +17,9 @@ import com.m4ykey.lyrics.presentation.LyricsScreen
 
 @Composable
 fun AppNavHost(
-    modifier: Modifier = Modifier,
-    navHostController: NavHostController
+    modifier: Modifier = Modifier
 ) {
+    val navHostController = rememberNavController()
     NavHost(
         navController = navHostController,
         modifier = modifier,
@@ -43,6 +43,9 @@ fun AppNavHost(
                         launchSingleTop = true
                         restoreState = true
                     }
+                },
+                onAlbumClick = { id ->
+                    navHostController.navigate(Screen.AlbumDetail.routeWithArgs(albumId = id))
                 }
             )
         }
@@ -100,6 +103,9 @@ fun AppNavHost(
                 },
                 onSearchClick = {
                     navHostController.navigate(Screen.SearchScreen.screen)
+                },
+                onAlbumClick = { id ->
+                    navHostController.navigate(Screen.AlbumDetail.routeWithArgs(albumId = id))
                 }
             )
         }
