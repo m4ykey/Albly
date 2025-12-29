@@ -14,9 +14,9 @@ class TrackViewModel(
     private val useCase : TrackUseCase
 ) : ViewModel() {
 
-    private val _albumId = MutableStateFlow<String?>("")
+    private val _albumId = MutableStateFlow<String?>(null)
 
-    fun setAlbum(id : String) {
+    fun setAlbum(id : String?) {
         _albumId.value = id
     }
 
