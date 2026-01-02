@@ -48,6 +48,8 @@ import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.domain.model.AlbumDetail
+import com.m4ykey.albly.album.presentation.components.AlbumButtonRow
+import com.m4ykey.albly.album.presentation.components.SaveButtonRow
 import com.m4ykey.albly.core.mapper.toEntity
 import com.m4ykey.albly.track.data.local.model.TrackEntity
 import com.m4ykey.albly.track.domain.model.TrackItem
@@ -205,7 +207,7 @@ fun AlbumDetailContent(
             .padding(contentPadding),
         contentPadding = PaddingValues(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        state = state,
+        state = state
     ) {
         item {
             Box(
@@ -238,7 +240,8 @@ fun AlbumDetailContent(
         }
 
         item {
-            SaveButtonsRow(
+            val message = stringResource(R.string.please_wait_until_all_tracks_are_loaded)
+            SaveButtonRow(
                 isSaved = isSaved,
                 isListenLaterSaved = isListenLaterSaved,
                 onSaveClick = {
@@ -246,9 +249,7 @@ fun AlbumDetailContent(
                         onSaveToggle(albumEntity, trackEntities)
                     } else {
                         scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = context.getString(R.string.please_wait_until_all_tracks_are_loaded)
-                            )
+                            snackbarHostState.showSnackbar(message = message)
                         }
                     }
                 },
@@ -257,9 +258,7 @@ fun AlbumDetailContent(
                         onListenLaterToggle(albumEntity, trackEntities)
                     } else {
                         scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = context.getString(R.string.please_wait_until_all_tracks_are_loaded)
-                            )
+                            snackbarHostState.showSnackbar(message = message)
                         }
                     }
                 }
@@ -275,7 +274,7 @@ fun AlbumDetailContent(
         }
 
         item {
-            AlbumButtonsRow(
+            AlbumButtonRow(
                 onAlbumClick = {
                     context.startActivity(Intent(Intent.ACTION_VIEW, albumUrl.toUri()))
                 },
@@ -305,74 +304,5 @@ fun AlbumDetailContent(
                 color = textColor
             )
         }
-    }
-}
-
-@Composable
-fun AlbumButtonsRow(
-    modifier: Modifier = Modifier,
-    onArtistClick : () -> Unit,
-    onAlbumClick : () -> Unit
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Button(
-            onClick = { onArtistClick() },
-            modifier = modifier.weight(1f)
-        ) {
-            Icon(
-                contentDescription = null,
-                painter = painterResource(R.drawable.ic_artist)
-            )
-            Spacer(modifier.width(5.dp))
-            Text(text = stringResource(R.string.artist))
-        }
-        Button(
-            onClick = { onAlbumClick() },
-            modifier = modifier.weight(1f)
-        ) {
-            Icon(
-                contentDescription = null,
-                painter = painterResource(R.drawable.ic_album)
-            )
-            Spacer(modifier.width(5.dp))
-            Text(text = stringResource(R.string.album))
-        }
-    }
-}
-
-@Composable
-fun SaveButtonsRow(
-    modifier: Modifier = Modifier,
-    isSaved : Boolean,
-    isListenLaterSaved : Boolean,
-    onSaveClick : () -> Unit,
-    onListenLaterClick : () -> Unit
-) {
-    Row(
-        modifier = modifier.wrapContentWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Icon(
-            contentDescription = stringResource(R.string.save),
-            painter = if (isSaved) {
-                painterResource(R.drawable.ic_favorite)
-            } else {
-                painterResource(R.drawable.ic_favorite_border)
-            },
-            modifier = modifier.clickable { onSaveClick() }
-        )
-
-        Icon(
-            contentDescription = stringResource(R.string.listen_later),
-            painter = if (isListenLaterSaved) {
-                painterResource(R.drawable.ic_access_time)
-            } else {
-                painterResource(R.drawable.ic_access_time_outline)
-            },
-            modifier = modifier.clickable { onListenLaterClick() }
-        )
     }
 }

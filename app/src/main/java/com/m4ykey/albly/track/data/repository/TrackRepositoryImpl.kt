@@ -32,7 +32,7 @@ class TrackRepositoryImpl(
         ).flow
     }
 
-    override fun getTrackById(id: String): List<TrackEntity> {
+    override suspend fun getTrackById(id: String): List<TrackEntity> {
          return dao.getTrackById(id)
     }
 

@@ -21,6 +21,18 @@ import com.m4ykey.albly.track.data.local.model.TrackEntity
 import com.m4ykey.albly.track.data.network.dto.TrackItemDto
 import com.m4ykey.albly.track.domain.model.TrackItem
 
+fun TrackEntity.toDomain() = TrackItem(
+    id = id,
+    previewUrl = previewUrl.orEmpty(),
+    discNumber = discNumber,
+    durationMs = durationMs,
+    name = name,
+    trackNumber = trackNumber,
+    explicit = explicit,
+    artists = artists.map { it.toDomain() },
+    externalUrls = externalUrls.toDomain()
+)
+
 fun TrackItem.toEntity(albumId : String) = TrackEntity(
     id = id,
     name = name,

@@ -19,6 +19,9 @@ val viewModelModule = module {
         getAlbumStateUseCase = get()) }
     viewModel { NewReleaseViewModel(get()) }
     viewModel { CollectionViewModel(get()) }
-    viewModel { TrackViewModel(get()) }
+    viewModel { TrackViewModel(
+        useCase = get(),
+        getTrackUseCase = get()
+    ) }
     viewModel { ListenLaterViewModel(get(), get()) }
 }

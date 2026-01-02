@@ -24,13 +24,8 @@ import androidx.compose.ui.unit.sp
 import com.m4ykey.albly.album.domain.model.AlbumArtist
 import com.m4ykey.albly.album.domain.model.ExternalUrls
 import com.m4ykey.albly.track.domain.model.TrackItem
+import com.m4ykey.core.ext.formatTrackDuration
 import java.util.Locale
-
-fun formatTrackDuration(seconds : Int) : String {
-    val minutes = seconds / 60
-    val remainingSeconds = seconds % 60
-    return String.format(Locale.getDefault(), "%d:%02d", minutes, remainingSeconds)
-}
 
 @Composable
 fun TrackListItem(

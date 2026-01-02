@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,11 +38,12 @@ fun LyricsScreen(
                 textRes = R.string.back
             )
         },
-        content = {
+        content = { padding ->
             LyricsDisplay(
                 state = state,
                 title = trackName,
-                artist = artistName
+                artist = artistName,
+                modifier = Modifier.padding(padding)
             )
         }
     )
@@ -57,7 +59,8 @@ fun LyricsDisplay(
     LyricsContent(
         state = state,
         title = title,
-        artist = artist
+        artist = artist,
+        modifier = modifier
     )
 }
 
@@ -76,14 +79,14 @@ fun LyricsContent(
             .fillMaxSize()
             .padding(contentPadding)
     ) {
-        item {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-
-            }
-        }
+//        item {
+//            Box(
+//                modifier = Modifier.fillMaxWidth(),
+//                contentAlignment = Alignment.Center
+//            ) {
+//
+//            }
+//        }
 
         item {
             Box(
@@ -91,7 +94,8 @@ fun LyricsContent(
                 contentAlignment = Alignment.Center
             ) {
                 Column(modifier = modifier.fillMaxSize()) {
-                    
+                    Text(text = title)
+                    Text(text = artist)
                 }
             }
         }
