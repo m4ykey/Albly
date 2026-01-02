@@ -19,9 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
-import com.m4ykey.albly.album.data.local.model.ArtistEntity
-import com.m4ykey.albly.album.data.local.model.ExternalUrlsEntity
 import com.m4ykey.core.ext.LoadImage
+import com.m4ykey.core.model.local.ArtistEntity
+import com.m4ykey.core.model.local.ExternalUrlsEntity
 
 @Composable
 fun AlbumListRow(

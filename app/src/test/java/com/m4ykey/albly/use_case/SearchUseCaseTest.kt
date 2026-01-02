@@ -10,7 +10,6 @@ import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert
 import org.junit.Test
 
 class SearchUseCaseTest {

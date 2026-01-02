@@ -1,60 +1,22 @@
 package com.m4ykey.albly.core.mapper
 
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
-import com.m4ykey.albly.album.data.local.model.ArtistEntity
 import com.m4ykey.albly.album.data.local.model.CopyrightEntity
-import com.m4ykey.albly.album.data.local.model.ExternalUrlsEntity
 import com.m4ykey.albly.album.data.local.model.ImageEntity
-import com.m4ykey.albly.album.data.network.dto.AlbumArtistDto
 import com.m4ykey.albly.album.data.network.dto.AlbumDetailDto
 import com.m4ykey.albly.album.data.network.dto.AlbumItemDto
 import com.m4ykey.albly.album.data.network.dto.CopyrightDto
-import com.m4ykey.albly.album.data.network.dto.ExternalUrlsDto
 import com.m4ykey.albly.album.data.network.dto.ImageDto
-import com.m4ykey.albly.album.domain.model.AlbumArtist
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.model.Copyright
-import com.m4ykey.albly.album.domain.model.ExternalUrls
 import com.m4ykey.albly.album.domain.model.Image
-import com.m4ykey.albly.track.data.local.model.TrackEntity
-import com.m4ykey.albly.track.data.network.dto.TrackItemDto
-import com.m4ykey.albly.track.domain.model.TrackItem
-
-fun TrackEntity.toDomain() = TrackItem(
-    id = id,
-    previewUrl = previewUrl.orEmpty(),
-    discNumber = discNumber,
-    durationMs = durationMs,
-    name = name,
-    trackNumber = trackNumber,
-    explicit = explicit,
-    artists = artists.map { it.toDomain() },
-    externalUrls = externalUrls.toDomain()
-)
-
-fun TrackItem.toEntity(albumId : String) = TrackEntity(
-    id = id,
-    name = name,
-    trackNumber = trackNumber,
-    externalUrls = externalUrls.toEntity(),
-    discNumber = discNumber,
-    durationMs = durationMs,
-    explicit = explicit,
-    previewUrl = previewUrl,
-    albumId = albumId,
-    artists = artists.map { it.toEntity() }
-)
-
-fun ExternalUrls.toEntity() = ExternalUrlsEntity(
-    spotify = spotify
-)
-
-fun AlbumArtist.toEntity() = ArtistEntity(
-    name = name,
-    id = id,
-    externalUrls = externalUrls.toEntity()
-)
+import com.m4ykey.core.model.domain.ExternalUrls
+import com.m4ykey.core.model.mapper.toAlbumArtistDomain
+import com.m4ykey.core.model.mapper.toAlbumArtistEntity
+import com.m4ykey.core.model.mapper.toDomain
+import com.m4ykey.core.model.mapper.toExternalUrlsDomain
+import com.m4ykey.core.model.mapper.toExternalUrlsEntity
 
 fun Copyright.toEntity() = CopyrightEntity(
     text = text
@@ -72,17 +34,6 @@ fun ImageEntity.toDomain() = Image(
     width = width
 )
 
-fun ExternalUrlsEntity.toDomain() = ExternalUrls(
-    spotify = spotify
-)
-
-fun ArtistEntity.toDomain() = AlbumArtist(
-    id = id,
-    name = name,
-    externalUrls = externalUrls.toDomain(),
-    type = ""
-)
-
 fun CopyrightEntity.toDomain() = Copyright(
     text = text,
     type = ""
@@ -96,8 +47,8 @@ fun AlbumEntity.toDomain() = AlbumDetail(
     releaseDate = releaseDate,
     type = albumType,
     images = images.map { it.toDomain() },
-    externalUrls = externalUrls.toDomain(),
-    artists = artists.map { it.toDomain() },
+    externalUrls = externalUrls.toExternalUrlsDomain(),
+    artists = artists.map { it.toAlbumArtistDomain() },
     label = label,
     popularity = 0,
     copyright = copyrights.map { it.toDomain() },
@@ -111,22 +62,10 @@ fun AlbumDetail.toEntity() = AlbumEntity(
     releaseDate = releaseDate,
     totalTracks = totalTracks,
     albumType = albumType,
-    artists = artists.map { it.toEntity() },
+    artists = artists.map { it.toAlbumArtistEntity() },
     images = images.map { it.toEntity() },
-    externalUrls = externalUrls.toEntity(),
+    externalUrls = externalUrls.toExternalUrlsEntity(),
     copyrights = copyright.map { it.toEntity() }
-)
-
-fun TrackItemDto.toDomain() = TrackItem(
-    id = id.orEmpty(),
-    name = name.orEmpty(),
-    discNumber = discNumber ?: 0,
-    externalUrls = externalUrls?.toDomain() ?: ExternalUrls.EMPTY,
-    previewUrl = previewUrl.orEmpty(),
-    durationMs = durationMs ?: 0,
-    explicit = explicit ?: false,
-    trackNumber = trackNumber ?: 0,
-    artists = artists?.map { it.toDomain() } ?: emptyList()
 )
 
 fun AlbumDetailDto.toDomain() = AlbumDetail(
@@ -166,15 +105,4 @@ fun AlbumItemDto.toDomain() = AlbumItem(
     images = images?.map { it.toDomain() } ?: emptyList(),
     externalUrls = externalUrls?.toDomain() ?: ExternalUrls.EMPTY,
     artists = artists?.map { it.toDomain() } ?: emptyList()
-)
-
-fun ExternalUrlsDto.toDomain() = ExternalUrls(
-    spotify = spotify.orEmpty()
-)
-
-fun AlbumArtistDto.toDomain() = AlbumArtist(
-    id = id.orEmpty(),
-    name = name.orEmpty(),
-    type = type.orEmpty(),
-    externalUrls = externalUrls?.toDomain() ?: ExternalUrls.EMPTY
 )

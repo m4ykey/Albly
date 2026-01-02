@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.stability.analyzer)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -48,6 +49,9 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.common)
     implementation(libs.androidx.paging.compose)
+    implementation(libs.room.runtime)
+
+    implementation(libs.ktx.serialization.json)
 
     implementation(libs.landscapist)
     implementation(libs.landscapist.animation)

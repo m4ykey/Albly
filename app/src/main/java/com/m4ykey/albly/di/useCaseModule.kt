@@ -10,10 +10,6 @@ import com.m4ykey.albly.album.domain.use_case.NewReleaseUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleAlbumSavedUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleListenLaterSavedUseCase
 import com.m4ykey.albly.search.domain.use_case.SearchUseCase
-import com.m4ykey.albly.track.domain.use_case.DeleteTracksUseCase
-import com.m4ykey.albly.track.domain.use_case.GetTrackUseCase
-import com.m4ykey.albly.track.domain.use_case.SaveTracksUseCase
-import com.m4ykey.albly.track.domain.use_case.TrackUseCase
 import org.koin.dsl.module
 
 val searchUseCaseModule = module {
@@ -38,11 +34,4 @@ val albumUseCaseModule = module {
         deleteTracksUseCase = get()
     ) }
     single { GetLocalAlbumUseCase(get()) }
-}
-
-val trackUseCaseModule = module {
-    single { TrackUseCase(get()) }
-    single { SaveTracksUseCase(get()) }
-    single { GetTrackUseCase(get()) }
-    single { DeleteTracksUseCase(get()) }
 }

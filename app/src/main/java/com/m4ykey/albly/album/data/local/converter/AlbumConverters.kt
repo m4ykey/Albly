@@ -1,12 +1,12 @@
 package com.m4ykey.albly.album.data.local.converter
 
 import androidx.room.TypeConverter
-import com.m4ykey.albly.album.data.local.model.ArtistEntity
 import com.m4ykey.albly.album.data.local.model.CopyrightEntity
-import com.m4ykey.albly.album.data.local.model.ExternalUrlsEntity
 import com.m4ykey.albly.album.data.local.model.ImageEntity
 import com.m4ykey.albly.core.database.decode
 import com.m4ykey.albly.core.database.encode
+import com.m4ykey.core.model.local.ArtistEntity
+import com.m4ykey.core.model.local.ExternalUrlsEntity
 
 class AlbumConverters {
 

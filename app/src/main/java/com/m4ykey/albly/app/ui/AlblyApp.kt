@@ -6,13 +6,16 @@ import com.m4ykey.albly.di.databaseModule
 import com.m4ykey.albly.di.repositoryModule
 import com.m4ykey.albly.di.searchUseCaseModule
 import com.m4ykey.albly.di.serviceModule
-import com.m4ykey.albly.di.trackUseCaseModule
 import com.m4ykey.albly.di.viewModelModule
 import com.m4ykey.auth.di.authModule
 import com.m4ykey.auth.di.dataStoreModule
 import com.m4ykey.auth.di.scopeModule
 import com.m4ykey.auth.di.spotifyApiModule
 import com.m4ykey.lyrics.di.lyricsModule
+import com.m4ykey.track.di.trackRepositoryModule
+import com.m4ykey.track.di.trackServiceModule
+import com.m4ykey.track.di.trackUseCaseModule
+import com.m4ykey.track.di.trackViewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -27,7 +30,10 @@ val modules = listOf(
     scopeModule,
     databaseModule,
     albumUseCaseModule,
-    trackUseCaseModule
+    trackUseCaseModule,
+    trackServiceModule,
+    trackRepositoryModule,
+    trackViewModelModule
 ) + lyricsModule
 
 class AlblyApp : Application() {

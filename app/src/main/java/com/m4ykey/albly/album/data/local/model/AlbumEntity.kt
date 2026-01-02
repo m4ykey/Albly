@@ -3,6 +3,8 @@ package com.m4ykey.albly.album.data.local.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.m4ykey.core.model.local.ArtistEntity
+import com.m4ykey.core.model.local.ExternalUrlsEntity
 
 @Entity(tableName = "album_table")
 data class AlbumEntity(

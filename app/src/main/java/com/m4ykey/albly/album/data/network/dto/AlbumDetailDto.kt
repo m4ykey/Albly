@@ -1,5 +1,7 @@
 package com.m4ykey.albly.album.data.network.dto
 
+import com.m4ykey.core.model.dto.AlbumArtistDto
+import com.m4ykey.core.model.dto.ExternalUrlsDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

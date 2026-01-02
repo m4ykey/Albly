@@ -3,9 +3,9 @@ package com.m4ykey.albly.album.domain.use_case
 import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.data.local.model.IsAlbumSaved
 import com.m4ykey.albly.album.domain.repository.AlbumRepository
-import com.m4ykey.albly.track.data.local.model.TrackEntity
-import com.m4ykey.albly.track.domain.use_case.DeleteTracksUseCase
-import com.m4ykey.albly.track.domain.use_case.SaveTracksUseCase
+import com.m4ykey.track.data.local.model.TrackEntity
+import com.m4ykey.track.domain.use_case.DeleteTracksUseCase
+import com.m4ykey.track.domain.use_case.SaveTracksUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

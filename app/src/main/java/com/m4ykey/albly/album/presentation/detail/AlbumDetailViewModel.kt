@@ -11,7 +11,7 @@ import com.m4ykey.albly.album.domain.use_case.GetLocalAlbumUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleAlbumSavedUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleListenLaterSavedUseCase
 import com.m4ykey.albly.core.mapper.toDomain
-import com.m4ykey.albly.track.data.local.model.TrackEntity
+import com.m4ykey.track.data.local.model.TrackEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
