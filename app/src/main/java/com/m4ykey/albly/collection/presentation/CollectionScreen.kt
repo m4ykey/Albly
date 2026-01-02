@@ -67,6 +67,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -83,7 +84,7 @@ import com.m4ykey.albly.collection.presentation.components.AlbumTypeChipList
 import com.m4ykey.albly.collection.presentation.components.ListOptions
 import com.m4ykey.albly.collection.presentation.components.SearchField
 import com.m4ykey.albly.collection.presentation.components.UrlInputField
-import com.m4ykey.albly.collection.presentation.drawer.DrawerItem
+import com.m4ykey.albly.collection.model.DrawerItem
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.collection.presentation.type.list.ListSortType
 import com.m4ykey.albly.collection.presentation.type.list.ListType
@@ -107,8 +108,8 @@ fun CollectionScreen(
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val viewState by viewModel.albumType.collectAsState()
-    val type by rememberUpdatedState(viewState.type)
+    val albumTypeState by viewModel.albumType.collectAsStateWithLifecycle()
+    val currentType = albumTypeState.type
 
     val isSortDialogVisible by viewModel.isSortDialogVisible.collectAsState()
     val isSearchVisible by viewModel.isSearchVisible.collectAsState()
@@ -150,13 +151,8 @@ fun CollectionScreen(
     )
 
     LaunchedEffect(viewModel) {
-        viewModel.loadAlbums()
-    }
-
-    LaunchedEffect(viewModel) {
         viewModel.collectionUiEvent.collectLatest { event ->
             when (event) {
-                is CollectionUiEvent.ChangeType -> viewModel.updateType(event.type)
                 is CollectionUiEvent.OnLinkClick -> onLinkClick(event.link)
             }
         }
@@ -215,7 +211,7 @@ fun CollectionScreen(
             title = R.string.collection,
             content = { padding ->
                 CollectionScreenContent(
-                    type = type,
+                    type = currentType,
                     onAction = onAction,
                     padding = padding,
                     listState = listState,
@@ -482,6 +478,8 @@ fun CollectionHeader(
         val startGuideline = createGuidelineFromStart(10.dp)
         val endGuideline = createGuidelineFromEnd(0.dp)
 
+        val keyboardController = LocalSoftwareKeyboardController.current
+
         Box(modifier = Modifier.constrainAs(chips) {
             top.linkTo(parent.top, margin = 8.dp)
             start.linkTo(startGuideline)
@@ -538,7 +536,7 @@ fun CollectionHeader(
                     onValueChange = { query ->
                         onAction(CollectionTypeAction.OnQueryChange(query))
                     },
-                    onSearch = {  },
+                    onSearch = { keyboardController?.hide() },
                     searchQuery = searchQuery,
                     onCloseClick = {
                         onHideSearchClick()

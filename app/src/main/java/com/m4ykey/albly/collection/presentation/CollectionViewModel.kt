@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.m4ykey.albly.collection.presentation
 
 import androidx.lifecycle.ViewModel
@@ -6,19 +8,25 @@ import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.domain.use_case.GetSavedAlbumsUseCase
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.collection.presentation.type.album.AlbumTypeState
+import com.m4ykey.core.ext.hide
+import com.m4ykey.core.ext.show
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CollectionViewModel(
     private val getSavedAlbumsUseCase: GetSavedAlbumsUseCase
 ) : ViewModel() {
-
-    private val _albums = MutableStateFlow<List<AlbumEntity>>(emptyList())
-    val albums = _albums.asStateFlow()
 
     private val _isLinkDialogVisible = MutableStateFlow(false)
     val isLinkDialogVisible = _isLinkDialogVisible.asStateFlow()
@@ -41,20 +49,21 @@ class CollectionViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    fun loadAlbums() {
-        viewModelScope.launch {
-            _isLoading.value = true
-
-            try {
-                val result = getSavedAlbumsUseCase()
-                _albums.value = result
-            } catch (e : Exception) {
-
-            } finally {
-                _isLoading.value = false
-            }
+    val albums : StateFlow<List<AlbumEntity>> = combine(
+        _searchQuery,
+        _albumType
+    ) { query, typeState ->
+        query to typeState.type
+    }.flatMapLatest { (query, type) ->
+        getSavedAlbumsUseCase(query, type = null).map { list ->
+            if (type == null) list
+            else list.filter { it.albumType == type.name }
         }
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
     fun hideSortDialog() = hide(_isSortDialogVisible)
     fun showSortDialog() = show(_isSortDialogVisible)
@@ -74,26 +83,18 @@ class CollectionViewModel(
     }
 
     fun onAction(action : CollectionTypeAction) {
-        viewModelScope.launch {
-            when (action) {
-                is CollectionTypeAction.OnTypeClick -> {
-                    _collectionUiEvent.emit(CollectionUiEvent.ChangeType(action.type))
-                }
-                is CollectionTypeAction.OnLinkClick -> {
+        when (action) {
+            is CollectionTypeAction.OnTypeClick -> {
+                updateType(action.type)
+            }
+            is CollectionTypeAction.OnLinkClick -> {
+                viewModelScope.launch {
                     _collectionUiEvent.emit(CollectionUiEvent.OnLinkClick(action.link))
                 }
-                is CollectionTypeAction.OnQueryChange -> {
-                    _searchQuery.value = action.text
-                }
+            }
+            is CollectionTypeAction.OnQueryChange -> {
+                _searchQuery.value = action.text
             }
         }
     }
-
-    private fun show(state : MutableStateFlow<Boolean>) {
-        state.value = true
-    }
-    private fun hide(state : MutableStateFlow<Boolean>) {
-        state.value = false
-    }
-
 }

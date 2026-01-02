@@ -12,6 +12,7 @@ import com.m4ykey.albly.album.data.paging.NewReleasePaging
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.AlbumItem
 import com.m4ykey.albly.album.domain.repository.AlbumRepository
+import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.core.mapper.toDomain
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig
@@ -88,8 +89,8 @@ class AlbumRepositoryImpl(
         dao.deleteSavedAlbumState(id)
     }
 
-    override suspend fun getAlbums(): List<AlbumEntity> {
-        return dao.getAlbums()
+    override fun getSavedAlbums(query : String, type : AlbumType?): Flow<List<AlbumEntity>> {
+        return dao.getSavedAlbums(query, type?.name)
     }
 
     override suspend fun getListenLaterAlbums(): List<AlbumEntity> {

@@ -7,6 +7,7 @@ import com.m4ykey.albly.album.data.local.model.IsAlbumSaved
 import com.m4ykey.albly.album.data.local.model.IsListenLaterSaved
 import com.m4ykey.albly.album.domain.model.AlbumDetail
 import com.m4ykey.albly.album.domain.model.AlbumItem
+import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {
@@ -24,7 +25,7 @@ interface AlbumRepository {
     suspend fun deleteAlbum(id : String)
     suspend fun deleteSavedListenLaterState(id : String)
     suspend fun deleteSavedAlbumState(id : String)
-    suspend fun getAlbums() : List<AlbumEntity>
+    fun getSavedAlbums(query : String, type : AlbumType?) : Flow<List<AlbumEntity>>
     suspend fun getListenLaterAlbums() : List<AlbumEntity>
     suspend fun getRandomAlbum() : Flow<AlbumEntity>
 }

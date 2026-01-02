@@ -1,4 +1,4 @@
-package com.m4ykey.albly.collection.presentation.drawer
+package com.m4ykey.albly.collection.model
 
 data class DrawerItem(
     val title : String,
