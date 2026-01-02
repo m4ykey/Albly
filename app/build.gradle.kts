@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.stability.analyzer)
 }
 
 val versionProperties = Properties().apply {

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.stability.analyzer)
     alias(libs.plugins.kotlin.compose)
 }
 

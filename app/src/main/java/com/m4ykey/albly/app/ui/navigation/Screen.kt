@@ -1,5 +1,6 @@
 package com.m4ykey.albly.app.ui.navigation
 
+import android.net.Uri
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -30,15 +31,18 @@ sealed class Screen(val screen : String) {
 
     @Serializable
     data class LyricsScreen(val trackName : String, val artistName : String) : Screen(
-        "$routeBase/$trackName&$artistName"
+        "$routeBase/$trackName/$artistName"
     ) {
         companion object {
             const val routeBase = "lyrics_screen"
             const val ARG_ARTIST_NAME = "artist_name"
             const val ARG_TRACK_NAME = "track_name"
 
-            fun routeWithArgs(artistName: String, trackName: String) =
-                "$routeBase/$artistName&$trackName"
+            fun routeWithArgs(artistName: String, trackName: String) : String {
+                val encodedArtist = Uri.encode(artistName)
+                val encodedTrack = Uri.encode(trackName)
+                return "$routeBase/$encodedArtist/$encodedTrack"
+            }
         }
     }
 

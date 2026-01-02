@@ -121,7 +121,8 @@ fun AppNavHost(
             val trackName = backStack.arguments?.getString(Screen.LyricsScreen.ARG_TRACK_NAME)
             LyricsScreen(
                 artistName = artistName.orEmpty(),
-                trackName = trackName.orEmpty()
+                trackName = trackName.orEmpty(),
+                onBack = { navHostController.navigateUp() }
             )
         }
     }

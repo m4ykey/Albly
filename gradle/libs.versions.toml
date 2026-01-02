@@ -33,6 +33,7 @@ about-libraries = "13.2.1"
 constraintlayout = "1.1.1"
 permissions = "0.37.3"
 turbine = "1.2.1"
+stability-analyzer = "0.6.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -113,3 +114,4 @@ gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 about-libraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "about-libraries" }
+stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "stability-analyzer" }

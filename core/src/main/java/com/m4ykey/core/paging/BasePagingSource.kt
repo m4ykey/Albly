@@ -7,12 +7,7 @@ abstract class BasePagingSource<Value : Any> : PagingSource<Int, Value>() {
 
     protected abstract suspend fun loadData(offset : Int, limit : Int) : Result<List<Value>>
 
-    override fun getRefreshKey(state: PagingState<Int, Value>): Int? {
-        return state.anchorPosition?.let { position ->
-            state.closestPageToPosition(position)?.prevKey
-                ?: state.closestPageToPosition(position)?.nextKey
-        }
-    }
+    override fun getRefreshKey(state: PagingState<Int, Value>): Int? = null
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Value> {
         val position = params.key ?: 0

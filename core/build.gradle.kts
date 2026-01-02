@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.stability.analyzer)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
