@@ -4,12 +4,10 @@ import com.m4ykey.albly.album.presentation.detail.AlbumDetailViewModel
 import com.m4ykey.albly.album.presentation.listen_later.ListenLaterViewModel
 import com.m4ykey.albly.album.presentation.new_release.NewReleaseViewModel
 import com.m4ykey.albly.collection.presentation.CollectionViewModel
-import com.m4ykey.albly.search.presentation.SearchViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val viewModelModule = module {
-    viewModel { SearchViewModel(get()) }
+val albumViewModelModule = module {
     viewModel { AlbumDetailViewModel(
         getLocalAlbumUseCase = get(),
         useCase = get(),

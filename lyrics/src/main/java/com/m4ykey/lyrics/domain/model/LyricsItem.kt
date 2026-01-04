@@ -1,4 +1,4 @@
-package com.m4ykey.lyrics.data.model
+package com.m4ykey.lyrics.domain.model
 
 data class LyricsItem(
     val albumName : String,

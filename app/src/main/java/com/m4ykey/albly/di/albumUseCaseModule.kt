@@ -9,12 +9,7 @@ import com.m4ykey.albly.album.domain.use_case.GetSavedAlbumsUseCase
 import com.m4ykey.albly.album.domain.use_case.NewReleaseUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleAlbumSavedUseCase
 import com.m4ykey.albly.album.domain.use_case.ToggleListenLaterSavedUseCase
-import com.m4ykey.albly.search.domain.use_case.SearchUseCase
 import org.koin.dsl.module
-
-val searchUseCaseModule = module {
-    single { SearchUseCase(get()) }
-}
 
 val albumUseCaseModule = module {
     single { AlbumUseCase(get()) }

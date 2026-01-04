@@ -1,6 +1,6 @@
 package com.m4ykey.lyrics.data.mapper
 
-import com.m4ykey.lyrics.data.model.LyricsItem
+import com.m4ykey.lyrics.domain.model.LyricsItem
 import com.m4ykey.lyrics.data.network.dto.LyricsDtoItem
 
 fun LyricsDtoItem.toDomain() : LyricsItem {

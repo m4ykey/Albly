@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
 package com.m4ykey.lyrics.presentation
 
@@ -11,12 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.lyrics.R
@@ -54,14 +58,28 @@ fun LyricsDisplay(
     modifier: Modifier = Modifier,
     state: LazyListState,
     title : String,
-    artist : String
+    artist : String,
+    paddingValues: PaddingValues,
+    uiState: LyricsUiState
 ) {
-    LyricsContent(
-        state = state,
-        title = title,
-        artist = artist,
-        modifier = modifier
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        when {
+            uiState.data != null -> {
+                LyricsContent()
+            }
+            uiState.error != null -> {}
+            uiState.loading -> {
+                Box(
+                    modifier = modifier
+                        .padding(paddingValues = paddingValues)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ContainedLoadingIndicator()
+                }
+            }
+        }
+    }
 }
 
 @Composable

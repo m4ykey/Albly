@@ -16,8 +16,10 @@ import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.core.mapper.toDomain
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class AlbumRepositoryImpl(
     private val service : RemoteAlbumService,
@@ -46,7 +48,7 @@ class AlbumRepositoryImpl(
                 onSuccess = { emit(it) },
                 onFailure = { throw it }
             )
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     override suspend fun insertAlbum(album: AlbumEntity) {

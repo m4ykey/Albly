@@ -32,8 +32,11 @@ class TrackRepositoryImpl(
         ).flow
     }
 
-    override suspend fun getTrackById(id: String): List<TrackEntity> {
-         return dao.getTrackById(id)
+    override fun getTrackById(id: String): Flow<PagingData<TrackEntity>> {
+         return Pager(
+             config = pagingConfig,
+             pagingSourceFactory = { dao.getTrackById(id) }
+         ).flow
     }
 
     override suspend fun insertTrack(track: List<TrackEntity>) {

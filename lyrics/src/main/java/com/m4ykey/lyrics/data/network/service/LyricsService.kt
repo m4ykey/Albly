@@ -10,13 +10,17 @@ class LyricsService(
     private val httpClient: HttpClient
 ) : RemoteLyricsService {
 
-    override suspend fun getLyrics(
-        artistName: String,
+    override suspend fun searchLyrics(
+        q: String,
         trackName: String
     ): List<LyricsDtoItem> {
         return httpClient.get("api/search") {
-            parameter("artist_name", artistName)
+            parameter("q", q)
             parameter("track_name", trackName)
         }.body()
+    }
+
+    override suspend fun getLyrics(id: Int): LyricsDtoItem {
+        return httpClient.get("api/get/$id").body()
     }
 }

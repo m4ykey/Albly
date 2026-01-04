@@ -57,7 +57,7 @@ class CollectionViewModel(
     }.flatMapLatest { (query, type) ->
         getSavedAlbumsUseCase(query, type = null).map { list ->
             if (type == null) list
-            else list.filter { it.albumType == type.name }
+            else list.filter { it.albumType.equals(type.name, ignoreCase = true) }
         }
     }.stateIn(
         scope = viewModelScope,

@@ -1,5 +1,6 @@
 package com.m4ykey.track.data.local.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,7 +14,7 @@ interface TrackDao {
     suspend fun insertTrack(track : List<TrackEntity>)
 
     @Query("SELECT * FROM track_table WHERE albumId = :id")
-    suspend fun getTrackById(id : String) : List<TrackEntity>
+    fun getTrackById(id : String) : PagingSource<Int, TrackEntity>
 
     @Query("DELETE FROM track_table WHERE albumId = :id")
     suspend fun deleteTracksById(id : String)

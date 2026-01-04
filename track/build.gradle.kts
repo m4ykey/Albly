@@ -16,6 +16,10 @@ android {
         version = release(36)
     }
 
+    ksp {
+        arg("room.generateKotlin", "true")
+    }
+
     defaultConfig {
         minSdk = 26
 
@@ -71,6 +75,8 @@ dependencies {
     implementation(libs.koin.android)
 
     implementation(libs.room.runtime)
+    implementation(libs.room.paging)
+    implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
     implementation(libs.ktx.serialization.json)
