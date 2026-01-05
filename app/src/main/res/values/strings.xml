@@ -1,30 +1,14 @@
 <resources>
     <string name="app_name">Albly</string>
-    <string name="collection">Collection</string>
-    <string name="album">Album</string>
-    <string name="ep">EP</string>
-    <string name="single">Single</string>
-    <string name="compilation">Compilation</string>
-    <string name="new_release">New release</string>
-    <string name="settings">Settings</string>
     <string name="discover_new_release">Discover New Release</string>
-    <string name="search">Search</string>
-    <string name="enter_url">Enter URL</string>
-    <string name="latest">Latest</string>
-    <string name="oldest">Oldest</string>
-    <string name="alphabetical">Alphabetical</string>
-    <string name="cancel">Cancel</string>
-    <string name="artist">Artist</string>
+
     <string name="all">All</string>
-    <string name="save">Save</string>
-    <string name="listen_later">Listen later</string>
-    <string name="tracks">Tracks</string>
+
+
     <string name="album_count">Album Count</string>
     <string name="random_album">Random album</string>
-    <string name="sort_by">Sort by</string>
     <string name="menu">Menu</string>
     <string name="empty"> </string>
-    <string name="please_wait_until_all_tracks_are_loaded">Please wait until all tracks are loaded</string>
-    <string name="invalid_album_url">Invalid album url</string>
+
     <string name="enter_album_name">Enter album name</string>
 </resources>

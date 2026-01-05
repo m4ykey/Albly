@@ -129,3 +129,4 @@ stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", ve
 paging = ["androidx-paging-common", "androidx-paging-runtime", "androidx-paging-compose"]
 ktor = ["ktor-android", "ktor-cio", "ktor-content-negotiation", "ktor-serialization-kotlinx-json", "ktor-core", "ktor-logging"]
 koin = ["koin-android", "koin-jetpack-compose", "koin-core"]
+room = ["room-ktx", "room-runtime"]

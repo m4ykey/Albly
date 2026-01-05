@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu">Menu</string>
+    <string name="enter_url">Enter URL</string>
+    <string name="search">Search</string>
+    <string name="collection">Collection</string>
+    <string name="new_release">New release</string>
+    <string name="listen_later">Listen later</string>
+    <string name="settings">Settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="invalid_album_url">Invalid album url</string>
+    <string name="latest">Latest</string>
+    <string name="oldest">Oldest</string>
+    <string name="alphabetical">Alphabetical</string>
+    <string name="empty">" "</string>
+    <string name="sort_by">Sort by</string>
+    <string name="clear">Clear</string>
+    <string name="album">Album</string>
+    <string name="ep">EP</string>
+    <string name="single">Single</string>
+    <string name="compilation">Compilation</string>
+</resources>

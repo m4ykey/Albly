@@ -9,7 +9,7 @@ interface TrackRepository {
 
     fun getAlbumTracks(id : String, offset : Int, limit : Int) : Flow<PagingData<TrackItem>>
 
-    fun getTrackById(id : String) : Flow<PagingData<TrackEntity>>
+    fun getTrackById(id : String) : List<TrackEntity>
     suspend fun insertTrack(track : List<TrackEntity>)
     suspend fun deleteTracksById(id : String)
 

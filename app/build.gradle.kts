@@ -83,6 +83,9 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":track"))
     implementation(project(":navigation"))
+    implementation(project(":search"))
+    implementation(project(":album"))
+    implementation(project(":collection"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
