@@ -1,7 +1,7 @@
 package com.m4ykey.albly.album.domain.use_case
 
 import androidx.paging.PagingData
-import com.m4ykey.albly.album.domain.model.AlbumItem
+import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.albly.album.domain.repository.AlbumRepository
 import kotlinx.coroutines.flow.Flow
 

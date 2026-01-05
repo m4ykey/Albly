@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.m4ykey.albly.album.domain.model.AlbumItem
+import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.albly.album.domain.use_case.NewReleaseUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

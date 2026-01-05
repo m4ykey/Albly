@@ -6,7 +6,7 @@ import com.m4ykey.albly.album.data.local.model.AlbumWithStates
 import com.m4ykey.albly.album.data.local.model.IsAlbumSaved
 import com.m4ykey.albly.album.data.local.model.IsListenLaterSaved
 import com.m4ykey.albly.album.domain.model.AlbumDetail
-import com.m4ykey.albly.album.domain.model.AlbumItem
+import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import kotlinx.coroutines.flow.Flow
 

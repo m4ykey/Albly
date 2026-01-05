@@ -4,13 +4,13 @@ import com.m4ykey.albly.album.data.local.model.AlbumEntity
 import com.m4ykey.albly.album.data.local.model.CopyrightEntity
 import com.m4ykey.albly.album.data.local.model.ImageEntity
 import com.m4ykey.albly.album.data.network.dto.AlbumDetailDto
-import com.m4ykey.albly.album.data.network.dto.AlbumItemDto
+import com.m4ykey.core.model.dto.AlbumItemDto
 import com.m4ykey.albly.album.data.network.dto.CopyrightDto
-import com.m4ykey.albly.album.data.network.dto.ImageDto
+import com.m4ykey.core.model.dto.ImageDto
 import com.m4ykey.albly.album.domain.model.AlbumDetail
-import com.m4ykey.albly.album.domain.model.AlbumItem
+import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.albly.album.domain.model.Copyright
-import com.m4ykey.albly.album.domain.model.Image
+import com.m4ykey.core.model.domain.Image
 import com.m4ykey.core.model.domain.ExternalUrls
 import com.m4ykey.core.model.mapper.toAlbumArtistDomain
 import com.m4ykey.core.model.mapper.toAlbumArtistEntity
@@ -89,20 +89,4 @@ fun CopyrightDto.toDomain() = Copyright(
     type = type.orEmpty()
 )
 
-fun ImageDto.toDomain() = Image(
-    url = url.orEmpty(),
-    width = width ?: 0,
-    height = height ?: 0
-)
 
-fun AlbumItemDto.toDomain() = AlbumItem(
-    albumType = albumType.orEmpty(),
-    id = id.orEmpty(),
-    name = name.orEmpty(),
-    releaseDate = releaseDate.orEmpty(),
-    totalTracks = totalTracks ?: 0,
-    type = type.orEmpty(),
-    images = images?.map { it.toDomain() } ?: emptyList(),
-    externalUrls = externalUrls?.toDomain() ?: ExternalUrls.EMPTY,
-    artists = artists?.map { it.toDomain() } ?: emptyList()
-)

@@ -1,7 +1,7 @@
 package com.m4ykey.albly.album.data.network.service
 
 import com.m4ykey.albly.album.data.network.dto.AlbumDetailDto
-import com.m4ykey.albly.album.data.network.dto.AlbumListDto
+import com.m4ykey.core.model.dto.AlbumListDto
 
 interface RemoteAlbumService {
 

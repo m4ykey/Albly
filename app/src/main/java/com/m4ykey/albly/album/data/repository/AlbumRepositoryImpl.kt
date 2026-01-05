@@ -10,7 +10,7 @@ import com.m4ykey.albly.album.data.local.model.IsListenLaterSaved
 import com.m4ykey.albly.album.data.network.service.RemoteAlbumService
 import com.m4ykey.albly.album.data.paging.NewReleasePaging
 import com.m4ykey.albly.album.domain.model.AlbumDetail
-import com.m4ykey.albly.album.domain.model.AlbumItem
+import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.albly.album.domain.repository.AlbumRepository
 import com.m4ykey.albly.collection.presentation.type.album.AlbumType
 import com.m4ykey.albly.core.mapper.toDomain

@@ -2,25 +2,10 @@
 
 package com.m4ykey.lyrics.presentation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.lyrics.R
@@ -43,79 +28,7 @@ fun LyricsScreen(
             )
         },
         content = { padding ->
-            LyricsDisplay(
-                state = state,
-                title = trackName,
-                artist = artistName,
-                modifier = Modifier.padding(padding)
-            )
+
         }
     )
-}
-
-@Composable
-fun LyricsDisplay(
-    modifier: Modifier = Modifier,
-    state: LazyListState,
-    title : String,
-    artist : String,
-    paddingValues: PaddingValues,
-    uiState: LyricsUiState
-) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        when {
-            uiState.data != null -> {
-                LyricsContent()
-            }
-            uiState.error != null -> {}
-            uiState.loading -> {
-                Box(
-                    modifier = modifier
-                        .padding(paddingValues = paddingValues)
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    ContainedLoadingIndicator()
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun LyricsContent(
-    modifier: Modifier = Modifier,
-    contentPadding : PaddingValues = PaddingValues(0.dp),
-    state : LazyListState,
-    title : String,
-    artist : String
-) {
-    LazyColumn(
-        state = state,
-        contentPadding = PaddingValues(10.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding)
-    ) {
-//        item {
-//            Box(
-//                modifier = Modifier.fillMaxWidth(),
-//                contentAlignment = Alignment.Center
-//            ) {
-//
-//            }
-//        }
-
-        item {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(modifier = modifier.fillMaxSize()) {
-                    Text(text = title)
-                    Text(text = artist)
-                }
-            }
-        }
-    }
 }

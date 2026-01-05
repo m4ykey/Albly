@@ -3,6 +3,7 @@ package com.m4ykey.albly.album.domain.model
 import androidx.compose.runtime.Immutable
 import com.m4ykey.core.model.domain.AlbumArtist
 import com.m4ykey.core.model.domain.ExternalUrls
+import com.m4ykey.core.model.domain.Image
 
 @Immutable
 data class AlbumDetail(

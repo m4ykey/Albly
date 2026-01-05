@@ -14,7 +14,7 @@ interface TrackDao {
     suspend fun insertTrack(track : List<TrackEntity>)
 
     @Query("SELECT * FROM track_table WHERE albumId = :id")
-    fun getTrackById(id : String) : PagingSource<Int, TrackEntity>
+    fun getTrackById(id : String) : List<TrackEntity>
 
     @Query("DELETE FROM track_table WHERE albumId = :id")
     suspend fun deleteTracksById(id : String)

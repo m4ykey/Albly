@@ -19,8 +19,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.m4ykey.albly.R
-import com.m4ykey.albly.album.domain.model.AlbumItem
-import com.m4ykey.albly.album.presentation.components.AlbumCard
+import com.m4ykey.core.model.domain.AlbumItem
+import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.paging.BasePagingList
