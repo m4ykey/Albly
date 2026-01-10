@@ -75,9 +75,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.album.data.mapper.toAlbum
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerItem
-import com.m4ykey.collection.presentation.components.AlbumGridCard
+import com.m4ykey.core.ui.AlbumGridCard
 import com.m4ykey.collection.presentation.components.AlbumListRow
 import com.m4ykey.collection.presentation.components.AlbumTypeChipList
 import com.m4ykey.collection.presentation.components.ListOptions
@@ -390,7 +391,7 @@ fun CollectionScreenContent(
                     contentType = { "album_item" }
                 ) { item ->
                     AlbumGridCard(
-                        item = item,
+                        item = item.toAlbum(),
                         onAlbumClick = onAlbumClick
                     )
                 }

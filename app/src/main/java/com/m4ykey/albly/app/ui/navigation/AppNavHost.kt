@@ -8,12 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.m4ykey.albly.album.presentation.detail.AlbumDetailScreen
-import com.m4ykey.albly.album.presentation.listen_later.ListenLaterScreen
-import com.m4ykey.albly.album.presentation.new_release.AlbumNewReleaseScreen
-import com.m4ykey.albly.collection.presentation.CollectionScreen
-import com.m4ykey.albly.search.presentation.SearchScreen
+import com.m4ykey.album.presentation.detail.AlbumDetailScreen
+import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
+import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
+import com.m4ykey.collection.presentation.CollectionScreen
 import com.m4ykey.lyrics.presentation.LyricsScreen
+import com.m4ykey.search.presentation.SearchScreen
 
 @Composable
 fun AppNavHost(

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.m4ykey.album.R
 import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ext.ActionIconButton

@@ -7,6 +7,7 @@ import com.m4ykey.album.data.network.dto.AlbumDetailDto
 import com.m4ykey.album.data.network.dto.CopyrightDto
 import com.m4ykey.album.domain.model.AlbumDetail
 import com.m4ykey.album.domain.model.Copyright
+import com.m4ykey.core.model.domain.Album
 import com.m4ykey.core.model.domain.Image
 import com.m4ykey.core.model.domain.ExternalUrls
 import com.m4ykey.core.model.mapper.toAlbumArtistDomain
@@ -14,6 +15,13 @@ import com.m4ykey.core.model.mapper.toAlbumArtistEntity
 import com.m4ykey.core.model.mapper.toDomain
 import com.m4ykey.core.model.mapper.toExternalUrlsDomain
 import com.m4ykey.core.model.mapper.toExternalUrlsEntity
+
+fun AlbumEntity.toAlbum() = Album(
+    name = name,
+    id = id,
+    images = images.map { it.toDomain() },
+    artists = artists.map { it.toAlbumArtistDomain() }
+)
 
 fun Copyright.toEntity() = CopyrightEntity(
     text = text
