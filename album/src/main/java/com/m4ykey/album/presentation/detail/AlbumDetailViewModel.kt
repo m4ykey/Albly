@@ -4,6 +4,7 @@ package com.m4ykey.album.presentation.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.mapper.toDomain
 import com.m4ykey.album.domain.use_case.AlbumUseCase
 import com.m4ykey.album.domain.use_case.GetAlbumStateUseCase
@@ -13,7 +14,6 @@ import com.m4ykey.album.domain.use_case.ToggleListenLaterSavedUseCase
 import com.m4ykey.track.data.local.model.TrackEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import com.m4ykey.album.data.local.model.AlbumEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -28,12 +28,12 @@ class AlbumDetailViewModel(
     private val getLocalAlbumUseCase : GetLocalAlbumUseCase
 ) : ViewModel() {
 
-    private val _detail = MutableStateFlow(DetailUiState())
+    private val _detail = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val detail = _detail.asStateFlow()
 
     fun getAlbumById(id : String) {
         viewModelScope.launch {
-            _detail.value = DetailUiState(loading = true)
+            _detail.value = DetailUiState.Loading
 
             val localState = withContext(Dispatchers.IO) {
                 getAlbumStateUseCase.invoke(id)
@@ -41,25 +41,20 @@ class AlbumDetailViewModel(
 
             useCase.invoke(id)
                 .catch { e ->
-                    val localAlbum = withContext(Dispatchers.IO) {
-                        getLocalAlbumUseCase(id)
-                    }
-
+                    val localAlbum = withContext(Dispatchers.IO) { getLocalAlbumUseCase(id) }
                     if (localAlbum != null) {
-                        _detail.value = DetailUiState(
+                        _detail.value = DetailUiState.Success(
                             item = localAlbum.toDomain(),
-                            loading = false,
                             isSaved = localState?.isAlbumSaved != null,
                             isListenLaterSaved = localState?.isListenLaterSaved != null
                         )
                     } else {
-                        _detail.value = DetailUiState(error = e.localizedMessage)
+                        _detail.value = DetailUiState.Error(message = e.localizedMessage ?: "Unknown Error")
                     }
                 }
                 .collect { result ->
-                    _detail.value = DetailUiState(
+                    _detail.value = DetailUiState.Success(
                         item = result,
-                        loading = false,
                         isSaved = localState?.isAlbumSaved != null,
                         isListenLaterSaved = localState?.isListenLaterSaved != null
                     )
@@ -68,28 +63,34 @@ class AlbumDetailViewModel(
     }
 
     fun toggleSave(album : AlbumEntity, tracks : List<TrackEntity>) {
-        viewModelScope.launch {
-            val currentState = _detail.value.isSaved
-            toggleAlbumSavedUseCase(
-                album = album,
-                isCurrentlySaved = currentState,
-                tracks = tracks
-            )
+        val currentState = _detail.value
+        if (currentState is DetailUiState.Success) {
+            viewModelScope.launch {
+                val isCurrentlySaved = currentState.isSaved
+                toggleAlbumSavedUseCase(
+                    album = album,
+                    isCurrentlySaved = isCurrentlySaved,
+                    tracks = tracks
+                )
 
-            _detail.value = _detail.value.copy(isSaved = !currentState)
+                _detail.value = currentState.copy(isSaved = !isCurrentlySaved)
+            }
         }
     }
 
     fun toggleListenLater(album : AlbumEntity, tracks : List<TrackEntity>) {
-        viewModelScope.launch {
-            val currentState = _detail.value.isListenLaterSaved
-            toggleListenLaterSavedUseCase.invoke(
-                album = album,
-                isCurrentlySaved = currentState,
-                tracks = tracks
-            )
+        val currentState = _detail.value
+        if (currentState is DetailUiState.Success) {
+            viewModelScope.launch {
+                val isCurrentlySaved = currentState.isListenLaterSaved
+                toggleListenLaterSavedUseCase.invoke(
+                    album = album,
+                    isCurrentlySaved = isCurrentlySaved,
+                    tracks = tracks
+                )
 
-            _detail.value = _detail.value.copy(isListenLaterSaved = !currentState)
+                _detail.value = currentState.copy(isListenLaterSaved = !isCurrentlySaved)
+            }
         }
     }
 }

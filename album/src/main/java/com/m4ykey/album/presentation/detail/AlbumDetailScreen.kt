@@ -43,6 +43,7 @@ import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.mapper.toEntity
 import com.m4ykey.album.domain.model.AlbumDetail
 import com.m4ykey.album.presentation.components.AlbumButtonRow
+import com.m4ykey.album.presentation.components.ErrorCard
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
@@ -124,25 +125,26 @@ fun AlbumDetailDisplay(
     onListenLaterToggle: (AlbumEntity, List<TrackEntity>) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    val item = albumDetail.item
-
-    when {
-        albumDetail.loading -> Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
-        ) {
-            ContainedLoadingIndicator()
+    when (albumDetail) {
+        is DetailUiState.Loading -> {
+            Box(modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                ContainedLoadingIndicator()
+            }
         }
-        albumDetail.error != null -> {}
-        item != null -> {
+        is DetailUiState.Error -> {
+            ErrorCard(text = albumDetail.message)
+        }
+        is DetailUiState.Success -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
                 AlbumDetailContent(
-                    item = item,
+                    item = albumDetail.item,
                     contentPadding = paddingValues,
                     state = state,
                     tracks = tracks,

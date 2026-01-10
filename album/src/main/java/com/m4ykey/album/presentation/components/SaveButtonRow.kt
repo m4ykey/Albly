@@ -4,10 +4,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.AccessTimeFilled
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.m4ykey.album.R
@@ -26,20 +30,20 @@ fun SaveButtonRow(
     ) {
         Icon(
             contentDescription = stringResource(R.string.save),
-            painter = if (isSaved) {
-                painterResource(R.drawable.ic_favorite)
+            imageVector = if (isSaved) {
+                Icons.Default.Favorite
             } else {
-                painterResource(R.drawable.ic_favorite_border)
+                Icons.Outlined.FavoriteBorder
             },
             modifier = modifier.clickable { onSaveClick() }
         )
 
         Icon(
             contentDescription = stringResource(R.string.listen_later),
-            painter = if (isListenLaterSaved) {
-                painterResource(R.drawable.ic_access_time)
+            imageVector = if (isListenLaterSaved) {
+                Icons.Default.AccessTimeFilled
             } else {
-                painterResource(R.drawable.ic_access_time_outline)
+                Icons.Default.AccessTime
             },
             modifier = modifier.clickable { onListenLaterClick() }
         )

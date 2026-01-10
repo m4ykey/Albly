@@ -12,15 +12,14 @@ import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.paging.NewReleasePaging
 import com.m4ykey.album.domain.model.AlbumDetail
 import com.m4ykey.album.domain.repository.AlbumRepository
-import com.m4ykey.core.model.type.AlbumType
 import com.m4ykey.core.model.domain.AlbumItem
+import com.m4ykey.core.model.type.AlbumType
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlin.fold
 
 class AlbumRepositoryImpl(
     private val service : RemoteAlbumService,

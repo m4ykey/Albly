@@ -1,8 +1,8 @@
 package com.m4ykey.album.domain.use_case
 
 import androidx.paging.PagingData
-import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.album.domain.repository.AlbumRepository
+import com.m4ykey.core.model.domain.AlbumItem
 import kotlinx.coroutines.flow.Flow
 
 class NewReleaseUseCase(

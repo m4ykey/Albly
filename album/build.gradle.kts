@@ -65,7 +65,11 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.ktor)
 
+    implementation(libs.lottie)
+
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 

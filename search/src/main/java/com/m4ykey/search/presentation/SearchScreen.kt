@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class)
+@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class,
+    ExperimentalMaterial3ExpressiveApi::class
+)
 
 package com.m4ykey.search.presentation
 
@@ -40,6 +42,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -62,6 +66,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -71,6 +76,7 @@ import com.m4ykey.core.chip.ChipItem
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.CenteredContent
 import com.m4ykey.core.paging.BasePagingList
+import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.search.R
 import kotlinx.coroutines.flow.collectLatest
@@ -248,6 +254,28 @@ fun SearchScreen(
                                         item = item,
                                         onAlbumClick = { onAction(SearchTypeAction.OnAlbumClick(item.id)) }
                                     )
+                                }
+                            }
+
+                            item {
+                                when (val appendState = items.loadState.append) {
+                                    is LoadState.Loading -> {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            ContainedLoadingIndicator()
+                                        }
+                                    }
+                                    is LoadState.Error -> {
+                                        ErrorItem(
+                                            onRetry = { items.retry() },
+                                            message = appendState.error.message ?: "Loading error"
+                                        )
+                                    }
+                                    else -> {}
                                 }
                             }
                         }
