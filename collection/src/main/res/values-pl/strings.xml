@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="menu">Menu</string>
     <string name="enter_url">Wprowadź URL</string>
     <string name="search">Szukaj</string>
     <string name="collection">Kolekcja</string>
+    <string name="new_release">Nowe wydania</string>
+    <string name="listen_later">Posłuchaj później</string>
+    <string name="settings">Ustawienia</string>
+    <string name="cancel">Anuluj</string>
+    <string name="invalid_album_url">Niepoprawny adres URL albumu</string>
+    <string name="latest">Ostatnie</string>
+    <string name="oldest">Najstarsze</string>
+    <string name="alphabetical">Alfabetycznie</string>
+    <string name="sort_by">Sortuj według</string>
+    <string name="clear">Wyczyść</string>
+    <string name="compilation">Compilation</string>
+    <string name="your_collection_is_empty">Twoja kolekcja jest pusta</string>
 </resources>

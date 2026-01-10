@@ -6,8 +6,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.m4ykey.core.model.type.AlbumType
 import com.m4ykey.core.chip.ChipItem
+import com.m4ykey.core.model.type.AlbumType
 
 @Composable
 fun AlbumTypeChipList(

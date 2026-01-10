@@ -95,26 +95,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.navigation)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.common)
-    implementation(libs.androidx.browser)
-    implementation(libs.androidx.lifecycle.viewmodel)
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
-    implementation(libs.androidx.media3.common)
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
-    implementation(libs.androidx.constraint.layout)
-
-    implementation(libs.accompanist.permissions)
-
-    implementation(libs.landscapist)
-    implementation(libs.landscapist.palette)
-
-    implementation(libs.androidx.paging.compose)
 
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
@@ -126,13 +106,6 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.core)
     implementation(libs.koin.jetpack.compose)
-
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.cio)
-    implementation(libs.ktor.android)
-    implementation(libs.ktor.logging)
-    implementation(libs.ktor.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
 
     implementation(libs.aboutlibraries.compose.core)
     implementation(libs.aboutlibraries.compose.m3)

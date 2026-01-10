@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.androidx.paging.compose)
     implementation(libs.room.runtime)
 
+    api(libs.androidx.icons.extended)
+
     implementation(libs.ktx.serialization.json)
 
     implementation(libs.landscapist)

@@ -59,4 +59,6 @@ dependencies {
     implementation(libs.androidx.constraint.layout)
 
     implementation(libs.bundles.koin)
+
+    implementation(libs.lottie)
 }

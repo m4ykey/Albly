@@ -1,14 +1,3 @@
 <resources>
     <string name="app_name">Albly</string>
-    <string name="discover_new_release">Discover New Release</string>
-
-    <string name="all">All</string>
-
-
-    <string name="album_count">Album Count</string>
-    <string name="random_album">Random album</string>
-    <string name="menu">Menu</string>
-    <string name="empty"> </string>
-
-    <string name="enter_album_name">Enter album name</string>
 </resources>

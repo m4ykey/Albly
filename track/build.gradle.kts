@@ -61,22 +61,14 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.paging.compose)
-    implementation(libs.androidx.paging.common)
+    implementation(libs.bundles.paging)
 
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.cio)
-    implementation(libs.ktor.android)
-    implementation(libs.ktor.logging)
-    implementation(libs.ktor.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.bundles.ktor)
 
     implementation(libs.koin.android)
 
-    implementation(libs.room.runtime)
+    implementation(libs.bundles.room)
     implementation(libs.room.paging)
-    implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
     implementation(libs.ktx.serialization.json)

@@ -12,7 +12,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,12 +36,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -58,16 +59,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -77,20 +77,23 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.mapper.toAlbum
 import com.m4ykey.collection.R
+import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.DrawerItem
-import com.m4ykey.core.ui.AlbumGridCard
+import com.m4ykey.collection.model.IconSource
 import com.m4ykey.collection.presentation.components.AlbumListRow
 import com.m4ykey.collection.presentation.components.AlbumTypeChipList
+import com.m4ykey.collection.presentation.components.EmptyList
 import com.m4ykey.collection.presentation.components.ListOptions
 import com.m4ykey.collection.presentation.components.SearchField
 import com.m4ykey.collection.presentation.components.UrlInputField
-import com.m4ykey.core.model.type.AlbumType
 import com.m4ykey.collection.presentation.type.list.ListSortType
 import com.m4ykey.collection.presentation.type.list.ListType
 import com.m4ykey.collection.presentation.type.list.ListViewType
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.showToast
+import com.m4ykey.core.model.type.AlbumType
+import com.m4ykey.core.ui.AlbumGridCard
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -134,23 +137,25 @@ fun CollectionScreen(
 
     val context = LocalContext.current
 
-    val items = listOf(
-        DrawerItem(
-            title = stringResource(R.string.new_release),
-            icon = R.drawable.ic_new_release,
-            onClick = { navigateToNewRelease() }
-        ),
-        DrawerItem(
-            title = stringResource(R.string.listen_later),
-            icon = R.drawable.ic_clock,
-            onClick = { navigateToListenLater() }
-        ),
-        DrawerItem(
-            title = stringResource(R.string.settings),
-            icon = R.drawable.ic_settings,
-            onClick = { navigateToSettings() }
+    val items = remember {
+        listOf(
+            DrawerItem(
+                titleRes = R.string.new_release,
+                icon = IconSource.Resource(R.drawable.ic_new_release),
+                onClick = { navigateToNewRelease() }
+            ),
+            DrawerItem(
+                titleRes = R.string.listen_later,
+                icon = IconSource.Vector(Icons.Default.AccessTime),
+                onClick = { navigateToListenLater() }
+            ),
+            DrawerItem(
+                titleRes = R.string.settings,
+                icon = IconSource.Vector(Icons.Outlined.Settings),
+                onClick = { navigateToSettings() }
+            )
         )
-    )
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.collectionUiEvent.collectLatest { event ->
@@ -168,7 +173,7 @@ fun CollectionScreen(
                 Spacer(modifier.height(16.dp))
                 items.forEachIndexed { index, item ->
                     NavigationDrawerItem(
-                        label = { Text(text = item.title) },
+                        label = { Text(text = stringResource(item.titleRes)) },
                         selected = index == selectedItemIndex,
                         onClick = {
                             selectedItemIndex = index
@@ -177,10 +182,9 @@ fun CollectionScreen(
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
                         icon = {
-                            Image(
-                                painterResource(item.icon),
-                                contentDescription = item.title,
-                                colorFilter = ColorFilter.tint(color = LocalContentColor.current)
+                            DrawerIcon(
+                                iconSource = item.icon,
+                                contentDescription = stringResource(item.titleRes)
                             )
                         }
                     )
@@ -390,6 +394,11 @@ fun CollectionScreenContent(
                         viewType = viewType
                     )
                 }
+                if (albums.isEmpty()) {
+                    item(key = "empty_list", span = { GridItemSpan(maxLineSpan) }) {
+                        EmptyList()
+                    }
+                }
                 items(
                     items = albums,
                     key = { it.id },
@@ -427,6 +436,11 @@ fun CollectionScreenContent(
                         onListTypeChange = { listType = it },
                         viewType = viewType
                     )
+                }
+                if (albums.isEmpty()) {
+                    item {
+                        EmptyList()
+                    }
                 }
                 item {
                     Spacer(modifier = Modifier.height(10.dp))

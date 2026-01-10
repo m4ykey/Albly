@@ -1,28 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Albly</string>
-    <string name="album">Album</string>
-    <string name="ep">EP</string>
-    <string name="single">Single</string>
-    <string name="compilation">Kompilacja</string>
-    <string name="new_release">Nowe wydania</string>
-    <string name="settings">Ustawienia</string>
-    <string name="discover_new_release">Odkryj Nowe Wydania</string>
-    <string name="latest">Ostatnie</string>
-    <string name="oldest">Najstarsze</string>
-    <string name="alphabetical">Alfabetycznie</string>
-    <string name="cancel">Anuluj</string>
-    <string name="artist">Artysta</string>
-    <string name="all">Wszystko</string>
-    <string name="save">Zapisz</string>
-    <string name="listen_later">Posłuchaj później</string>
-    <string name="tracks">Utwory</string>
-    <string name="sort_by">Sortuj według</string>
-    <string name="menu">Menu</string>
-    <string name="empty"> </string>
-    <string name="please_wait_until_all_tracks_are_loaded">Proszę czekać aż wszystkie utwory się załadują</string>
-    <string name="album_count">Ilość Albumów</string>
-    <string name="random_album">Losowy album</string>
-    <string name="invalid_album_url">Nieprawidłowy adres URL albumu</string>
-    <string name="enter_album_name">Wprowadź nazwę albumu</string>
 </resources>

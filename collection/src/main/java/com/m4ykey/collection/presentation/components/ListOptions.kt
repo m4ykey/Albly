@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.m4ykey.collection.R
+import com.m4ykey.collection.model.IconSource
 import com.m4ykey.collection.presentation.type.list.ListSortType
 import com.m4ykey.collection.presentation.type.list.ListType
 import com.m4ykey.collection.presentation.type.list.ListViewType
@@ -49,7 +49,7 @@ fun ListOptions(
         Spacer(modifier = Modifier.weight(1f))
         TypeChip(
             onClick = onSearchClick,
-            icon = painterResource(R.drawable.ic_search),
+            icon = IconSource.Resource(R.drawable.ic_search),
             label = null
         )
     }

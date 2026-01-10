@@ -11,7 +11,6 @@ composeBom = "2025.12.01"
 serialization = "2.3.0"
 paging = "3.3.6"
 browser = "1.9.0"
-navigation = "2.9.6"
 room = "2.8.4"
 coroutines = "1.10.2"
 ksp = "2.3.4"
@@ -57,7 +56,6 @@ androidx-paging-common = { group = "androidx.paging", name = "paging-common", ve
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
-androidx-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
@@ -69,6 +67,9 @@ androidx-room-testing = { group = "androidx.room", name = "room-testing", versio
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 androidx-lifecycle-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version = "2.10.0" }
+androidx-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
+
+lottie = { module = "com.airbnb.android:lottie-compose", version = "6.7.1" }
 
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
@@ -111,8 +112,6 @@ aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-com
 aboutlibraries-view = { group = "com.mikepenz", name = "aboutlibraries", version.ref = "about-libraries" }
 
 mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

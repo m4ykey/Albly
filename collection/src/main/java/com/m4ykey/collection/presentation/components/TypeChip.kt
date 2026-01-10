@@ -17,9 +17,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
@@ -33,16 +36,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.m4ykey.collection.R
+import com.m4ykey.collection.model.DrawerIcon
+import com.m4ykey.collection.model.IconSource
 import com.m4ykey.collection.presentation.type.list.ListSortType
 import com.m4ykey.collection.presentation.type.list.ListType
 import com.m4ykey.collection.presentation.type.list.ListViewType
@@ -51,7 +53,7 @@ import com.m4ykey.collection.presentation.type.list.label
 @Composable
 fun TypeChip(
     modifier: Modifier = Modifier,
-    icon : Painter,
+    icon : IconSource,
     label : String?,
     onClick : () -> Unit,
     iconSize : Dp = 18.dp
@@ -81,8 +83,8 @@ fun TypeChip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(
-                painter = icon,
+            DrawerIcon(
+                iconSource = icon,
                 contentDescription = label,
                 modifier = modifier.size(iconSize),
                 tint = contentColor
@@ -101,16 +103,6 @@ fun TypeChip(
     }
 }
 
-@Preview
-@Composable
-private fun TypeChipPrev() {
-    TypeChip(
-        onClick = {},
-        label = "Latest Release",
-        icon = painterResource(R.drawable.ic_grid)
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SortTypeChip(
@@ -124,7 +116,7 @@ fun SortTypeChip(
 
     TypeChip(
         onClick = onShowDialog,
-        icon = painterResource(R.drawable.ic_arrow_sort),
+        icon = IconSource.Resource(R.drawable.ic_arrow_sort),
         label = currentType.label(),
         iconSize = 16.dp
     )
@@ -195,8 +187,9 @@ fun ViewTypeChip(
     }
 
     val icon = when (viewType) {
-        ListViewType.GRID -> painterResource(id = R.drawable.ic_grid)
-        ListViewType.LIST -> painterResource(id = R.drawable.ic_list)
+
+        ListViewType.GRID -> IconSource.Vector(Icons.Default.GridView)
+        ListViewType.LIST -> IconSource.Vector(Icons.AutoMirrored.Filled.ViewList)
     }
 
     TypeChip(
@@ -218,8 +211,8 @@ fun ListTypeChip(
     }
 
     val icon = when (currentType) {
-        ListType.ALBUM -> painterResource(id = R.drawable.ic_album)
-        ListType.ARTIST -> painterResource(id = R.drawable.ic_artist)
+        ListType.ALBUM -> IconSource.Vector(Icons.Outlined.Album)
+        ListType.ARTIST -> IconSource.Resource(resId = R.drawable.ic_artist)
     }
 
     TypeChip(

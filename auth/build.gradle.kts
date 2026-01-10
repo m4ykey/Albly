@@ -60,12 +60,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.jetpack.compose)
 
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.cio)
-    implementation(libs.ktor.android)
-    implementation(libs.ktor.logging)
-    implementation(libs.ktor.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.bundles.ktor)
     implementation(libs.ktor.auth)
 
     implementation(libs.kotlinx.datetime)

@@ -16,9 +16,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AlblyTheme {
-                Scaffold { innerPadding ->
-                    NavigationRoot(modifier = Modifier.padding(innerPadding))
-                }
+                NavigationRoot()
             }
         }
     }

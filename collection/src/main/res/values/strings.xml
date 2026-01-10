@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="menu">Menu</string>
+    <string name="menu" translatable="false">Menu</string>
     <string name="enter_url">Enter URL</string>
     <string name="search">Search</string>
     <string name="collection">Collection</string>
@@ -12,11 +12,12 @@
     <string name="latest">Latest</string>
     <string name="oldest">Oldest</string>
     <string name="alphabetical">Alphabetical</string>
-    <string name="empty">" "</string>
+    <string name="empty" translatable="false">" "</string>
     <string name="sort_by">Sort by</string>
     <string name="clear">Clear</string>
-    <string name="album">Album</string>
-    <string name="ep">EP</string>
-    <string name="single">Single</string>
+    <string name="album" translatable="false">Album</string>
+    <string name="ep" translatable="false">EP</string>
+    <string name="single" translatable="false">Single</string>
     <string name="compilation">Compilation</string>
+    <string name="your_collection_is_empty">Your collection is empty</string>
 </resources>
