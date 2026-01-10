@@ -68,6 +68,7 @@ androidx-constraint-layout = { group = "androidx.constraintlayout", name = "cons
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
+androidx-lifecycle-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version = "2.10.0" }
 
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 

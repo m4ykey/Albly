@@ -1,0 +1,131 @@
+package com.m4ykey.navigation
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
+import com.m4ykey.album.presentation.detail.AlbumDetailScreen
+import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
+import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
+import com.m4ykey.collection.presentation.CollectionScreen
+import com.m4ykey.search.presentation.SearchScreen
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+
+@Composable
+fun NavigationRoot(
+    modifier : Modifier = Modifier
+) {
+    val rootBackStack = rememberNavBackStack(
+        configuration = SavedStateConfiguration {
+            serializersModule = SerializersModule {
+                polymorphic(NavKey::class) {
+                    subclass(Route.Collection::class, Route.Collection.serializer())
+                    subclass(Route.Search::class, Route.Search.serializer())
+                }
+            }
+        },
+        Route.Collection
+    )
+
+    NavDisplay(
+        modifier = modifier,
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator()
+        ),
+        backStack = rootBackStack,
+        entryProvider = entryProvider {
+            entry<Route.Collection> {
+                CollectionScreen(
+                    navigateToSettings = {
+                        rootBackStack.add(Route.Search)
+                    },
+                    navigateToNewRelease = {
+                        rootBackStack.add(Route.NewRelease)
+                    },
+                    navigateToListenLater = {
+                        rootBackStack.add(Route.ListenLater)
+                    },
+                    onAlbumClick = {
+                        rootBackStack.add(Route.AlbumDetail(it))
+                    },
+                    onSearch = {
+                        rootBackStack.add(Route.Search)
+                    },
+                    onLinkClick = {
+                        rootBackStack.add(Route.AlbumDetail(it))
+                    }
+                )
+            }
+            entry<Route.Search> {
+                SearchScreen(
+                    onAlbumClick = {
+                        rootBackStack.add(Route.AlbumDetail(it))
+                    },
+                    onBack = {
+                        if (rootBackStack.isNotEmpty()) {
+                            rootBackStack.removeAt(rootBackStack.lastIndex)
+                        }
+                    }
+                )
+            }
+            entry<Route.Settings> {
+                Box(modifier = Modifier
+                    .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                }
+            }
+            entry<Route.ListenLater> {
+                ListenLaterScreen(
+                    onBack = {
+                        if (rootBackStack.isNotEmpty()) {
+                            rootBackStack.removeAt(rootBackStack.lastIndex)
+                        }
+                    },
+                    onAlbumClick = {
+                        rootBackStack.add(Route.AlbumDetail(it))
+                    },
+                    onSearchClick = {
+                        rootBackStack.add(Route.Search)
+                    }
+                )
+            }
+            entry<Route.AlbumDetail> { key ->
+                AlbumDetailScreen(
+                    onBack = {
+                        if (rootBackStack.isNotEmpty()) {
+                            rootBackStack.removeAt(rootBackStack.lastIndex)
+                        }
+                    },
+                    onTrackClick = { _, _ ->
+
+                    },
+                    id = key.albumId
+                )
+            }
+            entry<Route.NewRelease> {
+                AlbumNewReleaseScreen(
+                    onBack = {
+                        if (rootBackStack.isNotEmpty()) {
+                            rootBackStack.removeAt(rootBackStack.lastIndex)
+                        }
+                    },
+                    onAlbumClick = {
+                        rootBackStack.add(Route.AlbumDetail(it))
+                    }
+                )
+            }
+        }
+    )
+}

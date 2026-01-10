@@ -102,8 +102,10 @@ fun CollectionScreen(
     onSearch : () -> Unit,
     viewModel : CollectionViewModel = koinViewModel(),
     onLinkClick : (String) -> Unit,
-    onNavigateTo : (String) -> Unit,
-    onAlbumClick : (String) -> Unit
+    onAlbumClick : (String) -> Unit,
+    navigateToNewRelease : () -> Unit,
+    navigateToListenLater : () -> Unit,
+    navigateToSettings : () -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -135,15 +137,18 @@ fun CollectionScreen(
     val items = listOf(
         DrawerItem(
             title = stringResource(R.string.new_release),
-            icon = R.drawable.ic_new_release
+            icon = R.drawable.ic_new_release,
+            onClick = { navigateToNewRelease() }
         ),
         DrawerItem(
             title = stringResource(R.string.listen_later),
-            icon = R.drawable.ic_clock
+            icon = R.drawable.ic_clock,
+            onClick = { navigateToListenLater() }
         ),
         DrawerItem(
             title = stringResource(R.string.settings),
-            icon = R.drawable.ic_settings
+            icon = R.drawable.ic_settings,
+            onClick = { navigateToSettings() }
         )
     )
 
@@ -167,8 +172,8 @@ fun CollectionScreen(
                         selected = index == selectedItemIndex,
                         onClick = {
                             selectedItemIndex = index
-                            onNavigateTo(item.route.toString())
                             scope.launch { drawerState.close() }
+                            item.onClick()
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
                         icon = {
