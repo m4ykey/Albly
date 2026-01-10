@@ -1,8 +1,8 @@
 package com.m4ykey.search.repository
 
-import com.m4ykey.albly.search.data.network.service.RemoteSearchService
-import com.m4ykey.albly.search.data.repository.SearchRepositoryImpl
-import com.m4ykey.albly.search.domain.repository.SearchRepository
+import com.m4ykey.search.data.network.service.RemoteSearchService
+import com.m4ykey.search.data.repository.SearchRepositoryImpl
+import com.m4ykey.search.domain.repository.SearchRepository
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
