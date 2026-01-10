@@ -130,6 +130,8 @@ fun SearchScreen(
 
     val speechPrompt = stringResource(R.string.enter_album_name)
 
+    val errorMessage = stringResource(R.string.speech_recognition_not_supported)
+
     val startSpeechRecognition = {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.apply {
@@ -140,7 +142,7 @@ fun SearchScreen(
         try {
             launcher.launch(intent)
         } catch (e : Exception) {
-            Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -188,9 +190,7 @@ fun SearchScreen(
                 )
                 ActionIconButton(
                     tint = isDarkTheme,
-                    onClick = {
-                        handleMick()
-                    },
+                    onClick = { handleMick() },
                     textRes = R.string.mic,
                     iconRes = R.drawable.ic_mic
                 )

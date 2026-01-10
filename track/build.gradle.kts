@@ -61,8 +61,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(libs.bundles.paging)
-
     implementation(libs.bundles.ktor)
 
     implementation(libs.koin.android)

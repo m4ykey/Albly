@@ -58,7 +58,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.bundles.room)
-    implementation(libs.bundles.paging)
     ksp(libs.room.compiler)
 
     implementation(libs.ktx.serialization.json)

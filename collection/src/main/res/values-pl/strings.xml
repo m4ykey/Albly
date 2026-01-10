@@ -13,6 +13,6 @@
     <string name="alphabetical">Alfabetycznie</string>
     <string name="sort_by">Sortuj według</string>
     <string name="clear">Wyczyść</string>
-    <string name="compilation">Compilation</string>
+    <string name="compilation">Kompilacja</string>
     <string name="your_collection_is_empty">Twoja kolekcja jest pusta</string>
 </resources>
