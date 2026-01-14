@@ -3,6 +3,7 @@
 package com.m4ykey.core.ext
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -30,25 +31,17 @@ fun LoadImage(
         modifier = modifier
     ) {
         CoilImage(
-            component = rememberImageComponent {
-                CrossfadePlugin(
-                    duration = 500
-                )
+            imageModel = {
+                imageUrl
             },
-            loading = {
-                Box(modifier = Modifier.matchParentSize()) {
-                    ContainedLoadingIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(32.dp)
-                    )
-                }
-            },
-            imageModel = { imageUrl },
             imageOptions = ImageOptions(
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Crop
-            )
+            ),
+            component = rememberImageComponent {
+                CrossfadePlugin(duration = 500)
+            },
+            modifier = Modifier.fillMaxSize()
         )
     }
 }

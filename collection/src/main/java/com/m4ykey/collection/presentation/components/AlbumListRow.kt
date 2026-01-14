@@ -29,6 +29,7 @@ fun AlbumListRow(
     onAlbumClick : (String) -> Unit
 ) {
     val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
+    val smallestImageUrl = item.images.minByOrNull { it.width * it.height }?.url
     val artists = item.artists.joinToString(", ") { it.name }
 
     Row(

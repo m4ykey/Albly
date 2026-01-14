@@ -4,16 +4,19 @@ package com.m4ykey.search.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.m4ykey.search.domain.use_case.SearchUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -40,12 +43,20 @@ class SearchViewModel(
     val searchResults = combine(
         _activeSearchQuery,
         _searchType
-    ) { query, typeState -> query to typeState.type }.flatMapLatest { (query, type) ->
-        if (query.isBlank()) emptyFlow() else useCase(
-            q = query,
-            type = type.name.lowercase()
-        ).cachedIn(viewModelScope)
+    ) { query, typeState -> query to typeState.type }
+        .flatMapLatest { (query, type) ->
+            if (query.isBlank()) {
+                emptyFlow()
+            } else {
+                useCase(q = query, type = type.name.lowercase())
+            }
     }
+        .cachedIn(viewModelScope)
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = PagingData.empty(),
+            started = SharingStarted.Lazily
+        )
 
 
     fun onAction(action: SearchTypeAction) {

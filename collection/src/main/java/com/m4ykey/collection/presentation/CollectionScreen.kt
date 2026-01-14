@@ -176,8 +176,10 @@ fun CollectionScreen(
                         label = { Text(text = stringResource(item.titleRes)) },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            selectedItemIndex = index
-                            scope.launch { drawerState.close() }
+                            scope.launch {
+                                drawerState.close()
+                                selectedItemIndex = -1
+                            }
                             item.onClick()
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),

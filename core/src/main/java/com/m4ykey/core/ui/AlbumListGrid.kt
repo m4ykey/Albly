@@ -18,6 +18,7 @@ fun AlbumGridCard(
     item : Album,
     onAlbumClick : (String) -> Unit
 ) {
+    val smallestImageUrl = item.images.minByOrNull { it.width * it.height }?.url
     val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
 
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -25,7 +26,9 @@ fun AlbumGridCard(
     Column(
         modifier = Modifier.clickable { onAlbumClick(item.id) }
     ) {
-        LoadImage(imageUrl = largestImageUrl.orEmpty())
+        LoadImage(
+            imageUrl = largestImageUrl.orEmpty()
+        )
         Text(
             text = item.name,
             textAlign = TextAlign.Start,
