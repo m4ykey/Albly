@@ -17,6 +17,7 @@ import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
 import com.m4ykey.collection.presentation.CollectionScreen
 import com.m4ykey.search.presentation.SearchScreen
+import com.m4ykey.settings.SettingsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
@@ -47,7 +48,7 @@ fun NavigationRoot(
             entry<Route.Collection> {
                 CollectionScreen(
                     navigateToSettings = {
-                        rootBackStack.add(Route.Search)
+                        rootBackStack.add(Route.Settings)
                     },
                     navigateToNewRelease = {
                         rootBackStack.add(Route.NewRelease)
@@ -79,12 +80,13 @@ fun NavigationRoot(
                 )
             }
             entry<Route.Settings> {
-                Box(modifier = Modifier
-                    .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                }
+                SettingsScreen(
+                    onBack = {
+                        if (rootBackStack.isNotEmpty()) {
+                            rootBackStack.removeAt(rootBackStack.lastIndex)
+                        }
+                    }
+                )
             }
             entry<Route.ListenLater> {
                 ListenLaterScreen(

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Ustawienia</string>
+    <string name="theme">Motyw</string>
+    <string name="dark_mode">Ciemny</string>
+    <string name="light_mode">Jasny</string>
+    <string name="compatible_with_device">Zgodnie z motywem urządzenia</string>
+    <string name="open_source">Kod Źródłowy</string>
+    <string name="open_source_message">Odwiedź projekt na Githubie</string>
+</resources>

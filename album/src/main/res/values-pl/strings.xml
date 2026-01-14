@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="artist">Artist</string>
+    <string name="artist">Artysta</string>
+    <string name="save">Zapisz</string>
+    <string name="listen_later">Posłuchaj później</string>
+    <string name="please_wait_until_all_tracks_are_loaded">Proszę poczekać, dopóki wszystkie utwory się nie wczytają</string>
+    <string name="tracks">Utwory</string>
+    <string name="back">Wróć</string>
+    <string name="album_count">Ilość Albumów:</string>
+    <string name="random_album">Losowy Album</string>
+    <string name="discover_new_release">Odkryj Nowe Wydania</string>
 </resources>

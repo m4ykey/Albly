@@ -60,5 +60,7 @@ dependencies {
 
     implementation(libs.bundles.koin)
 
+    implementation(libs.androidx.datastore.preferences)
+
     implementation(libs.lottie)
 }
