@@ -181,7 +181,7 @@ fun AlbumDetailContent(
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
     val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
 
-    val albumType = item.type.replaceFirstChar { it.uppercase() }
+    val albumType = item.albumType.replaceFirstChar { it.uppercase() }
 
     val albumInfo = "$albumType • ${formatReleaseDate(item.releaseDate)} • ${item.totalTracks} " +
             stringResource(R.string.tracks)
