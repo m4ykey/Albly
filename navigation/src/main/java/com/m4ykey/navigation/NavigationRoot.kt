@@ -30,7 +30,11 @@ fun NavigationRoot(
             serializersModule = SerializersModule {
                 polymorphic(NavKey::class) {
                     subclass(Route.Collection::class, Route.Collection.serializer())
+                    subclass(Route.NewRelease::class, Route.NewRelease.serializer())
                     subclass(Route.Search::class, Route.Search.serializer())
+                    subclass(Route.Settings::class, Route.Settings.serializer())
+                    subclass(Route.AlbumDetail::class, Route.AlbumDetail.serializer())
+                    subclass(Route.ListenLater::class, Route.ListenLater.serializer())
                 }
             }
         },
