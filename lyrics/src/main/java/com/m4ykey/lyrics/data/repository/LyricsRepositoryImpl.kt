@@ -2,8 +2,8 @@ package com.m4ykey.lyrics.data.repository
 
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.lyrics.data.mapper.toDomain
-import com.m4ykey.lyrics.domain.model.LyricsItem
 import com.m4ykey.lyrics.data.network.service.RemoteLyricsService
+import com.m4ykey.lyrics.domain.model.LyricsItem
 import com.m4ykey.lyrics.domain.repository.LyricsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

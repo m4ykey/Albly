@@ -9,6 +9,7 @@ import com.m4ykey.lyrics.di.lyricsModule
 import com.m4ykey.search.di.searchModule
 import com.m4ykey.track.di.trackModule
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
 val modules = listOf(
@@ -26,6 +27,7 @@ class AlblyApp : Application() {
         super.onCreate()
 
         startKoin {
+            androidLogger()
             androidContext(this@AlblyApp)
             modules(modules)
         }

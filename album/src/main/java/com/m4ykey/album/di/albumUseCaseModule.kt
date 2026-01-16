@@ -9,28 +9,17 @@ import com.m4ykey.album.domain.use_case.GetSavedAlbumsUseCase
 import com.m4ykey.album.domain.use_case.NewReleaseUseCase
 import com.m4ykey.album.domain.use_case.ToggleAlbumSavedUseCase
 import com.m4ykey.album.domain.use_case.ToggleListenLaterSavedUseCase
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
 val albumUseCaseModule = module {
-    single { AlbumUseCase(get()) }
-    single { NewReleaseUseCase(get()) }
-    single { GetAlbumStateUseCase(get()) }
-    single { GetListenLaterAlbumsUseCase(get()) }
-    single { GetRandomAlbumUseCase(get()) }
-    single { GetSavedAlbumsUseCase(get()) }
-    single {
-        ToggleAlbumSavedUseCase(
-            repository = get(),
-            saveTracksUseCase = get(),
-            deleteTracksUseCase = get()
-        )
-    }
-    single {
-        ToggleListenLaterSavedUseCase(
-            repository = get(),
-            saveTracksUseCase = get(),
-            deleteTracksUseCase = get()
-        )
-    }
-    single { GetLocalAlbumUseCase(get()) }
+    factoryOf(::AlbumUseCase)
+    factoryOf(::NewReleaseUseCase)
+    factoryOf(::GetAlbumStateUseCase)
+    factoryOf(::GetListenLaterAlbumsUseCase)
+    factoryOf(::GetRandomAlbumUseCase)
+    factoryOf(::GetSavedAlbumsUseCase)
+    factoryOf(::ToggleAlbumSavedUseCase)
+    factoryOf(::ToggleListenLaterSavedUseCase)
+    factoryOf(::GetLocalAlbumUseCase)
 }

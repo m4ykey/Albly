@@ -10,7 +10,7 @@ import com.m4ykey.auth.service.RemoteAuthService
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
-import kotlin.time.ExperimentalTime
+import kotlin.time.Clock
 
 class SpotifyTokenProvider(
     private val service : RemoteAuthService,
@@ -37,7 +37,6 @@ class SpotifyTokenProvider(
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     override suspend fun fetchAndSaveNewToken() : String {
         return try {
             val newAccessToken = fetchAccessToken(
@@ -48,7 +47,7 @@ class SpotifyTokenProvider(
 
             val expiresInHours = 1
 
-            val expirationTimeInstant = kotlin.time.Clock.System.now().plus(expiresInHours,
+            val expirationTimeInstant = Clock.System.now().plus(expiresInHours,
                 DateTimeUnit.HOUR)
 
             val newExpireTime = expirationTimeInstant.toEpochMilliseconds()

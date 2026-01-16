@@ -10,8 +10,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.core.ext.LoadImage
+import com.m4ykey.core.model.domain.AlbumItem
 
 @Composable
 fun AlbumCard(

@@ -69,7 +69,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -83,7 +82,6 @@ import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ui.ArtistCard
 import com.m4ykey.search.R
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
