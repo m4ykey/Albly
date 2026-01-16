@@ -2,11 +2,13 @@
 
 package com.m4ykey.search.presentation
 
+import androidx.compose.ui.text.style.TextDecoration.Companion.combine
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.m4ykey.search.domain.use_case.SearchUseCase
+import com.m4ykey.search.domain.use_case.SearchAlbumUseCase
+import com.m4ykey.search.domain.use_case.SearchArtistUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +23,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-    private val useCase: SearchUseCase
+    private val albumUseCase: SearchAlbumUseCase,
+    private val artistUseCase : SearchArtistUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -40,7 +43,7 @@ class SearchViewModel(
         _searchType.update { it.copy(type = type) }
     }
 
-    val searchResults = combine(
+    val searchArtistResults = combine(
         _activeSearchQuery,
         _searchType
     ) { query, typeState -> query to typeState.type }
@@ -48,7 +51,25 @@ class SearchViewModel(
             if (query.isBlank()) {
                 emptyFlow()
             } else {
-                useCase(q = query, type = type.name.lowercase())
+                artistUseCase(q = query, type = type.name.lowercase())
+            }
+    }
+        .cachedIn(viewModelScope)
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = PagingData.empty(),
+            started = SharingStarted.Lazily
+        )
+
+    val searchAlbumResults = combine(
+        _activeSearchQuery,
+        _searchType
+    ) { query, typeState -> query to typeState.type }
+        .flatMapLatest { (query, type) ->
+            if (query.isBlank()) {
+                emptyFlow()
+            } else {
+                albumUseCase(q = query, type = type.name.lowercase())
             }
     }
         .cachedIn(viewModelScope)

@@ -2,11 +2,15 @@ package com.m4ykey.core.model.mapper
 
 import com.m4ykey.core.model.domain.AlbumArtist
 import com.m4ykey.core.model.domain.AlbumItem
+import com.m4ykey.core.model.domain.ArtistItem
 import com.m4ykey.core.model.domain.ExternalUrls
+import com.m4ykey.core.model.domain.Followers
 import com.m4ykey.core.model.domain.Image
 import com.m4ykey.core.model.dto.AlbumArtistDto
 import com.m4ykey.core.model.dto.AlbumItemDto
+import com.m4ykey.core.model.dto.ArtistItemDto
 import com.m4ykey.core.model.dto.ExternalUrlsDto
+import com.m4ykey.core.model.dto.FollowersDto
 import com.m4ykey.core.model.dto.ImageDto
 import com.m4ykey.core.model.local.ArtistEntity
 import com.m4ykey.core.model.local.ExternalUrlsEntity
@@ -59,4 +63,17 @@ fun ImageDto.toDomain() = Image(
     url = url.orEmpty(),
     width = width ?: 0,
     height = height ?: 0
+)
+
+fun FollowersDto.toDomain() = Followers(
+    total = total ?: 0
+)
+
+fun ArtistItemDto.toDomain() = ArtistItem(
+    id = id.orEmpty(),
+    name = name.orEmpty(),
+    externalUrls = external_urls?.toDomain() ?: ExternalUrls.EMPTY,
+    images = images?.map { it.toDomain() } ?: emptyList(),
+    popularity = popularity ?: 0,
+    followers = followers?.toDomain() ?: Followers.EMPTY
 )

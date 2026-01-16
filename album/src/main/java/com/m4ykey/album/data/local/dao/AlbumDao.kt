@@ -49,7 +49,11 @@ interface AlbumDao {
         SELECT album_table.* FROM album_table
         INNER JOIN is_album_saved_table ON album_table.id = is_album_saved_table.id
         WHERE is_album_saved_table.isAlbumSaved = 1
-        AND (album_table.name LIKE '%' || :query || '%')
+        AND (
+            album_table.name LIKE '%' || :query || '%'
+            OR
+            album_table.artists LIKE '%' || :query || '%'
+        )
         AND (:type IS NULL OR album_table.album_type = :type)
         ORDER BY save_time DESC
     """)

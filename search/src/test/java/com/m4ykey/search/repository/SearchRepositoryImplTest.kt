@@ -23,7 +23,7 @@ class SearchRepositoryImplTest {
     fun searchShouldReturnPagingDataFlow() = runTest {
         val query = "Daft Punk"
 
-        val result = repository.search(
+        val result = repository.searchAlbum(
             q = query,
             offset = 0,
             limit = 20,

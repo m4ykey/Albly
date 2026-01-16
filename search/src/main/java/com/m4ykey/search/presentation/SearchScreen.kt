@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
@@ -75,9 +76,12 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.m4ykey.core.chip.ChipItem
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.CenteredContent
+import com.m4ykey.core.model.domain.AlbumItem
+import com.m4ykey.core.model.domain.ArtistItem
 import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard
+import com.m4ykey.core.ui.ArtistCard
 import com.m4ykey.search.R
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -93,7 +97,8 @@ fun SearchScreen(
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
-    val searchItems = viewModel.searchResults.collectAsLazyPagingItems()
+    val albumSearchItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
+    val artistSearchItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
 
     val targetWeight = if (searchQuery.isEmpty()) 1f else 0.8f
 
@@ -113,12 +118,16 @@ fun SearchScreen(
     val context = LocalContext.current
 
     LaunchedEffect(viewModel) {
-        viewModel.searchUiEvent.collectLatest { event ->
+        viewModel.searchUiEvent.collect { event ->
             when (event) {
                 is SearchUiEvent.ChangeType -> viewModel.updateType(event.type)
                 is SearchUiEvent.OnAlbumClick -> onAlbumClick(event.id)
             }
         }
+    }
+
+    LaunchedEffect(type) {
+        state.scrollToItem(0)
     }
 
     val permissionState = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
@@ -230,9 +239,15 @@ fun SearchScreen(
                     selectedChip = type
                 )
                 Spacer(modifier = Modifier.height(8.dp))
+
+                val currentSelectedItem = when (type) {
+                    SearchType.ARTIST -> artistSearchItems
+                    else -> albumSearchItems
+                }
+
                 BasePagingList(
                     isActiveSearch = activeSearchQuery.isNotBlank(),
-                    items = searchItems,
+                    items = currentSelectedItem,
                     listContent = { items ->
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(3),
@@ -246,36 +261,46 @@ fun SearchScreen(
                         ) {
                             items(
                                 count = items.itemCount,
-                                contentType = { "album_item" },
-                                key = items.itemKey { item -> item.id }
+                                contentType = { type.name },
+                                key = { index ->
+                                    when (val item = items.peek(index)) {
+                                        is ArtistItem -> "artist_${item.id}"
+                                        is AlbumItem -> "album_${item.id}"
+                                        else -> "placeholder_$index"
+                                    }
+                                }
                             ) { index ->
-                                items[index]?.let { item ->
-                                    AlbumCard(
-                                        item = item,
-                                        onAlbumClick = { onAction(SearchTypeAction.OnAlbumClick(item.id)) }
-                                    )
+                                val item = items[index]
+
+                                when (type) {
+                                    SearchType.ARTIST -> {
+                                        (item as? ArtistItem)?.let { artist ->
+                                            ArtistCard(
+                                                item = artist,
+                                                onArtistClick = {}
+                                            )
+                                        }
+                                    }
+                                    else -> {
+                                        (item as? AlbumItem)?.let { album ->
+                                            AlbumCard(
+                                                item = album,
+                                                onAlbumClick = { onAction(SearchTypeAction.OnAlbumClick(item.id)) }
+                                            )
+                                        }
+                                    }
                                 }
                             }
 
-                            item {
-                                when (val appendState = items.loadState.append) {
-                                    is LoadState.Loading -> {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            ContainedLoadingIndicator()
-                                        }
-                                    }
-                                    is LoadState.Error -> {
-                                        ErrorItem(
-                                            onRetry = { items.retry() },
-                                            message = appendState.error.message ?: "Loading error"
-                                        )
-                                    }
-                                    else -> {}
+                            item (span = { GridItemSpan(maxLineSpan) }) {
+                                val appendState = items.loadState.append
+                                if (appendState is LoadState.Loading) {
+                                    ContainedLoadingIndicator()
+                                } else if (appendState is LoadState.Error) {
+                                    ErrorItem(
+                                        onRetry = { items.retry() },
+                                        message = appendState.error.message ?: "Loading error"
+                                    )
                                 }
                             }
                         }

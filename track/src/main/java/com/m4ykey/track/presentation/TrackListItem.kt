@@ -70,6 +70,7 @@ fun TrackListItem(
                 }
             }
             Text(
+                fontSize = 13.sp,
                 text = trackDuration,
                 color = textColor,
                 modifier = Modifier

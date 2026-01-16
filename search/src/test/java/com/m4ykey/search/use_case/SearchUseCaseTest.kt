@@ -3,7 +3,7 @@ package com.m4ykey.search.use_case
 import androidx.paging.PagingData
 import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.search.domain.repository.SearchRepository
-import com.m4ykey.search.domain.use_case.SearchUseCase
+import com.m4ykey.search.domain.use_case.SearchAlbumUseCase
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -15,7 +15,7 @@ import org.junit.Test
 class SearchUseCaseTest {
 
     private val repository = mockk<SearchRepository>()
-    private val useCase = SearchUseCase(repository)
+    private val useCase = SearchAlbumUseCase(repository)
 
     @Test
     fun invokeShouldCallRepositorySearchWithCorrectParameters() = runTest {
@@ -27,7 +27,7 @@ class SearchUseCaseTest {
         val expectedFlow = flowOf(PagingData.empty<AlbumItem>())
 
         every {
-            repository.search(q, offset, limit, type)
+            repository.searchAlbum(q, offset, limit, type)
         } returns expectedFlow
 
         val result = useCase(limit, offset, q, type)
@@ -35,7 +35,7 @@ class SearchUseCaseTest {
         assertEquals(expectedFlow, result)
 
         verify(exactly = 1) {
-            repository.search(q, offset, limit, type)
+            repository.searchAlbum(q, offset, limit, type)
         }
     }
 
