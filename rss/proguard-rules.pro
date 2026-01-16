@@ -19,16 +19,3 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
--keepclassmembers class **.BuildConfig {
-    public static final java.lang.String *;
-}
-
--assumenosideeffects class android.util.Log {
-    public static int d(...);
-    public static int v(...);
-}
-
--assumenosideeffects class java.io.PrintStream {
-    public void println(java.lang.String);
-}

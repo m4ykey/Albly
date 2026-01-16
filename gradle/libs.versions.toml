@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.2"
+agp = "9.0.0"
 kotlin = "2.3.0"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -111,7 +111,6 @@ ktx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-seri
 aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "about-libraries" }
 aboutlibraries-compose-core = { group = "com.mikepenz", name = "aboutlibraries-compose-core", version.ref = "about-libraries" }
 aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "about-libraries" }
-aboutlibraries-view = { group = "com.mikepenz", name = "aboutlibraries", version.ref = "about-libraries" }
 
 mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompatVersion" }
@@ -134,3 +133,4 @@ paging = ["androidx-paging-common", "androidx-paging-runtime", "androidx-paging-
 ktor = ["ktor-android", "ktor-cio", "ktor-content-negotiation", "ktor-serialization-kotlinx-json", "ktor-core", "ktor-logging"]
 koin = ["koin-android", "koin-jetpack-compose", "koin-core"]
 room = ["room-ktx", "room-runtime"]
+aboutlibraries = ["aboutlibraries-core", "aboutlibraries-compose-core", "aboutlibraries-compose-m3"]

@@ -1,5 +1,7 @@
+import com.mikepenz.aboutlibraries.plugin.StrictMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -11,6 +13,7 @@ plugins {
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.serialization)
     alias(libs.plugins.stability.analyzer)
+    alias(libs.plugins.about.libraries)
 }
 
 val versionProperties = Properties().apply {
@@ -21,10 +24,26 @@ val versionMajor = versionProperties["versionMajor"].toString().toInt()
 val versionMinor = versionProperties["versionMinor"].toString().toInt()
 val versionPatch = versionProperties["versionPatch"].toString().toInt()
 
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.m4ykey.albly"
     compileSdk {
         version = release(36)
+    }
+
+    signingConfigs {
+        create("release") {
+            val path = keystoreProperties["storeFile"] as String?
+            if (path != null) storeFile = File(path)
+            storePassword = keystoreProperties["storePassword"] as String?
+            keyAlias = keystoreProperties["keyAlias"] as String?
+            keyPassword = keystoreProperties["keyPassword"] as String?
+        }
     }
 
     defaultConfig {
@@ -51,7 +70,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -86,6 +105,7 @@ dependencies {
     implementation(project(":search"))
     implementation(project(":album"))
     implementation(project(":collection"))
+    implementation(project(":settings"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -107,10 +127,7 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.jetpack.compose)
 
-    implementation(libs.aboutlibraries.compose.core)
-    implementation(libs.aboutlibraries.compose.m3)
-    implementation(libs.aboutlibraries.core)
-    implementation(libs.aboutlibraries.view)
+    implementation(libs.bundles.aboutlibraries)
 
     testImplementation(libs.junit)
 
@@ -121,4 +138,24 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+aboutLibraries {
+    offlineMode = false
+    export {
+        val path = "${rootProject.projectDir}/src/main/raw/aboutlibraries.json"
+        outputFile = file(path)
+        prettyPrint = true
+        excludeFields.addAll("developers", "funding")
+    }
+    license {
+        strictMode = StrictMode.WARN
+
+        allowedLicenses.addAll("Apache-2.0", "MIT", "BSD-3-Clause", "LGPL-2.1")
+
+        allowedLicensesMap = mapOf(
+            "asdkl" to listOf("androidx.jetpack.library"),
+            "NOASSERTION" to listOf("org.jetbrains.kotlinx"),
+        )
+    }
 }
