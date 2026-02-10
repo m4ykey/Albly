@@ -13,9 +13,6 @@ val localProps = Properties().apply {
     load(rootProject.file("local.properties").inputStream())
 }
 
-val spotifyClientId : String = localProps.getProperty("SPOTIFY_CLIENT_ID")
-val spotifyClientSecret : String = localProps.getProperty("SPOTIFY_CLIENT_SECRET")
-
 android {
     namespace = "com.m4ykey.auth"
     compileSdk {
@@ -32,9 +29,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        buildConfigField("String", "SPOTIFY_CLIENT_ID" , "\"${spotifyClientId}\"")
-        buildConfigField("String", "SPOTIFY_CLIENT_SECRET" , "\"${spotifyClientSecret}\"")
     }
 
     compileOptions {
