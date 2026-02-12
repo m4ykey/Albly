@@ -10,9 +10,7 @@ import com.m4ykey.album.data.local.model.IsListenLaterSaved
 import com.m4ykey.album.data.mapper.toDomain
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.paging.NewReleasePaging
-import com.m4ykey.album.domain.model.AlbumDetail
 import com.m4ykey.album.domain.repository.AlbumRepository
-import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.core.model.type.AlbumType
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig

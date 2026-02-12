@@ -1,7 +1,6 @@
 package com.m4ykey.search.domain.use_case
 
 import androidx.paging.PagingData
-import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.search.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
 

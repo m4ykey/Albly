@@ -1,7 +1,5 @@
 package com.m4ykey.album.presentation.detail
 
-import com.m4ykey.album.domain.model.AlbumDetail
-
 sealed interface DetailUiState {
     data object Loading : DetailUiState
 

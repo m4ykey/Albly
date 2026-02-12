@@ -1,10 +1,6 @@
 package com.m4ykey.track.paging
 
 import androidx.paging.PagingSource
-import com.m4ykey.core.model.dto.AlbumArtistDto
-import com.m4ykey.core.model.dto.ExternalUrlsDto
-import com.m4ykey.track.data.network.dto.AlbumTracksDto
-import com.m4ykey.track.data.network.dto.TrackItemDto
 import com.m4ykey.track.data.network.service.RemoteTrackService
 import com.m4ykey.track.data.paging.TrackPagingSource
 import io.mockk.coEvery

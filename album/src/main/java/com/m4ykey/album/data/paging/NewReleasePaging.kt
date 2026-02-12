@@ -1,7 +1,6 @@
 package com.m4ykey.album.data.paging
 
 import com.m4ykey.album.data.network.service.RemoteAlbumService
-import com.m4ykey.core.model.domain.AlbumItem
 import com.m4ykey.core.model.mapper.toDomain
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.BasePagingSource

@@ -1,7 +1,5 @@
 package com.m4ykey.search.data.network.service
 
-import com.m4ykey.core.model.dto.AlbumListDto
-import com.m4ykey.core.model.dto.ArtistListDto
 import java.util.Locale
 
 interface RemoteSearchService {

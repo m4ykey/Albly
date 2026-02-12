@@ -2,8 +2,6 @@ package com.m4ykey.search.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.m4ykey.core.model.domain.AlbumItem
-import com.m4ykey.core.model.domain.ArtistItem
 import com.m4ykey.core.paging.pagingConfig
 import com.m4ykey.search.data.network.service.RemoteSearchService
 import com.m4ykey.search.data.paging.SearchAlbumPagingSource

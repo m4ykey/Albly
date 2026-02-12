@@ -1,7 +1,5 @@
 package com.m4ykey.track.service
 
-import com.m4ykey.track.data.network.dto.AlbumTracksDto
-import com.m4ykey.track.data.network.dto.TrackItemDto
 import com.m4ykey.track.data.network.service.RemoteTrackService
 import io.mockk.coEvery
 import io.mockk.coVerify

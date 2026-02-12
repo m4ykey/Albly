@@ -3,13 +3,6 @@ package com.m4ykey.album.data.mapper
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.CopyrightEntity
 import com.m4ykey.album.data.local.model.ImageEntity
-import com.m4ykey.album.data.network.dto.AlbumDetailDto
-import com.m4ykey.album.data.network.dto.CopyrightDto
-import com.m4ykey.album.domain.model.AlbumDetail
-import com.m4ykey.album.domain.model.Copyright
-import com.m4ykey.core.model.domain.Album
-import com.m4ykey.core.model.domain.ExternalUrls
-import com.m4ykey.core.model.domain.Image
 import com.m4ykey.core.model.mapper.toAlbumArtistDomain
 import com.m4ykey.core.model.mapper.toAlbumArtistEntity
 import com.m4ykey.core.model.mapper.toDomain

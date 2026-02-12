@@ -1,14 +1,11 @@
 package com.m4ykey.track.data.mapper
 
-import com.m4ykey.core.model.domain.ExternalUrls
 import com.m4ykey.core.model.mapper.toAlbumArtistDomain
 import com.m4ykey.core.model.mapper.toAlbumArtistEntity
 import com.m4ykey.core.model.mapper.toDomain
 import com.m4ykey.core.model.mapper.toExternalUrlsDomain
 import com.m4ykey.core.model.mapper.toExternalUrlsEntity
 import com.m4ykey.track.data.local.model.TrackEntity
-import com.m4ykey.track.data.network.dto.TrackItemDto
-import com.m4ykey.track.domain.model.TrackItem
 
 fun TrackEntity.toDomain() = TrackItem(
     id = id,

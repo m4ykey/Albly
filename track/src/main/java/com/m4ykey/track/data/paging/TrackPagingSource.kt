@@ -4,7 +4,6 @@ import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.BasePagingSource
 import com.m4ykey.track.data.mapper.toDomain
 import com.m4ykey.track.data.network.service.RemoteTrackService
-import com.m4ykey.track.domain.model.TrackItem
 
 class TrackPagingSource(
     private val id : String,

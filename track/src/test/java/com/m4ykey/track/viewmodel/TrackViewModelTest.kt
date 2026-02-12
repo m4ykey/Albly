@@ -4,8 +4,6 @@ package com.m4ykey.track.viewmodel
 
 import androidx.paging.PagingData
 import app.cash.turbine.test
-import com.m4ykey.core.model.domain.ExternalUrls
-import com.m4ykey.track.domain.model.TrackItem
 import com.m4ykey.track.domain.use_case.GetTrackUseCase
 import com.m4ykey.track.domain.use_case.TrackUseCase
 import com.m4ykey.track.presentation.TrackViewModel

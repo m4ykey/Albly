@@ -75,8 +75,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.m4ykey.core.chip.ChipItem
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.CenteredContent
-import com.m4ykey.core.model.domain.AlbumItem
-import com.m4ykey.core.model.domain.ArtistItem
 import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard

@@ -2,7 +2,6 @@ package com.m4ykey.track.domain.repository
 
 import androidx.paging.PagingData
 import com.m4ykey.track.data.local.model.TrackEntity
-import com.m4ykey.track.domain.model.TrackItem
 import kotlinx.coroutines.flow.Flow
 
 interface TrackRepository {

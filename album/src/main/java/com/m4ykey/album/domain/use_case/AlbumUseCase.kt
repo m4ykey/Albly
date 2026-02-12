@@ -1,6 +1,5 @@
 package com.m4ykey.album.domain.use_case
 
-import com.m4ykey.album.domain.model.AlbumDetail
 import com.m4ykey.album.domain.repository.AlbumRepository
 import kotlinx.coroutines.flow.Flow
 

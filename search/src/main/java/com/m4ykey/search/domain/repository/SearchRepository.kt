@@ -1,8 +1,6 @@
 package com.m4ykey.search.domain.repository
 
 import androidx.paging.PagingData
-import com.m4ykey.core.model.domain.AlbumItem
-import com.m4ykey.core.model.domain.ArtistItem
 import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
