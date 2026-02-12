@@ -97,7 +97,6 @@ android {
 
 dependencies {
 
-    implementation(project(":auth"))
     implementation(project(":lyrics"))
     implementation(project(":core"))
     implementation(project(":track"))

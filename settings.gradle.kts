@@ -24,7 +24,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Albly"
 include(":app")
-include(":auth")
 include(":lyrics")
 include(":core")
 include(":track")
