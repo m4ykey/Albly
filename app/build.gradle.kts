@@ -6,7 +6,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.gms)
@@ -74,19 +73,19 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_18
-        targetCompatibility = JavaVersion.VERSION_18
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_18)
+            jvmTarget.set(JvmTarget.JVM_21)
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }
 
     sourceSets {
         getByName("androidTest") {
-            java.srcDirs("src/androidTest/java")
+            java.directories.add("src/androidTest/java")
         }
     }
 
@@ -139,22 +138,24 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
-aboutLibraries {
-    offlineMode = false
-    export {
-        val path = "${rootProject.projectDir}/src/main/raw/aboutlibraries.json"
-        outputFile = file(path)
-        prettyPrint = true
-        excludeFields.addAll("developers", "funding")
-    }
-    license {
-        strictMode = StrictMode.WARN
+afterEvaluate {
+    aboutLibraries {
+        offlineMode = false
+        export {
+            val path = "${rootProject.projectDir}/src/main/raw/aboutlibraries.json"
+            outputFile = file(path)
+            prettyPrint = true
+            excludeFields.addAll("developers", "funding")
+        }
+        license {
+            strictMode = StrictMode.WARN
 
-        allowedLicenses.addAll("Apache-2.0", "MIT", "BSD-3-Clause", "LGPL-2.1")
+            allowedLicenses.addAll("Apache-2.0", "MIT", "BSD-3-Clause", "LGPL-2.1")
 
-        allowedLicensesMap = mapOf(
-            "asdkl" to listOf("androidx.jetpack.library"),
-            "NOASSERTION" to listOf("org.jetbrains.kotlinx"),
-        )
+            allowedLicensesMap = mapOf(
+                "asdkl" to listOf("androidx.jetpack.library"),
+                "NOASSERTION" to listOf("org.jetbrains.kotlinx"),
+            )
+        }
     }
 }

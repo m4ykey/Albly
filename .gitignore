@@ -15,6 +15,6 @@
 local.properties
 .kotlin/sessions
 .idea
-/app/google-services.json
 /keystore.properties
 /app/release/
+/app/google-services.json
