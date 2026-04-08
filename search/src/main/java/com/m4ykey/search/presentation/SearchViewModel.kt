@@ -12,11 +12,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,7 +32,12 @@ class SearchViewModel(
     val searchQuery = _searchQuery.asStateFlow()
 
     private val _searchType = MutableStateFlow(SearchTypeState())
-    val searchType = _searchType.asStateFlow()
+    val searchType = _searchType.map { it.type }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = SearchType.ALBUM,
+            started = SharingStarted.WhileSubscribed(5000)
+        )
 
     private val _searchUiEvent = MutableSharedFlow<SearchUiEvent>()
     val searchUiEvent = _searchUiEvent.asSharedFlow()
@@ -42,23 +49,23 @@ class SearchViewModel(
         _searchType.update { it.copy(type = type) }
     }
 
-    val searchArtistResults = combine(
-        _activeSearchQuery,
-        _searchType
-    ) { query, typeState -> query to typeState.type }
-        .flatMapLatest { (query, type) ->
-            if (query.isBlank()) {
-                emptyFlow()
-            } else {
-                artistUseCase(q = query, type = type.name.lowercase())
-            }
-    }
-        .cachedIn(viewModelScope)
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = PagingData.empty(),
-            started = SharingStarted.Lazily
-        )
+//    val searchArtistResults = combine(
+//        _activeSearchQuery,
+//        _searchType
+//    ) { query, typeState -> query to typeState.type }
+//        .flatMapLatest { (query, type) ->
+//            if (query.isBlank()) {
+//                emptyFlow()
+//            } else {
+//                artistUseCase(q = query, type = type.name.lowercase())
+//            }
+//    }
+//        .cachedIn(viewModelScope)
+//        .stateIn(
+//            scope = viewModelScope,
+//            initialValue = PagingData.empty(),
+//            started = SharingStarted.Lazily
+//        )
 
     val searchAlbumResults = combine(
         _activeSearchQuery,
@@ -68,7 +75,7 @@ class SearchViewModel(
             if (query.isBlank()) {
                 emptyFlow()
             } else {
-                albumUseCase(q = query, type = type.name.lowercase())
+                albumUseCase(query = query, type = type.name.lowercase())
             }
     }
         .cachedIn(viewModelScope)
@@ -96,7 +103,7 @@ class SearchViewModel(
                 }
 
                 is SearchTypeAction.OnAlbumClick -> {
-                    _searchUiEvent.emit(SearchUiEvent.OnAlbumClick(action.id))
+                    _searchUiEvent.emit(SearchUiEvent.OnAlbumClick(action.albumName, action.artistName))
                 }
             }
         }

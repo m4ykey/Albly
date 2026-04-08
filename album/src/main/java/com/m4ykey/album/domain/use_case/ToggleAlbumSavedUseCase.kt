@@ -3,21 +3,15 @@ package com.m4ykey.album.domain.use_case
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.domain.repository.AlbumRepository
-import com.m4ykey.track.data.local.model.TrackEntity
-import com.m4ykey.track.domain.use_case.DeleteTracksUseCase
-import com.m4ykey.track.domain.use_case.SaveTracksUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ToggleAlbumSavedUseCase(
-    private val repository : AlbumRepository,
-    private val saveTracksUseCase: SaveTracksUseCase,
-    private val deleteTracksUseCase: DeleteTracksUseCase
+    private val repository : AlbumRepository
 ) {
     suspend operator fun invoke(
         album : AlbumEntity,
-        isCurrentlySaved : Boolean,
-        tracks : List<TrackEntity>
+        isCurrentlySaved : Boolean
     ) = withContext(Dispatchers.IO) {
         if (isCurrentlySaved) {
             repository.deleteSavedAlbumState(album.id)
@@ -25,10 +19,8 @@ class ToggleAlbumSavedUseCase(
             val state = repository.getAlbumWithStates(id = album.id)
             if (state?.isListenLaterSaved == null) {
                 repository.deleteAlbum(album.id)
-                deleteTracksUseCase(album.id)
             }
         } else {
-            saveTracksUseCase(tracks)
             repository.insertAlbum(album)
             repository.insertSavedAlbum(
                 IsAlbumSaved(

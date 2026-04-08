@@ -78,9 +78,8 @@ import com.m4ykey.core.ext.CenteredContent
 import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard
-import com.m4ykey.core.ui.ArtistCard
 import com.m4ykey.search.R
-import kotlinx.coroutines.flow.map
+import com.m4ykey.search.domain.model.search.ResultsAlbum
 import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
 
@@ -89,12 +88,12 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     viewModel: SearchViewModel = koinViewModel(),
-    onAlbumClick : (String) -> Unit
+    onAlbumClick : (String, String) -> Unit
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
     val albumSearchItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
-    val artistSearchItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
+    //val artistSearchItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
 
     val targetWeight = if (searchQuery.isEmpty()) 1f else 0.8f
 
@@ -104,7 +103,7 @@ fun SearchScreen(
         animationSpec = tween(durationMillis = 1000)
     )
 
-    val type by viewModel.searchType.map { it.type }.collectAsStateWithLifecycle(initialValue = SearchType.ALBUM)
+    val type by viewModel.searchType.collectAsStateWithLifecycle()
     val activeSearchQuery by viewModel.activeSearchQuery.collectAsStateWithLifecycle()
 
     val onAction = viewModel::onAction
@@ -117,7 +116,10 @@ fun SearchScreen(
         viewModel.searchUiEvent.collect { event ->
             when (event) {
                 is SearchUiEvent.ChangeType -> viewModel.updateType(event.type)
-                is SearchUiEvent.OnAlbumClick -> onAlbumClick(event.id)
+                is SearchUiEvent.OnAlbumClick -> onAlbumClick(
+                    event.albumName,
+                    event.artistName
+                )
             }
         }
     }
@@ -237,7 +239,7 @@ fun SearchScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 val currentSelectedItem = when (type) {
-                    SearchType.ARTIST -> artistSearchItems
+                    //SearchType.ARTIST -> artistSearchItems
                     else -> albumSearchItems
                 }
 
@@ -260,8 +262,8 @@ fun SearchScreen(
                                 contentType = { type.name },
                                 key = { index ->
                                     when (val item = items.peek(index)) {
-                                        is ArtistItem -> "artist_${item.id}"
-                                        is AlbumItem -> "album_${item.id}"
+                                        //is ArtistItem -> "artist_${item.id}"
+                                        is ResultsAlbum -> "album_${item.id}"
                                         else -> "placeholder_$index"
                                     }
                                 }
@@ -270,18 +272,21 @@ fun SearchScreen(
 
                                 when (type) {
                                     SearchType.ARTIST -> {
-                                        (item as? ArtistItem)?.let { artist ->
-                                            ArtistCard(
-                                                item = artist,
-                                                onArtistClick = {}
-                                            )
-                                        }
+//                                        (item as? ArtistItem)?.let { artist ->
+//                                            ArtistCard(
+//                                                item = artist,
+//                                                onArtistClick = {}
+//                                            )
+//                                        }
                                     }
                                     else -> {
-                                        (item as? AlbumItem)?.let { album ->
+                                        (item as? ResultsAlbum)?.let { album ->
                                             AlbumCard(
-                                                item = album,
-                                                onAlbumClick = { onAction(SearchTypeAction.OnAlbumClick(item.id)) }
+                                                image = album.cover_image.orEmpty(),
+                                                albumName = album.album.orEmpty(),
+                                                artistName = album.artist.orEmpty(),
+                                                onAlbumClick = {
+                                                    onAction(SearchTypeAction.OnAlbumClick(album.album.orEmpty(), album.artist.orEmpty())) }
                                             )
                                         }
                                     }

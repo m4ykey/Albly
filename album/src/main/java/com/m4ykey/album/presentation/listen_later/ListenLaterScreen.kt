@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.album.data.mapper.toAlbum
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ui.AlbumGridCard
@@ -148,7 +147,7 @@ fun ListenLaterContent(
                     key = { it.id }
                 ) { item ->
                     AlbumGridCard(
-                        item = item.toAlbum(),
+                        //item = item.toAlbum(),
                         onAlbumClick = { onAlbumClick(item.id) }
                     )
                 }

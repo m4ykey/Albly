@@ -70,8 +70,8 @@ fun NavigationRoot(
             }
             entry<Route.Search> {
                 SearchScreen(
-                    onAlbumClick = {
-                        rootBackStack.add(Route.AlbumDetail(it))
+                    onAlbumClick = { _, _ ->
+                        //rootBackStack.add(Route.AlbumDetail(it))
                     },
                     onBack = {
                         if (rootBackStack.isNotEmpty()) {

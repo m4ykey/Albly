@@ -33,18 +33,18 @@ fun AlbumNewReleaseScreen(
     onAlbumClick : (String) -> Unit
 ) {
 
-    val newRelease = viewModel.newRelease.collectAsLazyPagingItems()
+    //val newRelease = viewModel.newRelease.collectAsLazyPagingItems()
 
     val state = rememberLazyGridState()
 
-    val onAction = viewModel::onAction
+    //val onAction = viewModel::onAction
 
     LaunchedEffect(viewModel) {
-        viewModel.uiEvent.collectLatest { event ->
-            when (event) {
-                is NewReleaseUiEvent.OnAlbumClick -> onAlbumClick(event.id)
-            }
-        }
+//        viewModel.uiEvent.collectLatest { event ->
+//            when (event) {
+//                is NewReleaseUiEvent.OnAlbumClick -> onAlbumClick(event.id)
+//            }
+//        }
     }
 
     AppScaffold(
@@ -60,8 +60,8 @@ fun AlbumNewReleaseScreen(
             NewReleaseContent(
                 paddingValues = padding,
                 state = state,
-                newRelease = newRelease,
-                onAction = onAction
+                //newRelease = newRelease,
+                //onAction = onAction
             )
         }
     )
@@ -72,35 +72,35 @@ fun NewReleaseContent(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
     state : LazyGridState,
-    newRelease : LazyPagingItems<AlbumItem>,
-    onAction : (NewReleaseAction) -> Unit
+    //newRelease : LazyPagingItems<AlbumItem>,
+   // onAction : (NewReleaseAction) -> Unit
 ) {
-    BasePagingList(
-        items = newRelease,
-        listContent = { items ->
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = modifier
-                    .padding(paddingValues)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                state = state
-            ) {
-                items(
-                    count = items.itemCount,
-                    contentType = { "album_item" },
-                    key = items.itemKey { item -> item.id }
-                ) { index ->
-                    items[index]?.let { item ->
-                        AlbumCard(
-                            item = item,
-                            onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.id)) }
-                        )
-                    }
-                }
-            }
-        }
-    )
+//    BasePagingList(
+//        items = newRelease,
+//        listContent = { items ->
+//            LazyVerticalGrid(
+//                columns = GridCells.Fixed(3),
+//                modifier = modifier
+//                    .padding(paddingValues)
+//                    .fillMaxWidth(),
+//                contentPadding = PaddingValues(horizontal = 8.dp),
+//                horizontalArrangement = Arrangement.spacedBy(8.dp),
+//                verticalArrangement = Arrangement.spacedBy(8.dp),
+//                state = state
+//            ) {
+//                items(
+//                    count = items.itemCount,
+//                    contentType = { "album_item" },
+//                    key = items.itemKey { item -> item.id }
+//                ) { index ->
+//                    items[index]?.let { item ->
+//                        AlbumCard(
+//                            item = item,
+//                            onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.id)) }
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    )
 }

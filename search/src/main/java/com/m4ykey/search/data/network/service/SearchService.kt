@@ -1,5 +1,6 @@
 package com.m4ykey.search.data.network.service
 
+import com.m4ykey.search.data.network.model.dto.SearchAlbumRootDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -10,34 +11,18 @@ class SearchService(
 ) : RemoteSearchService {
 
     override suspend fun searchAlbum(
-        q: String,
-        offset: Int,
-        limit: Int,
-        type: String,
-        market : String
-    ): AlbumListDto {
+        query : String,
+        format : String,
+        perPage : Int,
+        page : Int,
+        type : String
+    ): SearchAlbumRootDto {
         return httpClient.get("search") {
-            parameter("q", q)
-            parameter("offset", offset)
-            parameter("limit", limit)
+            parameter("q", query)
+            parameter("format", format)
+            parameter("per_page", perPage)
+            parameter("page", page)
             parameter("type", type)
-            parameter("market", market)
-        }.body()
-    }
-
-    override suspend fun searchArtist(
-        q: String,
-        type: String,
-        limit: Int,
-        offset: Int,
-        market : String
-    ): ArtistListDto {
-        return httpClient.get("search") {
-            parameter("q", q)
-            parameter("offset", offset)
-            parameter("limit", limit)
-            parameter("type", type)
-            parameter("market", market)
         }.body()
     }
 }

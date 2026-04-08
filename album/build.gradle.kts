@@ -46,7 +46,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":track"))
     implementation(project(":core"))
 
     implementation(platform(libs.androidx.compose.bom))

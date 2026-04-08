@@ -1,53 +1,19 @@
 package com.m4ykey.album.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingData
 import com.m4ykey.album.data.local.dao.AlbumDao
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
-import com.m4ykey.album.data.mapper.toDomain
 import com.m4ykey.album.data.network.service.RemoteAlbumService
-import com.m4ykey.album.data.paging.NewReleasePaging
 import com.m4ykey.album.domain.repository.AlbumRepository
 import com.m4ykey.core.model.type.AlbumType
-import com.m4ykey.core.network.safeApi
-import com.m4ykey.core.paging.pagingConfig
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 
 class AlbumRepositoryImpl(
-    private val service : RemoteAlbumService,
+    //private val service : RemoteAlbumService,
     private val dao : AlbumDao
 ) : AlbumRepository {
-
-    override fun getNewRelease(
-        offset: Int,
-        limit: Int
-    ): Flow<PagingData<AlbumItem>> {
-        return Pager(
-            config = pagingConfig,
-            pagingSourceFactory = {
-                NewReleasePaging(service = service)
-            }
-        ).flow
-    }
-
-    override suspend fun getAlbumById(id: String): Flow<AlbumDetail> {
-        return flow {
-            val result = safeApi {
-                service.getAlbumById(id = id).toDomain()
-            }
-
-            result.fold(
-                onSuccess = { emit(it) },
-                onFailure = { throw it }
-            )
-        }.flowOn(Dispatchers.IO)
-    }
 
     override suspend fun insertAlbum(album: AlbumEntity) {
         dao.insertAlbum(album)

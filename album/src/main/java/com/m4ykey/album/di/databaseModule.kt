@@ -16,5 +16,4 @@ val databaseModule = module {
     }
 
     single { get<AppDatabase>().albumDao() }
-    single { get<AppDatabase>().trackDao() }
 }

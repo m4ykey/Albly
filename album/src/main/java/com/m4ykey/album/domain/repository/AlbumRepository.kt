@@ -9,10 +9,6 @@ import com.m4ykey.core.model.type.AlbumType
 import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {
-
-    suspend fun getAlbumById(id : String) : Flow<AlbumDetail>
-    fun getNewRelease(offset : Int, limit : Int) : Flow<PagingData<AlbumItem>>
-
     suspend fun insertAlbum(album : AlbumEntity)
     suspend fun insertSavedAlbum(isAlbumSaved: IsAlbumSaved)
     suspend fun insertListenLaterSaved(isListenLaterSaved: IsListenLaterSaved)

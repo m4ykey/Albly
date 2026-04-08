@@ -8,15 +8,12 @@ import com.m4ykey.album.data.local.dao.AlbumDao
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
-import com.m4ykey.track.data.local.dao.TrackDao
-import com.m4ykey.track.data.local.model.TrackEntity
 
 @Database(
     entities = [
         AlbumEntity::class,
         IsAlbumSaved::class,
-        IsListenLaterSaved::class,
-        TrackEntity::class
+        IsListenLaterSaved::class
     ],
     version = 1
 )
@@ -24,6 +21,5 @@ import com.m4ykey.track.data.local.model.TrackEntity
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun albumDao() : AlbumDao
-    abstract fun trackDao() : TrackDao
 
 }

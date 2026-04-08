@@ -98,12 +98,12 @@ dependencies {
 
     implementation(project(":lyrics"))
     implementation(project(":core"))
-    implementation(project(":track"))
     implementation(project(":navigation"))
     implementation(project(":search"))
     implementation(project(":album"))
     implementation(project(":collection"))
     implementation(project(":settings"))
+    implementation(project(":network"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

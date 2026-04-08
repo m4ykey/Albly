@@ -1,27 +1,27 @@
 package com.m4ykey.search.data.paging
 
-import com.m4ykey.core.model.mapper.toDomain
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.BasePagingSource
+import com.m4ykey.search.data.mapper.SearchMapper
 import com.m4ykey.search.data.network.service.RemoteSearchService
+import com.m4ykey.search.domain.model.search.ResultsAlbum
 
 class SearchAlbumPagingSource(
-    private val type : String,
-    private val q : String,
-    private val service : RemoteSearchService
-) : BasePagingSource<AlbumItem>() {
+    private val service : RemoteSearchService,
+    private val query : String
+) : BasePagingSource<ResultsAlbum>() {
 
     override suspend fun loadData(
-        offset: Int,
+        page: Int,
         limit: Int
-    ): Result<List<AlbumItem>> {
+    ): Result<List<ResultsAlbum>> {
         return safeApi {
             service.searchAlbum(
-                q = q,
-                type = type,
-                limit = limit,
-                offset = offset
+                page = page,
+                query = query
             )
-        }.map { it.albums.items?.map { album -> album.toDomain() } ?: emptyList() }
+        }.map { response ->
+            SearchMapper.mapToDomain(response).results
+        }
     }
 }

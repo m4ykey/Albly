@@ -14,35 +14,35 @@ import com.m4ykey.core.ext.LoadImage
 
 @Composable
 fun AlbumGridCard(
-    item : Album,
+    //item : Any,
     onAlbumClick : (String) -> Unit
 ) {
-    val smallestImageUrl = item.images.minByOrNull { it.width * it.height }?.url
-    val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
+    //val smallestImageUrl = item.images.minByOrNull { it.width * it.height }?.url
+    //val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
 
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     Column(
-        modifier = Modifier.clickable { onAlbumClick(item.id) }
+        //modifier = Modifier.clickable { onAlbumClick(item.id) }
     ) {
-        LoadImage(
-            imageUrl = largestImageUrl.orEmpty()
-        )
-        Text(
-            text = item.name,
-            textAlign = TextAlign.Start,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 2,
-            color = textColor,
-            fontSize = 17.sp
-        )
-        Text(
-            text = item.artists.joinToString(", ") { it.name },
-            textAlign = TextAlign.Start,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            color = textColor,
-            fontSize = 13.sp
-        )
+//        LoadImage(
+//            imageUrl = largestImageUrl.orEmpty()
+//        )
+//        Text(
+//            text = item.name,
+//            textAlign = TextAlign.Start,
+//            overflow = TextOverflow.Ellipsis,
+//            maxLines = 2,
+//            color = textColor,
+//            fontSize = 17.sp
+//        )
+//        Text(
+//            text = item.artists.joinToString(", ") { it.name },
+//            textAlign = TextAlign.Start,
+//            overflow = TextOverflow.Ellipsis,
+//            maxLines = 1,
+//            color = textColor,
+//            fontSize = 13.sp
+//        )
     }
 }

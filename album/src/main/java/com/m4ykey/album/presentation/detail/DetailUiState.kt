@@ -6,7 +6,7 @@ sealed interface DetailUiState {
     data class Error(val message : String) : DetailUiState
 
     data class Success(
-        val item: AlbumDetail,
+        //val item: AlbumDetail,
         val isSaved: Boolean = false,
         val isListenLaterSaved: Boolean = false
     ) : DetailUiState

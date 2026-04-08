@@ -8,6 +8,5 @@ import org.koin.dsl.module
 
 val albumViewModelModule = module {
     viewModelOf(::AlbumDetailViewModel)
-    viewModelOf(::NewReleaseViewModel)
     viewModelOf(::ListenLaterViewModel)
 }
