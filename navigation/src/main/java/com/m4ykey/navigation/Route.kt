@@ -19,7 +19,7 @@ sealed interface Route : NavKey {
     data object ListenLater : Route
 
     @Serializable
-    data class AlbumDetail(val albumId : String) : Route
+    data class AlbumDetail(val albumId : Int) : Route
 
     @Serializable
     data object NewRelease : Route

@@ -6,14 +6,26 @@ import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
 import com.m4ykey.album.data.network.service.RemoteAlbumService
+import com.m4ykey.album.domain.model.AlbumRoot
 import com.m4ykey.album.domain.repository.AlbumRepository
+import com.m4ykey.album.mapper.AlbumMapper
 import com.m4ykey.core.model.type.AlbumType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class AlbumRepositoryImpl(
-    //private val service : RemoteAlbumService,
+    private val service : RemoteAlbumService,
     private val dao : AlbumDao
 ) : AlbumRepository {
+
+    override suspend fun getAlbum(id: Int): Flow<AlbumRoot> = flow {
+        val response = service.getAlbum(id)
+
+        val domainAlbum =  AlbumMapper.mapToDomain(response)
+            ?: throw Exception("")
+
+        emit(domainAlbum)
+    }
 
     override suspend fun insertAlbum(album: AlbumEntity) {
         dao.insertAlbum(album)
@@ -27,31 +39,31 @@ class AlbumRepositoryImpl(
         dao.insertListenLaterSaved(isListenLaterSaved)
     }
 
-    override fun getLocalAlbumById(id: String): AlbumEntity? {
+    override fun getLocalAlbumById(id: Int): AlbumEntity? {
         return dao.getAlbumById(id)
     }
 
-    override fun getSavedAlbumState(id: String): IsAlbumSaved? {
+    override fun getSavedAlbumState(id: Int): IsAlbumSaved? {
         return dao.getSavedAlbumState(id)
     }
 
-    override fun getSavedListenLaterState(id: String): IsListenLaterSaved? {
+    override fun getSavedListenLaterState(id: Int): IsListenLaterSaved? {
         return dao.getSavedListenLaterState(id)
     }
 
-    override suspend fun getAlbumWithStates(id: String): AlbumWithStates? {
+    override suspend fun getAlbumWithStates(id: Int): AlbumWithStates? {
         return dao.getAlbumWithStates(id)
     }
 
-    override suspend fun deleteAlbum(id: String) {
+    override suspend fun deleteAlbum(id: Int) {
         dao.deleteAlbum(id)
     }
 
-    override suspend fun deleteSavedListenLaterState(id: String) {
+    override suspend fun deleteSavedListenLaterState(id: Int) {
         dao.deleteSavedListenLaterState(id)
     }
 
-    override suspend fun deleteSavedAlbumState(id: String) {
+    override suspend fun deleteSavedAlbumState(id: Int) {
         dao.deleteSavedAlbumState(id)
     }
 

@@ -46,7 +46,7 @@ fun ListenLaterScreen(
     onBack : () -> Unit,
     onSearchClick : () -> Unit,
     viewModel: ListenLaterViewModel = koinViewModel(),
-    onAlbumClick : (String) -> Unit
+    onAlbumClick : (Int) -> Unit
 ) {
     val albums by viewModel.albums.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -100,7 +100,7 @@ fun ListenLaterContent(
     isLoading : Boolean,
     albums : List<AlbumEntity>,
     state : LazyGridState,
-    onAlbumClick: (String) -> Unit
+    onAlbumClick: (Int) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxSize()

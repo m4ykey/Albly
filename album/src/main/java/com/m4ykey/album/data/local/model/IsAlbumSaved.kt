@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "is_album_saved_table")
 data class IsAlbumSaved(
-    @ColumnInfo("id") @PrimaryKey(autoGenerate = false) val id : String,
+    @ColumnInfo("id") @PrimaryKey(autoGenerate = false) val id : Int,
     @ColumnInfo("isAlbumSaved") val isAlbumSaved : Boolean
 )

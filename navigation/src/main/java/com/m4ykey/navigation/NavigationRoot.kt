@@ -64,7 +64,7 @@ fun NavigationRoot(
                         rootBackStack.add(Route.Search)
                     },
                     onLinkClick = {
-                        rootBackStack.add(Route.AlbumDetail(it))
+                        //rootBackStack.add(Route.AlbumDetail(it))
                     }
                 )
             }

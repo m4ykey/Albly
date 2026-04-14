@@ -26,7 +26,7 @@ import com.m4ykey.core.model.local.ExternalUrlsEntity
 @Composable
 fun AlbumListRow(
     item : AlbumEntity,
-    onAlbumClick : (String) -> Unit
+    onAlbumClick : (Int) -> Unit
 ) {
     val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
     val smallestImageUrl = item.images.minByOrNull { it.width * it.height }?.url
@@ -88,7 +88,7 @@ private fun AlbumListRowPrev() {
         )
     )
     val item = AlbumEntity(
-        id = "",
+        id = 0,
         label = "",
         images = emptyList(),
         albumType = "",

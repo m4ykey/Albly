@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "is_listen_later_saved_table")
 data class IsListenLaterSaved(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "id") val id : String,
+    @ColumnInfo(name = "id") val id : Int,
     @ColumnInfo("isListenLater") val isListenLaterSaved : Boolean
 )

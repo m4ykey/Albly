@@ -5,7 +5,6 @@ import org.koin.dsl.module
 val albumModule = module {
     includes(
         albumRepositoryModule,
-        albumServiceModule,
         albumUseCaseModule,
         albumViewModelModule
     )

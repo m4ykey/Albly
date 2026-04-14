@@ -53,7 +53,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AlbumDetailScreen(
-    id : String,
+    id : Int,
     onBack : () -> Unit,
     viewModel : AlbumDetailViewModel = koinViewModel(),
     onTrackClick : (String, String) -> Unit

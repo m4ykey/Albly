@@ -104,7 +104,7 @@ fun CollectionScreen(
     onSearch : () -> Unit,
     viewModel : CollectionViewModel = koinViewModel(),
     onLinkClick : (String) -> Unit,
-    onAlbumClick : (String) -> Unit,
+    onAlbumClick : (Int) -> Unit,
     navigateToNewRelease : () -> Unit,
     navigateToListenLater : () -> Unit,
     navigateToSettings : () -> Unit
@@ -348,7 +348,7 @@ fun CollectionScreenContent(
     onHideSearchClick : () -> Unit,
     clearTextField : () -> Unit,
     albums : List<AlbumEntity>,
-    onAlbumClick : (String) -> Unit,
+    onAlbumClick : (Int) -> Unit,
     isLoading : Boolean,
     gridState : LazyGridState
 ) {

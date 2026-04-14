@@ -13,7 +13,7 @@ data class AlbumEntity(
     @ColumnInfo("copyrights") val copyrights : List<CopyrightEntity>,
     @ColumnInfo("external_urls") val externalUrls : ExternalUrlsEntity,
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo("id") val id : String,
+    @ColumnInfo("id") val id : Int,
     @ColumnInfo("val images") val images : List<ImageEntity>,
     @ColumnInfo("label") val label : String,
     @ColumnInfo("name") val name : String,

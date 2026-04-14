@@ -24,26 +24,26 @@ interface AlbumDao {
     suspend fun insertListenLaterSaved(isListenLaterSaved: IsListenLaterSaved)
 
     @Query("SELECT * FROM album_table WHERE id = :id")
-    fun getAlbumById(id : String) : AlbumEntity?
+    fun getAlbumById(id : Int) : AlbumEntity?
 
     @Query("SELECT * FROM is_album_saved_table WHERE id = :id")
-    fun getSavedAlbumState(id : String) : IsAlbumSaved?
+    fun getSavedAlbumState(id : Int) : IsAlbumSaved?
 
     @Query("SELECT * FROM is_listen_later_saved_table WHERE id = :id")
-    fun getSavedListenLaterState(id : String) : IsListenLaterSaved?
+    fun getSavedListenLaterState(id : Int) : IsListenLaterSaved?
 
     @Transaction
     @Query("SELECT * FROM album_table WHERE id = :id")
-    suspend fun getAlbumWithStates(id : String) : AlbumWithStates?
+    suspend fun getAlbumWithStates(id : Int) : AlbumWithStates?
 
     @Query("DELETE FROM album_table WHERE id = :id")
-    suspend fun deleteAlbum(id : String)
+    suspend fun deleteAlbum(id : Int)
 
     @Query("DELETE FROM is_listen_later_saved_table WHERE id = :id")
-    suspend fun deleteSavedListenLaterState(id : String)
+    suspend fun deleteSavedListenLaterState(id : Int)
 
     @Query("DELETE FROM is_album_saved_table WHERE id = :id")
-    suspend fun deleteSavedAlbumState(id : String)
+    suspend fun deleteSavedAlbumState(id : Int)
 
     @Query("""
         SELECT album_table.* FROM album_table

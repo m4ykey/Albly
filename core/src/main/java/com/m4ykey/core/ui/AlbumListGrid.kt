@@ -15,7 +15,7 @@ import com.m4ykey.core.ext.LoadImage
 @Composable
 fun AlbumGridCard(
     //item : Any,
-    onAlbumClick : (String) -> Unit
+    onAlbumClick : (Int) -> Unit
 ) {
     //val smallestImageUrl = item.images.minByOrNull { it.width * it.height }?.url
     //val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url

@@ -30,7 +30,7 @@ import org.koin.androidx.compose.koinViewModel
 fun AlbumNewReleaseScreen(
     onBack : () -> Unit,
     viewModel: NewReleaseViewModel = koinViewModel(),
-    onAlbumClick : (String) -> Unit
+    onAlbumClick : (Int) -> Unit
 ) {
 
     //val newRelease = viewModel.newRelease.collectAsLazyPagingItems()

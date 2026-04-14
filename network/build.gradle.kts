@@ -47,6 +47,7 @@ android {
 dependencies {
     implementation(project(":search"))
     implementation(project(":lyrics"))
+    implementation(project(":album"))
 
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)

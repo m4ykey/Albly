@@ -1,5 +1,7 @@
 package com.m4ykey.network
 
+import com.m4ykey.album.data.network.service.AlbumService
+import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.lyrics.data.network.service.LyricsService
 import com.m4ykey.lyrics.data.network.service.RemoteLyricsService
 import com.m4ykey.search.data.network.service.RemoteSearchService
@@ -8,10 +10,20 @@ import io.ktor.client.plugins.defaultRequest
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-private val LRCLIB = "LrcLibClient"
-private val SEARCH_DISCOGS = "SearchDiscogsClient"
+private const val LRCLIB = "LrcLibClient"
+private const val SEARCH_DISCOGS = "SearchDiscogsClient"
+private const val ALBUM_DISCOGS = "AlbumDiscogsClient"
 
 val networkModule = module {
+
+    single(named(ALBUM_DISCOGS)) {
+        HttpClientFactory.create(enableLogging = true).config {
+            defaultRequest {
+                url("https://api.discogs.com/")
+                url.parameters.append("token", BuildConfig.token)
+            }
+        }
+    }
 
     single(named(SEARCH_DISCOGS)) {
         HttpClientFactory.create(enableLogging = true).config {
@@ -28,6 +40,10 @@ val networkModule = module {
                 url("https://lrclib.net/api/")
             }
         }
+    }
+
+    single<RemoteAlbumService> {
+        AlbumService(httpClient = get(named(ALBUM_DISCOGS)))
     }
 
     single<RemoteSearchService> {

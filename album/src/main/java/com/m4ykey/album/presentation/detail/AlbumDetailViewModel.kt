@@ -29,7 +29,7 @@ class AlbumDetailViewModel(
     private val _detail = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val detail = _detail.asStateFlow()
 
-    fun getAlbumById(id : String) {
+    fun getAlbumById(id : Int) {
         viewModelScope.launch {
             _detail.value = DetailUiState.Loading
 
@@ -37,26 +37,26 @@ class AlbumDetailViewModel(
                 getAlbumStateUseCase.invoke(id)
             }
 
-//            useCase.invoke(id)
-//                .catch { e ->
-//                    val localAlbum = withContext(Dispatchers.IO) { getLocalAlbumUseCase(id) }
-//                    if (localAlbum != null) {
+            useCase.invoke(id)
+                .catch { e ->
+                    val localAlbum = withContext(Dispatchers.IO) { getLocalAlbumUseCase(id) }
+                    if (localAlbum != null) {
 //                        _detail.value = DetailUiState.Success(
-//                            item = localAlbum,
+//                            item = ,
 //                            isSaved = localState?.isAlbumSaved != null,
 //                            isListenLaterSaved = localState?.isListenLaterSaved != null
 //                        )
-//                    } else {
-//                        _detail.value = DetailUiState.Error(message = e.localizedMessage ?: "Unknown Error")
-//                    }
-//                }
-//                .collect { result ->
-//                    _detail.value = DetailUiState.Success(
-//                        item = result,
-//                        isSaved = localState?.isAlbumSaved != null,
-//                        isListenLaterSaved = localState?.isListenLaterSaved != null
-//                    )
-//                }
+                    } else {
+                        _detail.value = DetailUiState.Error(message = e.localizedMessage ?: "Unknown Error")
+                    }
+                }
+                .collect { result ->
+                    _detail.value = DetailUiState.Success(
+                        item = result,
+                        isSaved = localState?.isAlbumSaved != null,
+                        isListenLaterSaved = localState?.isListenLaterSaved != null
+                    )
+                }
         }
     }
 
