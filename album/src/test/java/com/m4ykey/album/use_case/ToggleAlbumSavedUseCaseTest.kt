@@ -3,7 +3,6 @@ package com.m4ykey.album.use_case
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.domain.repository.AlbumRepository
 import com.m4ykey.album.domain.use_case.ToggleAlbumSavedUseCase
-import com.m4ykey.core.model.local.ExternalUrlsEntity
 import com.m4ykey.track.domain.use_case.DeleteTracksUseCase
 import com.m4ykey.track.domain.use_case.SaveTracksUseCase
 import io.mockk.coEvery

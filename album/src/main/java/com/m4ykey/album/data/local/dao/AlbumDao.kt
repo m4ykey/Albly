@@ -50,19 +50,18 @@ interface AlbumDao {
         INNER JOIN is_album_saved_table ON album_table.id = is_album_saved_table.id
         WHERE is_album_saved_table.isAlbumSaved = 1
         AND (
-            album_table.name LIKE '%' || :query || '%'
+            album_table.title LIKE '%' || :query || '%'
             OR
-            album_table.artists LIKE '%' || :query || '%'
+            album_table.artist LIKE '%' || :query || '%'
         )
-        AND (:type IS NULL OR album_table.album_type = :type)
         ORDER BY save_time DESC
     """)
-    fun getSavedAlbums(query : String, type : String?) : Flow<List<AlbumEntity>>
+    fun getSavedAlbums(query : String) : Flow<List<AlbumEntity>>
 
     @Query("""
         SELECT album_table.* FROM album_table
         INNER JOIN is_listen_later_saved_table ON album_table.id = is_listen_later_saved_table.id
-        WHERE is_listen_later_saved_table.isListenLater = 1 ORDER BY name ASC
+        WHERE is_listen_later_saved_table.isListenLater = 1 ORDER BY title ASC
     """)
     suspend fun getListenLaterAlbums() : List<AlbumEntity>
 

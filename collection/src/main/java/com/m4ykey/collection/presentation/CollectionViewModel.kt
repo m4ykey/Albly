@@ -49,21 +49,15 @@ class CollectionViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    val albums : StateFlow<List<AlbumEntity>> = combine(
-        _searchQuery,
-        _albumType
-    ) { query, typeState ->
-        query to typeState.type
-    }.flatMapLatest { (query, type) ->
-        getSavedAlbumsUseCase(query, type = null).map { list ->
-            if (type == null) list
-            else list.filter { it.albumType.equals(type.name, ignoreCase = true) }
+    val albums : StateFlow<List<AlbumEntity>> = _searchQuery
+        .flatMapLatest { query ->
+            getSavedAlbumsUseCase(query)
         }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+        .stateIn(
+            initialValue = emptyList(),
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000)
+        )
 
     fun hideSortDialog() = hide(_isSortDialogVisible)
     fun showSortDialog() = show(_isSortDialogVisible)

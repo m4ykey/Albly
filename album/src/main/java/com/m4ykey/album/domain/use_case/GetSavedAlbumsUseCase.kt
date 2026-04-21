@@ -6,7 +6,7 @@ import com.m4ykey.core.model.type.AlbumType
 import kotlinx.coroutines.flow.Flow
 
 class GetSavedAlbumsUseCase(private val repository: AlbumRepository) {
-    operator fun invoke(query : String, type : AlbumType?) : Flow<List<AlbumEntity>> {
-        return repository.getSavedAlbums(query, type)
+    operator fun invoke(query : String) : Flow<List<AlbumEntity>> {
+        return repository.getSavedAlbums(query)
     }
 }

@@ -11,7 +11,7 @@ class AlbumService(
 ) : RemoteAlbumService {
 
     override suspend fun getAlbum(id: Int): AlbumRootDto {
-        return httpClient.get("masters/{id}").body()
+        return httpClient.get("masters/$id").body()
     }
 
 }

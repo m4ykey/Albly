@@ -103,7 +103,7 @@ class SearchViewModel(
                 }
 
                 is SearchTypeAction.OnAlbumClick -> {
-                    _searchUiEvent.emit(SearchUiEvent.OnAlbumClick(action.albumName, action.artistName))
+                    _searchUiEvent.emit(SearchUiEvent.OnAlbumClick(action.id))
                 }
             }
         }

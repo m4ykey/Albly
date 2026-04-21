@@ -10,6 +10,7 @@ import com.m4ykey.album.domain.use_case.GetAlbumStateUseCase
 import com.m4ykey.album.domain.use_case.GetLocalAlbumUseCase
 import com.m4ykey.album.domain.use_case.ToggleAlbumSavedUseCase
 import com.m4ykey.album.domain.use_case.ToggleListenLaterSavedUseCase
+import com.m4ykey.album.mapper.AlbumMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,12 +41,14 @@ class AlbumDetailViewModel(
             useCase.invoke(id)
                 .catch { e ->
                     val localAlbum = withContext(Dispatchers.IO) { getLocalAlbumUseCase(id) }
-                    if (localAlbum != null) {
-//                        _detail.value = DetailUiState.Success(
-//                            item = ,
-//                            isSaved = localState?.isAlbumSaved != null,
-//                            isListenLaterSaved = localState?.isListenLaterSaved != null
-//                        )
+                    val domainAlbum = AlbumMapper.mapToDomain(localAlbum)
+
+                    if (domainAlbum != null) {
+                        _detail.value = DetailUiState.Success(
+                            item = domainAlbum,
+                            isSaved = localState?.isAlbumSaved != null,
+                            isListenLaterSaved = localState?.isListenLaterSaved != null
+                        )
                     } else {
                         _detail.value = DetailUiState.Error(message = e.localizedMessage ?: "Unknown Error")
                     }

@@ -1,6 +1,5 @@
 package com.m4ykey.album.domain.repository
 
-import androidx.paging.PagingData
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
@@ -23,7 +22,7 @@ interface AlbumRepository {
     suspend fun deleteAlbum(id : Int)
     suspend fun deleteSavedListenLaterState(id : Int)
     suspend fun deleteSavedAlbumState(id : Int)
-    fun getSavedAlbums(query : String, type : AlbumType?) : Flow<List<AlbumEntity>>
+    fun getSavedAlbums(query : String) : Flow<List<AlbumEntity>>
     suspend fun getListenLaterAlbums() : List<AlbumEntity>
     suspend fun getRandomAlbum() : Flow<AlbumEntity>
 }

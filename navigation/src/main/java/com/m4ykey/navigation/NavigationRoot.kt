@@ -70,8 +70,8 @@ fun NavigationRoot(
             }
             entry<Route.Search> {
                 SearchScreen(
-                    onAlbumClick = { _, _ ->
-                        //rootBackStack.add(Route.AlbumDetail(it))
+                    onAlbumClick = { albumId ->
+                        rootBackStack.add(Route.AlbumDetail(albumId = albumId))
                     },
                     onBack = {
                         if (rootBackStack.isNotEmpty()) {
@@ -111,7 +111,7 @@ fun NavigationRoot(
                             rootBackStack.removeAt(rootBackStack.lastIndex)
                         }
                     },
-                    onTrackClick = { _, _ ->
+                    onTrackClick = { title, artists ->
 
                     },
                     id = key.albumId

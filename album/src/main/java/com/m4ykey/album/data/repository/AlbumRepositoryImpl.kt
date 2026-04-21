@@ -67,8 +67,8 @@ class AlbumRepositoryImpl(
         dao.deleteSavedAlbumState(id)
     }
 
-    override fun getSavedAlbums(query : String, type : AlbumType?): Flow<List<AlbumEntity>> {
-        return dao.getSavedAlbums(query, type?.name)
+    override fun getSavedAlbums(query : String): Flow<List<AlbumEntity>> {
+        return dao.getSavedAlbums(query)
     }
 
     override suspend fun getListenLaterAlbums(): List<AlbumEntity> {

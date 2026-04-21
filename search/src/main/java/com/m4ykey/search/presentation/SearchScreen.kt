@@ -88,7 +88,7 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     viewModel: SearchViewModel = koinViewModel(),
-    onAlbumClick : (String, String) -> Unit
+    onAlbumClick : (Int) -> Unit
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -116,10 +116,7 @@ fun SearchScreen(
         viewModel.searchUiEvent.collect { event ->
             when (event) {
                 is SearchUiEvent.ChangeType -> viewModel.updateType(event.type)
-                is SearchUiEvent.OnAlbumClick -> onAlbumClick(
-                    event.albumName,
-                    event.artistName
-                )
+                is SearchUiEvent.OnAlbumClick -> onAlbumClick(event.id)
             }
         }
     }
@@ -286,7 +283,7 @@ fun SearchScreen(
                                                 albumName = album.album.orEmpty(),
                                                 artistName = album.artist.orEmpty(),
                                                 onAlbumClick = {
-                                                    onAction(SearchTypeAction.OnAlbumClick(album.album.orEmpty(), album.artist.orEmpty())) }
+                                                    onAction(SearchTypeAction.OnAlbumClick(album.id ?: 0)) }
                                             )
                                         }
                                     }

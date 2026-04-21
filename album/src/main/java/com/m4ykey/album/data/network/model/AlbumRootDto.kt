@@ -4,16 +4,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AlbumRootDto(
-    val id : Int?,
-    val main_release : Int?,
-    val most_recent_release : Int?,
-    val resource_url : String?,
-    val versions_url : String?,
-    val main_release_url : String?,
-    val most_recent_release_url: String?,
-    val year: Int?,
-    val title : String?,
-    val images : List<ImageDto>?,
-    val trackList : List<TrackListDto>?,
-    val artists : List<ArtistsDto>?
+    val id : Int? = null,
+    val main_release : Int? = null,
+    val most_recent_release : Int? = null,
+    val resource_url : String? = null,
+    val versions_url : String? = null,
+    val main_release_url : String? = null,
+    val most_recent_release_url: String? = null,
+    val year: Int? = null,
+    val title : String? = null,
+    val images : List<ImageDto>? = emptyList(),
+    val tracklist : List<TrackListDto>? = emptyList(),
+    val artists : List<ArtistsDto>? = emptyList()
 )

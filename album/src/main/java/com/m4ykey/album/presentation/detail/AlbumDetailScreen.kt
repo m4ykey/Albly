@@ -2,7 +2,7 @@
 
 package com.m4ykey.album.presentation.detail
 
-import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -33,22 +33,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.album.domain.model.AlbumRoot
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.ErrorCard
 import com.m4ykey.album.presentation.components.SaveButtonRow
+import com.m4ykey.album.presentation.components.TrackListItem
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.LoadImage
 import com.m4ykey.core.ext.copyText
-import com.m4ykey.core.ext.formatReleaseDate
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -114,8 +110,8 @@ fun AlbumDetailDisplay(
     when (albumDetail) {
         is DetailUiState.Loading -> {
             Box(modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                .fillMaxSize()
+                .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 ContainedLoadingIndicator()
@@ -123,6 +119,7 @@ fun AlbumDetailDisplay(
         }
         is DetailUiState.Error -> {
             ErrorCard(text = albumDetail.message)
+            Log.i("AlbumDetailError", albumDetail.message)
         }
         is DetailUiState.Success -> {
             Box(
@@ -130,7 +127,7 @@ fun AlbumDetailDisplay(
                 contentAlignment = Alignment.TopCenter
             ) {
                 AlbumDetailContent(
-                    //item = albumDetail.item,
+                    item = albumDetail.item,
                     contentPadding = paddingValues,
                     state = state,
                     onTrackClick = onTrackClick,
@@ -154,26 +151,19 @@ fun AlbumDetailContent(
     onListenLaterToggle : (AlbumEntity) -> Unit,
     isSaved : Boolean,
     isListenLaterSaved : Boolean,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    item : AlbumRoot
 ) {
     //val albumEntity = remember(item) { item.toEntity() }
 
-    //val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
+    val imageUrl = item.images.find { it.type == "primary" }?.uri ?: item.images.firstOrNull()?.uri
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
     val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
 
-    //val albumType = item.albumType.replaceFirstChar { it.uppercase() }
+    val albumInfo = "${item.year} • ${item.tracklist.size} " +
+            stringResource(R.string.tracks)
 
-//    val albumInfo = "$albumType • ${formatReleaseDate(item.releaseDate)} • ${item.totalTracks} " +
-//            stringResource(R.string.tracks)
-//
-//    val albumUrl = item.externalUrls.spotify
-//    val artistUrl = item.artists[0].externalUrls.spotify
-//
-//    val copyright = item.copyright
-//        .map { it.text }
-//        .distinct()
-//        .joinToString(separator = "\n")
+    val artists = item.artists.joinToString(", ") { it.name }
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -193,33 +183,32 @@ fun AlbumDetailContent(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-//                largestImageUrl?.let { LoadImage(
-//                    imageUrl = it,
-//                    modifier = Modifier.size(260.dp)
-//                ) }
+                LoadImage(
+                    imageUrl = imageUrl.orEmpty(),
+                    modifier = Modifier.size(260.dp)
+                )
             }
         }
 
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "item.name",
+                    text = item.title,
                     fontSize = 25.sp,
                     color = textColor,
                     modifier = Modifier.clickable {
-                        copyText(text = "item.name", context)
+                        copyText(text = item.title, context)
                     }
                 )
-//                Text(
-//                    text = "item.artists.joinToString(", ") { it.name }",
-//                    fontSize = 15.sp,
-//                    color = textColor2
-//                )
+                Text(
+                    text = artists,
+                    fontSize = 15.sp,
+                    color = textColor2
+                )
             }
         }
 
         item {
-            val message = stringResource(R.string.please_wait_until_all_tracks_are_loaded)
             SaveButtonRow(
                 isSaved = isSaved,
                 isListenLaterSaved = isListenLaterSaved,
@@ -234,7 +223,7 @@ fun AlbumDetailContent(
 
         item {
             Text(
-                text = "albumInfo",
+                text = albumInfo,
                 color = textColor2,
                 fontSize = 14.sp
             )
@@ -251,25 +240,21 @@ fun AlbumDetailContent(
             )
         }
 
-//        items(
-//            count = tracks.itemCount,
-//            key = tracks.itemKey { item -> item.id },
-//            contentType = { "track_item" }
-//        ) { index ->
-//            val currentItem = tracks[index]
-//            currentItem?.let { item ->
-//                TrackListItem(
-//                    item = item,
-//                    onTrackClick = onTrackClick
-//                )
-//            }
-//        }
-//
-//        item {
-//            Text(
-//                text = copyright,
-//                color = textColor
-//            )
-//        }
+        items(
+            count = item.tracklist.size,
+            key = { index ->
+                item.tracklist[index].position
+            },
+            contentType = { "track_item" }
+        ) { index ->
+            val currentItem = item.tracklist[index]
+            TrackListItem(
+                onTrackClick = onTrackClick,
+                duration = currentItem.duration,
+                title = currentItem.title,
+                artists = artists,
+                position = currentItem.position
+            )
+        }
     }
 }

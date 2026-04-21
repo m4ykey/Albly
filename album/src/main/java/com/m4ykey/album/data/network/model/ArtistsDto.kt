@@ -4,6 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ArtistsDto(
-    val name : String,
-    val thumbnail_url : String
+    val name : String? = null
 )

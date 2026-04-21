@@ -15,22 +15,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.core.ext.LoadImage
-import com.m4ykey.core.model.local.ArtistEntity
-import com.m4ykey.core.model.local.ExternalUrlsEntity
 
 @Composable
 fun AlbumListRow(
     item : AlbumEntity,
     onAlbumClick : (Int) -> Unit
 ) {
-    val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
-    val smallestImageUrl = item.images.minByOrNull { it.width * it.height }?.url
-    val artists = item.artists.joinToString(", ") { it.name }
+    val artists = item.artistList.joinToString(", ") { it.name }
 
     Row(
         modifier = Modifier
@@ -40,7 +35,7 @@ fun AlbumListRow(
             .clickable { onAlbumClick(item.id) }
     ) {
         LoadImage(
-            imageUrl = largestImageUrl.orEmpty(),
+            imageUrl = item.image,
             modifier = Modifier.size(90.dp)
         )
         Column(
@@ -51,7 +46,7 @@ fun AlbumListRow(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = item.name,
+                text = item.title,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -67,40 +62,4 @@ fun AlbumListRow(
             )
         }
     }
-}
-
-@Preview
-@Composable
-private fun AlbumListRowPrev() {
-    val externalUrls = ExternalUrlsEntity(
-        spotify = ""
-    )
-    val artists = listOf(
-        ArtistEntity(
-            name = "Artist1",
-            id = "",
-            externalUrls = externalUrls
-        ),
-        ArtistEntity(
-            name = "Artist2",
-            id = "",
-            externalUrls = externalUrls
-        )
-    )
-    val item = AlbumEntity(
-        id = 0,
-        label = "",
-        images = emptyList(),
-        albumType = "",
-        copyrights = emptyList(),
-        name = "Test Album 123",
-        releaseDate = "",
-        totalTracks = 0,
-        externalUrls = externalUrls,
-        artists = artists
-    )
-    AlbumListRow(
-        item = item,
-        onAlbumClick = {}
-    )
 }

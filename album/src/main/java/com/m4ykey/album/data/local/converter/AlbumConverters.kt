@@ -3,10 +3,8 @@ package com.m4ykey.album.data.local.converter
 import androidx.room.TypeConverter
 import com.m4ykey.album.data.database.decode
 import com.m4ykey.album.data.database.encode
-import com.m4ykey.album.data.local.model.CopyrightEntity
-import com.m4ykey.album.data.local.model.ImageEntity
-import com.m4ykey.core.model.local.ArtistEntity
-import com.m4ykey.core.model.local.ExternalUrlsEntity
+import com.m4ykey.album.data.local.model.ArtistEntity
+import com.m4ykey.album.data.local.model.TrackEntity
 
 class AlbumConverters {
 
@@ -17,21 +15,9 @@ class AlbumConverters {
     fun toArtistList(value : String) : List<ArtistEntity> = decode(value)
 
     @TypeConverter
-    fun fromCopyrightList(value : List<CopyrightEntity>) : String = encode(value)
+    fun fromTrackList(value : List<TrackEntity>) : String = encode(value)
 
     @TypeConverter
-    fun toCopyrightList(value : String) : List<CopyrightEntity> = decode(value)
-
-    @TypeConverter
-    fun fromExternalUrls(value : ExternalUrlsEntity) : String = encode(value)
-
-    @TypeConverter
-    fun toExternalUrls(value : String) : ExternalUrlsEntity = decode(value)
-
-    @TypeConverter
-    fun fromImageList(value : List<ImageEntity>) : String = encode(value)
-
-    @TypeConverter
-    fun toImageList(value : String) : List<ImageEntity> = decode(value)
+    fun toTrackList(value : String) : List<TrackEntity> = decode(value)
 
 }
