@@ -14,13 +14,60 @@ import com.m4ykey.album.domain.model.TrackList
 
 object AlbumMapper {
 
-    private fun mapToArtistsList(entities : List<ArtistEntity>?) : List<Artists> {
+    fun mapToEntity(domain : AlbumRoot?) : AlbumEntity? {
+        if (domain == null) return null
+
+        return AlbumEntity(
+            id = domain.id,
+            title = domain.title,
+            year = domain.year,
+            save_time = System.currentTimeMillis(),
+            image = domain.images.firstOrNull()?.uri.orEmpty(),
+            artistList = mapDomainArtistsToEntity(domain.artists),
+            trackList = mapDomainTrackListToEntity(domain.tracklist)
+        )
+    }
+
+    private fun mapDomainArtistsToEntity(artists : List<Artists>) : List<ArtistEntity> {
+        return artists.map { artists ->
+            ArtistEntity(
+                name = artists.name,
+                artist_id = 0
+            )
+        }
+    }
+
+    private fun mapDomainTrackListToEntity(tracks : List<TrackList>) : List<TrackEntity> {
+        return tracks.map { track ->
+            TrackEntity(
+                position = track.position,
+                duration = track.duration,
+                title = track.title,
+                track_id = 0
+            )
+        }
+    }
+
+    fun mapToDomain(entity : AlbumEntity?) : AlbumRoot? {
+        if (entity == null) return null
+
+        return AlbumRoot(
+            id = entity.id,
+            title = entity.title,
+            year = entity.year,
+            tracklist = mapEntityToTrackList(entity.trackList),
+            artists = mapEntityToArtistsList(entity.artistList),
+            images = mapStringPathToImageList(entity.image)
+        )
+    }
+
+    private fun mapEntityToArtistsList(entities : List<ArtistEntity>?) : List<Artists> {
         return entities?.map { entity ->
             Artists(entity.name)
         } ?: emptyList()
     }
 
-    private fun mapToTrackList(entities : List<TrackEntity>?) : List<TrackList> {
+    private fun mapEntityToTrackList(entities : List<TrackEntity>?) : List<TrackList> {
         return entities?.map { entity ->
             TrackList(
                 duration = entity.duration,
@@ -31,7 +78,7 @@ object AlbumMapper {
         } ?: emptyList()
     }
 
-    private fun mapToImageList(imagePath : String?) : List<Image> {
+    private fun mapStringPathToImageList(imagePath : String?) : List<Image> {
         return if (imagePath.isNullOrEmpty()) {
             emptyList()
         } else {
@@ -44,19 +91,6 @@ object AlbumMapper {
         }
     }
 
-    fun mapToDomain(entity : AlbumEntity?) : AlbumRoot? {
-        if (entity == null) return null
-
-        return AlbumRoot(
-            id = entity.id,
-            title = entity.title,
-            year = entity.year,
-            tracklist = mapToTrackList(entity.trackList),
-            artists = mapToArtistsList(entity.artistList),
-            images = mapToImageList(entity.image)
-        )
-    }
-
     fun mapToDomain(dto : AlbumRootDto?) : AlbumRoot? {
         if (dto == null) return null
 
@@ -64,23 +98,23 @@ object AlbumMapper {
             id = dto.id ?: 0,
             title = dto.title.orEmpty(),
             year = dto.year ?: 0,
-            images = mapToImageList(dto.images),
-            artists = mapToArtistsList(dto.artists),
-            tracklist = mapToTrackList(dto.tracklist)
+            images = mapDtoToImageList(dto.images),
+            artists = mapDtoToArtistsList(dto.artists),
+            tracklist = mapDtoToTrackList(dto.tracklist)
         )
     }
 
-    private fun mapToImageList(dto : List<ImageDto>?) : List<Image> {
+    private fun mapDtoToImageList(dto : List<ImageDto>?) : List<Image> {
         return dto?.map { img ->
             Image(type = img.type.orEmpty(), uri = img.uri.orEmpty())
         } ?: emptyList()
     }
 
-    private fun mapToTrackList(dto : List<TrackListDto>?) : List<TrackList> {
+    private fun mapDtoToTrackList(dto : List<TrackListDto>?) : List<TrackList> {
         return dto?.mapNotNull { mapToSingleTrack(it) } ?: emptyList()
     }
 
-    private fun mapToArtistsList(dto : List<ArtistsDto>?) : List<Artists> {
+    private fun mapDtoToArtistsList(dto : List<ArtistsDto>?) : List<Artists> {
         return dto?.map { a ->
             Artists(name = a.name.orEmpty())
         } ?: emptyList()

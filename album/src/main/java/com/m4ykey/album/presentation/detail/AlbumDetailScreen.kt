@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.domain.model.AlbumRoot
+import com.m4ykey.album.mapper.AlbumMapper
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.ErrorCard
 import com.m4ykey.album.presentation.components.SaveButtonRow
@@ -154,7 +155,7 @@ fun AlbumDetailContent(
     snackbarHostState: SnackbarHostState,
     item : AlbumRoot
 ) {
-    //val albumEntity = remember(item) { item.toEntity() }
+    val albumEntity = remember(item) { AlbumMapper.mapToEntity(item) }
 
     val imageUrl = item.images.find { it.type == "primary" }?.uri ?: item.images.firstOrNull()?.uri
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -213,10 +214,14 @@ fun AlbumDetailContent(
                 isSaved = isSaved,
                 isListenLaterSaved = isListenLaterSaved,
                 onSaveClick = {
-                    //onSaveToggle(albumEntity)
+                    if (albumEntity != null) {
+                        onSaveToggle(albumEntity)
+                    }
                 },
                 onListenLaterClick = {
-                    //onListenLaterToggle(albumEntity)
+                    if (albumEntity != null) {
+                        onListenLaterToggle(albumEntity)
+                    }
                 }
             )
         }

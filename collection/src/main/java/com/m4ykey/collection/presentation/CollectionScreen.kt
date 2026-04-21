@@ -405,10 +405,13 @@ fun CollectionScreenContent(
                     key = { it.id },
                     contentType = { "album_item" }
                 ) { item ->
-//                    AlbumGridCard(
-//                        //item = item.toAlbum(),
-//                        onAlbumClick = onAlbumClick
-//                    )
+                    AlbumGridCard(
+                        albumName = item.title,
+                        image = item.image,
+                        artistName = item.artistList.joinToString(", ") { it.name },
+                        onAlbumClick = onAlbumClick,
+                        id = item.id
+                    )
                 }
             }
         } else {

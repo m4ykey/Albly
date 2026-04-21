@@ -17,12 +17,13 @@ fun AlbumGridCard(
     albumName : String,
     artistName : String,
     image : String,
-    onAlbumClick : () -> Unit
+    onAlbumClick : (Int) -> Unit,
+    id : Int
 ) {
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     Column(
-        modifier = Modifier.clickable { onAlbumClick() }
+        modifier = Modifier.clickable { onAlbumClick(id) }
     ) {
         LoadImage(imageUrl = image)
         Text(
