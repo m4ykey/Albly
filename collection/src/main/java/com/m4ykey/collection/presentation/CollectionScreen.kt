@@ -80,7 +80,6 @@ import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.DrawerItem
 import com.m4ykey.collection.model.IconSource
 import com.m4ykey.collection.presentation.components.AlbumListRow
-import com.m4ykey.collection.presentation.components.AlbumTypeChipList
 import com.m4ykey.collection.presentation.components.EmptyList
 import com.m4ykey.collection.presentation.components.ListOptions
 import com.m4ykey.collection.presentation.components.SearchField
@@ -91,7 +90,6 @@ import com.m4ykey.collection.presentation.type.list.ListViewType
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.showToast
-import com.m4ykey.core.model.type.AlbumType
 import com.m4ykey.core.ui.AlbumGridCard
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -111,8 +109,6 @@ fun CollectionScreen(
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val albumTypeState by viewModel.albumType.collectAsStateWithLifecycle()
-    val currentType = albumTypeState.type
 
     val isSortDialogVisible by viewModel.isSortDialogVisible.collectAsState()
     val isSearchVisible by viewModel.isSearchVisible.collectAsState()
@@ -218,7 +214,6 @@ fun CollectionScreen(
             title = R.string.collection,
             content = { padding ->
                 CollectionScreenContent(
-                    type = currentType,
                     onAction = onAction,
                     padding = padding,
                     listState = listState,
@@ -335,7 +330,6 @@ private fun getAlbumFromIdUrl(url : String) : String? {
 @Composable
 fun CollectionScreenContent(
     modifier: Modifier = Modifier,
-    type : AlbumType?,
     onAction : (CollectionTypeAction) -> Unit,
     padding : PaddingValues,
     listState: LazyListState,
@@ -381,7 +375,6 @@ fun CollectionScreenContent(
                         modifier = headerModifier,
                         onSearchClick = onSearchClick,
                         onAction = onAction,
-                        type = type,
                         onShowSortDialog = onShowSortDialog,
                         clearTextField = clearTextField,
                         onHideSearchClick = onHideSearchClick,
@@ -427,7 +420,6 @@ fun CollectionScreenContent(
                         modifier = headerModifier,
                         onSearchClick = onSearchClick,
                         onAction = onAction,
-                        type = type,
                         onShowSortDialog = onShowSortDialog,
                         clearTextField = clearTextField,
                         onHideSearchClick = onHideSearchClick,
@@ -477,7 +469,6 @@ fun CollectionHeader(
     modifier: Modifier = Modifier,
     onAction: (CollectionTypeAction) -> Unit,
     isSearchVisible : Boolean,
-    type : AlbumType?,
     onSortChange : (ListSortType) -> Unit,
     onViewChange : (ListViewType) -> Unit,
     onListTypeChange: (ListType) -> Unit,
@@ -499,20 +490,6 @@ fun CollectionHeader(
         val endGuideline = createGuidelineFromEnd(0.dp)
 
         val keyboardController = LocalSoftwareKeyboardController.current
-
-        Box(modifier = Modifier.constrainAs(chips) {
-            top.linkTo(parent.top, margin = 8.dp)
-            start.linkTo(startGuideline)
-            end.linkTo(endGuideline)
-            width = Dimension.fillToConstraints
-        }) {
-            AlbumTypeChipList(
-                selectedChip = type,
-                onChipSelected = { selectedType ->
-                    onAction(CollectionTypeAction.OnTypeClick(selectedType))
-                }
-            )
-        }
 
         Box(modifier = Modifier.constrainAs(options) {
             top.linkTo(chips.bottom, margin = 8.dp)

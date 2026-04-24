@@ -5,7 +5,6 @@ import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
 import com.m4ykey.album.domain.model.AlbumRoot
-import com.m4ykey.core.model.type.AlbumType
 import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {

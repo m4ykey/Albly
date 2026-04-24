@@ -9,7 +9,6 @@ import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.domain.model.AlbumRoot
 import com.m4ykey.album.domain.repository.AlbumRepository
 import com.m4ykey.album.mapper.AlbumMapper
-import com.m4ykey.core.model.type.AlbumType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

@@ -1,11 +1,14 @@
 package com.m4ykey.settings
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -14,10 +17,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 
@@ -58,7 +64,8 @@ fun SettingsScreen(
                     )
                 }
             }
-        }
+        },
+        title = R.string.settings
     )
 }
 
@@ -70,21 +77,35 @@ fun SettingsIcon(
     message : Int,
     onClick : () -> Unit
 ) {
+    val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
+    val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+            .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(icon),
             contentDescription = stringResource(title),
-            modifier = modifier.size(24.dp)
+            modifier = modifier.size(22.dp)
         )
+        Spacer(modifier = Modifier.width(10.dp))
         Column(
             modifier = modifier.weight(1f)
         ) {
-            Text(text = stringResource(title))
-            Text(text = stringResource(message))
+            Text(
+                text = stringResource(title),
+                fontSize = 17.sp,
+                color = textColor
+            )
+            Text(
+                text = stringResource(message),
+                color = textColor2,
+                fontSize = 14.sp
+            )
         }
         Icon(
             contentDescription = null,

@@ -146,9 +146,13 @@ fun ListenLaterContent(
                     items = albums,
                     key = { it.id }
                 ) { item ->
-//                    AlbumGridCard(
-//                        onAlbumClick = { onAlbumClick(item.id) },
-//                    )
+                    AlbumGridCard(
+                        onAlbumClick = { onAlbumClick(item.id) },
+                        albumName = item.title,
+                        artistName = item.artistList.joinToString(", ") { it.name },
+                        id = item.id,
+                        image = item.image
+                    )
                 }
             }
 
