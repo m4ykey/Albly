@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.album.domain.model.AlbumRoot
+import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.mapper.AlbumMapper
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.ErrorCard

@@ -1,15 +1,18 @@
 package com.m4ykey.album.domain.repository
 
+import androidx.paging.PagingData
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
-import com.m4ykey.album.domain.model.AlbumRoot
+import com.m4ykey.album.domain.model.detail.AlbumRoot
+import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {
 
     suspend fun getAlbum(id : Int) : Flow<AlbumRoot>
+    fun getNewRelease() : Flow<PagingData<NewReleaseResult>>
 
     suspend fun insertAlbum(album : AlbumEntity)
     suspend fun insertSavedAlbum(isAlbumSaved: IsAlbumSaved)

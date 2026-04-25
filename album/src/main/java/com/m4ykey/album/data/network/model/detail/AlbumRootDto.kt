@@ -1,4 +1,4 @@
-package com.m4ykey.album.data.network.model
+package com.m4ykey.album.data.network.model.detail
 
 import kotlinx.serialization.Serializable
 

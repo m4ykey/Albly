@@ -1,6 +1,6 @@
 package com.m4ykey.album.presentation.detail
 
-import com.m4ykey.album.domain.model.AlbumRoot
+import com.m4ykey.album.domain.model.detail.AlbumRoot
 
 sealed interface DetailUiState {
     data object Loading : DetailUiState

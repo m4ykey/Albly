@@ -3,16 +3,47 @@ package com.m4ykey.album.mapper
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.ArtistEntity
 import com.m4ykey.album.data.local.model.TrackEntity
-import com.m4ykey.album.data.network.model.AlbumRootDto
-import com.m4ykey.album.data.network.model.ArtistsDto
-import com.m4ykey.album.data.network.model.ImageDto
-import com.m4ykey.album.data.network.model.TrackListDto
-import com.m4ykey.album.domain.model.AlbumRoot
-import com.m4ykey.album.domain.model.Artists
-import com.m4ykey.album.domain.model.Image
-import com.m4ykey.album.domain.model.TrackList
+import com.m4ykey.album.data.network.model.detail.AlbumRootDto
+import com.m4ykey.album.data.network.model.detail.ArtistsDto
+import com.m4ykey.album.data.network.model.detail.ImageDto
+import com.m4ykey.album.data.network.model.detail.TrackListDto
+import com.m4ykey.album.data.network.model.new_release.NewReleaseResultDto
+import com.m4ykey.album.data.network.model.new_release.NewReleaseRootDto
+import com.m4ykey.album.domain.model.detail.AlbumRoot
+import com.m4ykey.album.domain.model.detail.Artists
+import com.m4ykey.album.domain.model.detail.Image
+import com.m4ykey.album.domain.model.detail.TrackList
+import com.m4ykey.album.domain.model.new_release.NewReleaseResult
+import com.m4ykey.album.domain.model.new_release.NewReleaseRoot
 
 object AlbumMapper {
+
+    fun mapToNewRelease(dto : NewReleaseRootDto?) : NewReleaseRoot {
+        val results = dto?.results?.mapNotNull { mapToSingleNewRelease(it) } ?: emptyList()
+        return NewReleaseRoot(results)
+    }
+
+    fun mapToSingleNewRelease(dto : NewReleaseResultDto?) : NewReleaseResult? {
+        if (dto == null) return null
+
+        val rawTitle = dto.title
+        var artist = "Unknown artist"
+        var album = rawTitle
+
+        rawTitle?.takeIf { it.contains(" - ") }?.let {
+            val parts = it.split(" - ", limit = 2)
+            artist = parts[0].trim()
+            album = parts[1].trim()
+        }
+
+        return NewReleaseResult(
+            title = album.orEmpty(),
+            master_id = dto.master_id ?: 0,
+            thumb = dto.thumb.orEmpty(),
+            cover_image = dto.cover_image.orEmpty(),
+            artist = artist
+        )
+    }
 
     fun mapToEntity(domain : AlbumRoot?) : AlbumEntity? {
         if (domain == null) return null

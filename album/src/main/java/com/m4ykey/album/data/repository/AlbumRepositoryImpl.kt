@@ -1,20 +1,30 @@
 package com.m4ykey.album.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingData
 import com.m4ykey.album.data.local.dao.AlbumDao
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
+import com.m4ykey.album.data.network.paging.NewReleasePagingSource
 import com.m4ykey.album.data.network.service.RemoteAlbumService
-import com.m4ykey.album.domain.model.AlbumRoot
+import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
+import com.m4ykey.album.domain.model.detail.AlbumRoot
+import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.repository.AlbumRepository
 import com.m4ykey.album.mapper.AlbumMapper
+import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 
 class AlbumRepositoryImpl(
     private val service : RemoteAlbumService,
-    private val dao : AlbumDao
+    private val dao : AlbumDao,
+    private val newReleaseService : RemoteNewReleaseAlbumService
 ) : AlbumRepository {
 
     override suspend fun getAlbum(id: Int): Flow<AlbumRoot> = flow {
@@ -24,6 +34,24 @@ class AlbumRepositoryImpl(
             ?: throw Exception("")
 
         emit(domainAlbum)
+    }
+
+    override fun getNewRelease(): Flow<PagingData<NewReleaseResult>> {
+        val today = LocalDate.now()
+        val currentFriday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
+        val lastFriday = currentFriday.minusWeeks(1)
+
+        val dateRange = "$lastFriday..$currentFriday"
+
+        return Pager(
+            config = pagingConfig,
+            pagingSourceFactory = {
+                NewReleasePagingSource(
+                    service = newReleaseService,
+                    releaseDate = dateRange
+                )
+            }
+        ).flow
     }
 
     override suspend fun insertAlbum(album: AlbumEntity) {

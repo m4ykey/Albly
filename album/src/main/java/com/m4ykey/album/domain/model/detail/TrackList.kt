@@ -1,4 +1,4 @@
-package com.m4ykey.album.domain.model
+package com.m4ykey.album.domain.model.detail
 
 data class TrackList(
     val position : String,
