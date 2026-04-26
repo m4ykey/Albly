@@ -19,13 +19,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +37,7 @@ import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.mapper.AlbumMapper
 import com.m4ykey.album.presentation.components.AlbumButtonRow
-import com.m4ykey.album.presentation.components.ErrorCard
+import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
 import com.m4ykey.core.ext.ActionIconButton
@@ -53,7 +51,7 @@ fun AlbumDetailScreen(
     id : Int,
     onBack : () -> Unit,
     viewModel : AlbumDetailViewModel = koinViewModel(),
-    onTrackClick : (String, String) -> Unit
+    onTrackClick : (String, String, String) -> Unit
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
@@ -64,10 +62,7 @@ fun AlbumDetailScreen(
         viewModel.getAlbumById(id)
     }
 
-    val snackbarHostState = remember { SnackbarHostState() }
-
     AppScaffold(
-        snackbarHostState = snackbarHostState,
         navigation = {
             ActionIconButton(
                 onClick = onBack,
@@ -77,7 +72,6 @@ fun AlbumDetailScreen(
         },
         content = { padding ->
             AlbumDetailDisplay(
-                snackbarHostState = snackbarHostState,
                 onTrackClick = onTrackClick,
                 state = state,
                 albumDetail = albumDetail,
@@ -102,11 +96,10 @@ fun AlbumDetailDisplay(
     modifier: Modifier = Modifier,
     albumDetail : DetailUiState,
     paddingValues: PaddingValues,
-    onTrackClick: (String, String) -> Unit,
+    onTrackClick: (String, String, String) -> Unit,
     state : LazyListState,
     onSaveToggle: (AlbumEntity) -> Unit,
-    onListenLaterToggle: (AlbumEntity) -> Unit,
-    snackbarHostState: SnackbarHostState
+    onListenLaterToggle: (AlbumEntity) -> Unit
 ) {
     when (albumDetail) {
         is DetailUiState.Loading -> {
@@ -135,8 +128,7 @@ fun AlbumDetailDisplay(
                     onSaveToggle = onSaveToggle,
                     onListenLaterToggle = onListenLaterToggle,
                     isSaved = albumDetail.isSaved,
-                    isListenLaterSaved = albumDetail.isListenLaterSaved,
-                    snackbarHostState = snackbarHostState
+                    isListenLaterSaved = albumDetail.isListenLaterSaved
                 )
             }
         }
@@ -147,12 +139,11 @@ fun AlbumDetailDisplay(
 fun AlbumDetailContent(
     contentPadding : PaddingValues = PaddingValues(0.dp),
     state : LazyListState,
-    onTrackClick : (String, String) -> Unit,
+    onTrackClick : (String, String, String) -> Unit,
     onSaveToggle : (AlbumEntity) -> Unit,
     onListenLaterToggle : (AlbumEntity) -> Unit,
     isSaved : Boolean,
     isListenLaterSaved : Boolean,
-    snackbarHostState: SnackbarHostState,
     item : AlbumRoot
 ) {
     val albumEntity = remember(item) { AlbumMapper.mapToEntity(item) }
@@ -167,9 +158,6 @@ fun AlbumDetailContent(
     val artists = item.artists.joinToString(", ") { it.name }
 
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-
-    //val trackEntities = tracks.itemSnapshotList.items.map { it.toEntity(item.id) }
 
     LazyColumn(
         modifier = Modifier
@@ -258,7 +246,8 @@ fun AlbumDetailContent(
                 duration = currentItem.duration,
                 title = currentItem.title,
                 artists = artists,
-                position = currentItem.position
+                position = currentItem.position,
+                img = imageUrl.orEmpty()
             )
         }
     }

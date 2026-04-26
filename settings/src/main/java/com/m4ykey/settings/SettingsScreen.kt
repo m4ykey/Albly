@@ -63,6 +63,12 @@ fun SettingsScreen(
                         onClick = {}
                     )
                 }
+                item {
+
+                }
+                item {
+
+                }
             }
         },
         title = R.string.settings

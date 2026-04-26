@@ -22,8 +22,9 @@ fun TrackListItem(
     title : String,
     artists : String,
     duration : String,
-    onTrackClick : (String, String) -> Unit,
-    position : String
+    onTrackClick : (String, String, String) -> Unit,
+    position : String,
+    img : String
 ) {
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
     val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
@@ -31,7 +32,7 @@ fun TrackListItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onTrackClick(title, artists) }
+            .clickable { onTrackClick(title, artists, img) }
             .padding(vertical = 8.dp, horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

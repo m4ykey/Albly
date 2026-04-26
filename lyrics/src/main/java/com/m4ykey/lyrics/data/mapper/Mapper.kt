@@ -9,8 +9,6 @@ fun LyricsDtoItem.toDomain() : LyricsItem {
         name = name.orEmpty(),
         albumName = albumName.orEmpty(),
         artistName = artistName.orEmpty(),
-        duration = duration ?: 0.0,
-        instrumental = instrumental ?: false,
         plainLyrics = plainLyrics.orEmpty(),
         syncedLyrics = syncedLyrics.orEmpty(),
         trackName = trackName.orEmpty()

@@ -24,4 +24,7 @@ sealed interface Route : NavKey {
     @Serializable
     data object NewRelease : Route
 
+    @Serializable
+    data class Lyrics(val artist : String, val track : String, val img : String) : Route
+
 }

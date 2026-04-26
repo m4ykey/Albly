@@ -50,6 +50,8 @@ dependencies {
     api(libs.androidx.icons.extended)
     api(libs.bundles.paging)
 
+    implementation(libs.lottie)
+
     implementation(libs.ktx.serialization.json)
 
     implementation(libs.landscapist)

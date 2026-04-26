@@ -1,4 +1,4 @@
-package com.m4ykey.album.presentation.components
+package com.m4ykey.core.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,11 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.m4ykey.album.R
+import com.airbnb.lottie.compose.*
+import com.m4ykey.core.R
 
 @Composable
 fun ErrorCard(text : String) {

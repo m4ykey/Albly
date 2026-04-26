@@ -40,7 +40,7 @@ android {
 dependencies {
     implementation(project(":core"))
 
-    implementation(libs.koin.android)
+    implementation(libs.bundles.koin)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -52,4 +52,6 @@ dependencies {
     implementation(libs.bundles.ktor)
 
     implementation(libs.ktx.serialization.json)
+
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -13,6 +13,7 @@ import com.m4ykey.album.presentation.detail.AlbumDetailScreen
 import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
 import com.m4ykey.collection.presentation.CollectionScreen
+import com.m4ykey.lyrics.presentation.LyricsScreen
 import com.m4ykey.search.presentation.SearchScreen
 import com.m4ykey.settings.SettingsScreen
 import kotlinx.serialization.modules.SerializersModule
@@ -32,6 +33,7 @@ fun NavigationRoot(
                     subclass(Route.Settings::class, Route.Settings.serializer())
                     subclass(Route.AlbumDetail::class, Route.AlbumDetail.serializer())
                     subclass(Route.ListenLater::class, Route.ListenLater.serializer())
+                    subclass(Route.Lyrics::class, Route.Lyrics.serializer())
                 }
             }
         },
@@ -111,8 +113,8 @@ fun NavigationRoot(
                             rootBackStack.removeAt(rootBackStack.lastIndex)
                         }
                     },
-                    onTrackClick = { title, artists ->
-
+                    onTrackClick = { artist, track, img ->
+                        rootBackStack.add(Route.Lyrics(artist = artist, track = track, img = img))
                     },
                     id = key.albumId
                 )
@@ -127,6 +129,18 @@ fun NavigationRoot(
                     onAlbumClick = {
                         rootBackStack.add(Route.AlbumDetail(it))
                     }
+                )
+            }
+            entry<Route.Lyrics> { key ->
+                LyricsScreen(
+                    onBack = {
+                        if (rootBackStack.isNotEmpty()) {
+                            rootBackStack.removeAt(rootBackStack.lastIndex)
+                        }
+                    },
+                    artistName = key.artist,
+                    trackName = key.track,
+                    imageUrl = key.img
                 )
             }
         }

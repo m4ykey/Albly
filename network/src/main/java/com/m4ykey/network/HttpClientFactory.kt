@@ -53,6 +53,5 @@ object HttpClientFactory {
                 connectAttempts  = 3
             }
         }
-
     }
 }

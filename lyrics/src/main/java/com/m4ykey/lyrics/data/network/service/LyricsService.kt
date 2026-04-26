@@ -14,13 +14,13 @@ class LyricsService(
         q: String,
         trackName: String
     ): List<LyricsDtoItem> {
-        return httpClient.get("api/search") {
+        return httpClient.get("search") {
             parameter("q", q)
             parameter("track_name", trackName)
         }.body()
     }
 
     override suspend fun getLyrics(id: Int): LyricsDtoItem {
-        return httpClient.get("api/get/$id").body()
+        return httpClient.get("get/$id").body()
     }
 }
