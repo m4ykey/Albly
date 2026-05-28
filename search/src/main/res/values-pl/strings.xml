@@ -6,5 +6,6 @@
     <string name="artist">Artysta</string>
     <string name="enter_album_name">Wprowadź nazwę albumu</string>
     <string name="speech_recognition_not_supported">Rozpoznawanie mowy jest nieobsługiwane</string>
-    <string name="lyrics">Tekst</string>/>
+    <string name="lyrics">Tekst</string>
+    <string name="no_results">Brak wyników</string>/>
 </resources>

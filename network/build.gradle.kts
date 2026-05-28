@@ -9,6 +9,7 @@ val localProps = Properties().apply {
 }
 
 val token : String = localProps.getProperty("token")
+val genius_token : String = localProps.getProperty("genius_token")
 
 android {
     namespace = "com.m4ykey.network"
@@ -23,6 +24,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         buildConfigField("String", "token", "\"${token}\"")
+        buildConfigField("String", "genius_token", "\"${genius_token}\"")
     }
 
     buildTypes {

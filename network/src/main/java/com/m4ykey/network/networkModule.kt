@@ -10,7 +10,10 @@ import com.m4ykey.search.data.network.service.RemoteSearchLyricsService
 import com.m4ykey.search.data.network.service.RemoteSearchService
 import com.m4ykey.search.data.network.service.SearchLyricsService
 import com.m4ykey.search.data.network.service.SearchService
+import com.m4ykey.network.BuildConfig.token
+import com.m4ykey.network.BuildConfig.genius_token
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.header
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -25,7 +28,7 @@ val networkModule = module {
     single(named(GENIUS_SEARCH)) {
         HttpClientFactory.create(enableLogging = true).config {
             defaultRequest {
-                //header("Authorization", "Bearer " + BuildConfig)
+                header("Authorization", "Bearer $genius_token")
                 url("https://api.genius.com/")
             }
         }
@@ -35,7 +38,7 @@ val networkModule = module {
         HttpClientFactory.create(enableLogging = true).config {
             defaultRequest {
                 url("https://api.discogs.com/")
-                url.parameters.append("token", BuildConfig.token)
+                url.parameters.append("token", token)
             }
         }
     }
@@ -44,7 +47,7 @@ val networkModule = module {
         HttpClientFactory.create(enableLogging = true).config {
             defaultRequest {
                 url("https://api.discogs.com/database/")
-                url.parameters.append("token", BuildConfig.token)
+                url.parameters.append("token", token)
             }
         }
     }
@@ -53,7 +56,7 @@ val networkModule = module {
         HttpClientFactory.create(enableLogging = true).config {
             defaultRequest {
                 url("https://api.discogs.com/database/")
-                url.parameters.append("token", BuildConfig.token)
+                url.parameters.append("token", token)
             }
         }
     }

@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -68,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -80,8 +82,6 @@ import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ui.ArtistCard
 import com.m4ykey.search.R
-import com.m4ykey.search.domain.model.search.album.ResultsAlbum
-import com.m4ykey.search.domain.model.search.artist.ResultsArtist
 import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
 
@@ -96,6 +96,7 @@ fun SearchScreen(
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
     val albumSearchItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
     val artistSearchItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
+    val lyricsSearchItems by viewModel.searchLyricsResults.collectAsStateWithLifecycle()
 
     val targetWeight = if (searchQuery.isEmpty()) 1f else 0.8f
 
@@ -175,9 +176,7 @@ fun SearchScreen(
             .background(MaterialTheme.colorScheme.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
-        Column(
-            modifier = modifier
-        ) {
+        Column(modifier = modifier) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -237,50 +236,28 @@ fun SearchScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                val currentSelectedItem = when (type) {
-                    SearchType.ARTIST -> artistSearchItems
-                    else -> albumSearchItems
-                }
+                val isActiveSearch = activeSearchQuery.isNotBlank()
 
-                BasePagingList(
-                    isActiveSearch = activeSearchQuery.isNotBlank(),
-                    items = currentSelectedItem,
-                    listContent = { items ->
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(3),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            contentPadding = PaddingValues(horizontal = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            state = state
-                        ) {
-                            items(
-                                count = items.itemCount,
-                                contentType = { type.name },
-                                key = { index ->
-                                    when (val item = items.peek(index)) {
-                                        is ResultsArtist -> "artist_${item.id}"
-                                        is ResultsAlbum -> "album_${item.id}"
-                                        else -> "placeholder_$index"
-                                    }
-                                }
-                            ) { index ->
-                                val item = items[index]
-                                when (type) {
-                                    SearchType.ARTIST -> {
-                                        (item as? ResultsArtist)?.let { artist ->
-                                            ArtistCard(
-                                                onArtistClick = {},
-                                                title = artist.title,
-                                                cover = artist.cover_image,
-                                                id = artist.id
-                                            )
-                                        }
-                                    }
-                                    else -> {
-                                        (item as? ResultsAlbum)?.let { album ->
+                when (type) {
+                    SearchType.ALBUM -> {
+                        BasePagingList(
+                            isActiveSearch = isActiveSearch,
+                            items = albumSearchItems,
+                            listContent = { items ->
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(3),
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentPadding = PaddingValues(horizontal = 8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    state = state
+                                ) {
+                                    items(
+                                        count = items.itemCount,
+                                        contentType = { type.name },
+                                        key = { index -> items.peek(index)?.id?.let { "album_$it" } ?: "placeholder_album_$index" }
+                                    ) { index ->
+                                        items[index]?.let { album ->
                                             AlbumCard(
                                                 image = album.cover_image.orEmpty(),
                                                 albumName = album.album.orEmpty(),
@@ -290,25 +267,97 @@ fun SearchScreen(
                                             )
                                         }
                                     }
+
+                                    item (span = { GridItemSpan(maxLineSpan) }) {
+                                        PagingAppendState(items)
+                                    }
                                 }
                             }
+                        )
+                    }
 
-                            item (span = { GridItemSpan(maxLineSpan) }) {
-                                val appendState = items.loadState.append
-                                if (appendState is LoadState.Loading) {
-                                    ContainedLoadingIndicator()
-                                } else if (appendState is LoadState.Error) {
-                                    ErrorItem(
-                                        onRetry = { items.retry() },
-                                        message = appendState.error.message ?: "Loading error"
-                                    )
+                    SearchType.ARTIST -> {
+                        BasePagingList(
+                            isActiveSearch = isActiveSearch,
+                            items = artistSearchItems,
+                            listContent = { items ->
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentPadding = PaddingValues(horizontal = 8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    items(
+                                        count = items.itemCount,
+                                        contentType = { type.name },
+                                        key = { index -> items.peek(index)?.id?.let { "artist_$it" } ?: "placeholder_album_$index" }
+                                    ) { index ->
+                                        items[index]?.let { artist ->
+                                            ArtistCard(
+                                                onArtistClick = {  },
+                                                title = artist.title,
+                                                cover = artist.cover_image,
+                                                id = artist.id
+                                            )
+                                        }
+                                    }
+
+                                    item  {
+                                        PagingAppendState(items)
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    SearchType.LYRICS -> {
+                        if (isActiveSearch) {
+                            if (lyricsSearchItems.isEmpty()) {
+                                Text(
+                                    color = isDarkTheme,
+                                    modifier = Modifier.padding(16.dp),
+                                    text = stringResource(R.string.no_results)
+                                )
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                                ) {
+                                    items(
+                                        items = lyricsSearchItems,
+                                        key = { it.response.hits.firstOrNull()?.result?.id ?: it.hashCode() }
+                                    ) { geniusRoot ->
+                                        val song = geniusRoot.response.hits.firstOrNull()?.result
+                                        if (song != null) {
+                                            Text(
+                                                text = "${song.title} - ${song.artistNames}",
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(8.dp),
+                                                color = isDarkTheme
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                )
+                }
             }
         }
+    }
+}
+
+@Composable
+fun PagingAppendState(items : LazyPagingItems<*>) {
+    val appendState = items.loadState.append
+    if (appendState is LoadState.Loading) {
+        ContainedLoadingIndicator()
+    } else if (appendState is LoadState.Error) {
+        ErrorItem(
+            onRetry = { items.retry() },
+            message = appendState.error.message ?: "Loading error"
+        )
     }
 }
 

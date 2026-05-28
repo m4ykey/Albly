@@ -4,12 +4,50 @@ import com.m4ykey.search.data.network.model.dto.album.ResultsAlbumDto
 import com.m4ykey.search.data.network.model.dto.album.SearchAlbumRootDto
 import com.m4ykey.search.data.network.model.dto.artist.ResultsArtistDto
 import com.m4ykey.search.data.network.model.dto.artist.SearchArtistRootDto
+import com.m4ykey.search.data.network.model.dto.lyrics.GeniusResponseDto
+import com.m4ykey.search.data.network.model.dto.lyrics.GeniusResultDto
+import com.m4ykey.search.data.network.model.dto.lyrics.GeniusRootDto
+import com.m4ykey.search.data.network.model.dto.lyrics.HitDto
 import com.m4ykey.search.domain.model.search.album.ResultsAlbum
 import com.m4ykey.search.domain.model.search.album.SearchAlbumRoot
 import com.m4ykey.search.domain.model.search.artist.ResultsArtist
 import com.m4ykey.search.domain.model.search.artist.SearchArtistRoot
+import com.m4ykey.search.domain.model.search.lyrics.GeniusResponse
+import com.m4ykey.search.domain.model.search.lyrics.GeniusResult
+import com.m4ykey.search.domain.model.search.lyrics.GeniusRoot
+import com.m4ykey.search.domain.model.search.lyrics.Hit
 
 object SearchMapper {
+
+    fun mapToGeniusRootDomain(dto : GeniusRootDto) : GeniusRoot {
+        return GeniusRoot(
+            response = getGeniusResponse(dto.response)
+        )
+    }
+
+    private fun getGeniusResponse(dto : GeniusResponseDto) : GeniusResponse {
+        return GeniusResponse(
+            hits = getHitsList(dto.hits ?: emptyList())
+        )
+    }
+
+    private fun getHitsList(dto : List<HitDto>) : List<Hit> {
+        if (dto.isEmpty()) return emptyList()
+
+        return dto.map { hitDto ->
+            Hit(
+                result = mapToGeniusResult(hitDto.result)
+            )
+        }
+    }
+
+    private fun mapToGeniusResult(dto : GeniusResultDto) : GeniusResult {
+        return GeniusResult(
+            title = dto.title.orEmpty(),
+            artistNames = dto.artist_names.orEmpty(),
+            songArtImageUrl = dto.song_art_image_url.orEmpty()
+        )
+    }
 
     fun mapToArtistDomain(dto: SearchArtistRootDto?) : SearchArtistRoot {
         val results = dto?.results?.mapNotNull { mapToSingleArtistResult(it) } ?: emptyList()

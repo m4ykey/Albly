@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.m4ykey.search.domain.use_case.SearchAlbumUseCase
 import com.m4ykey.search.domain.use_case.SearchArtistUseCase
+import com.m4ykey.search.domain.use_case.SearchLyricsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -24,7 +26,8 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val albumUseCase: SearchAlbumUseCase,
-    private val artistUseCase : SearchArtistUseCase
+    private val artistUseCase : SearchArtistUseCase,
+    private val lyricsUseCase: SearchLyricsUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -47,6 +50,23 @@ class SearchViewModel(
     fun updateType(type: SearchType) {
         _searchType.update { it.copy(type = type) }
     }
+
+    val searchLyricsResults = combine(
+        _activeSearchQuery,
+        _searchType
+    ) { query, typeState -> query to typeState.type }
+        .flatMapLatest { (query, type) ->
+            if (query.isBlank() || type != SearchType.LYRICS) {
+                flowOf(emptyList())
+            } else {
+                lyricsUseCase(query = query)
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            started = SharingStarted.Lazily
+        )
 
     val searchArtistResults = combine(
         _activeSearchQuery,
