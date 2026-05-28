@@ -1,6 +1,7 @@
 package com.m4ykey.search.data.network.service
 
-import com.m4ykey.search.data.network.model.dto.SearchAlbumRootDto
+import com.m4ykey.search.data.network.model.dto.album.SearchAlbumRootDto
+import com.m4ykey.search.data.network.model.dto.artist.SearchArtistRootDto
 
 interface RemoteSearchService {
 
@@ -12,4 +13,10 @@ interface RemoteSearchService {
         type : String = "master"
     ) : SearchAlbumRootDto
 
+    suspend fun searchArtist(
+        query : String,
+        perPage : Int = 20,
+        page : Int,
+        type : String = "artist"
+    ) : SearchArtistRootDto
 }

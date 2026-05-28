@@ -20,4 +20,7 @@
     <string name="single" translatable="false">Single</string>
     <string name="compilation">Compilation</string>
     <string name="your_collection_is_empty">Your collection is empty</string>
+    <string name="good_morning" translatable="false">Good morning</string>
+    <string name="good_afternoon">Good afternoon</string>
+    <string name="good_evening">Good evening</string>
 </resources>

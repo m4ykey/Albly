@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "com.m4ykey.collection"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {
@@ -56,10 +56,13 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.constraint.layout)
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.bundles.koin)
 
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.lottie)
+
+    implementation(libs.kotlinx.datetime)
 }

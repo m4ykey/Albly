@@ -6,5 +6,6 @@ data class AlbumRoot(
     val title : String,
     val images : List<Image>,
     val tracklist : List<TrackList>,
-    val artists : List<Artists>
+    val artists : List<Artists>,
+    val uri : String
 )

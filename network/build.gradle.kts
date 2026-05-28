@@ -13,7 +13,7 @@ val token : String = localProps.getProperty("token")
 android {
     namespace = "com.m4ykey.network"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {

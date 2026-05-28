@@ -6,5 +6,7 @@
     <string name="album" translatable="false">Album</string>
     <string name="artist">Artist</string>
     <string name="enter_album_name">Enter album name</string>
-    <string name="speech_recognition_not_supported">Speech recognition not supported</string> />
+    <string name="speech_recognition_not_supported">Speech recognition not supported</string>
+    <string name="lyrics">Lyrics</string>
+    />
 </resources>

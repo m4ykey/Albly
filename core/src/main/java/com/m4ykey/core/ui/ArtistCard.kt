@@ -14,19 +14,19 @@ import com.m4ykey.core.ext.LoadImage
 
 @Composable
 fun ArtistCard(
-    item : Any,
-    onArtistClick : (String) -> Unit
+    title : String,
+    cover : String,
+    id : Int,
+    onArtistClick : (Int) -> Unit
 ) {
-    //val largestImageUrl = item.images.maxByOrNull { it.width * it.height }?.url
-
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     Column(
-       // modifier = Modifier.clickable { onArtistClick(item.id) }
+        modifier = Modifier.clickable { onArtistClick(id) }
     ) {
-        //largestImageUrl?.let { LoadImage(imageUrl = it) }
+        LoadImage(imageUrl = cover)
         Text(
-            text = "item.name",
+            text = title,
             textAlign = TextAlign.Start,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2,

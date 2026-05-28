@@ -7,4 +7,5 @@
     <string name="compatible_with_device">Compatible with the device theme</string>
     <string name="open_source">Open Source</string>
     <string name="open_source_message">Visit the project on Github</string>
+    <string name="default_mode">Default</string>
 </resources>

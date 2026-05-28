@@ -1,11 +1,31 @@
 package com.m4ykey.search.data.mapper
 
-import com.m4ykey.search.data.network.model.dto.ResultsAlbumDto
-import com.m4ykey.search.data.network.model.dto.SearchAlbumRootDto
-import com.m4ykey.search.domain.model.search.ResultsAlbum
-import com.m4ykey.search.domain.model.search.SearchAlbumRoot
+import com.m4ykey.search.data.network.model.dto.album.ResultsAlbumDto
+import com.m4ykey.search.data.network.model.dto.album.SearchAlbumRootDto
+import com.m4ykey.search.data.network.model.dto.artist.ResultsArtistDto
+import com.m4ykey.search.data.network.model.dto.artist.SearchArtistRootDto
+import com.m4ykey.search.domain.model.search.album.ResultsAlbum
+import com.m4ykey.search.domain.model.search.album.SearchAlbumRoot
+import com.m4ykey.search.domain.model.search.artist.ResultsArtist
+import com.m4ykey.search.domain.model.search.artist.SearchArtistRoot
 
 object SearchMapper {
+
+    fun mapToArtistDomain(dto: SearchArtistRootDto?) : SearchArtistRoot {
+        val results = dto?.results?.mapNotNull { mapToSingleArtistResult(it) } ?: emptyList()
+        return SearchArtistRoot(results)
+    }
+
+    fun mapToSingleArtistResult(dto : ResultsArtistDto?) : ResultsArtist? {
+        if (dto == null) return null
+
+        return ResultsArtist(
+            cover_image = dto.cover_image.orEmpty(),
+            id = dto.id ?: 0,
+            thumb = dto.thumb.orEmpty(),
+            title = dto.title.orEmpty()
+        )
+    }
 
     fun mapToDomain(dto : SearchAlbumRootDto?) : SearchAlbumRoot {
         val results = dto?.results?.mapNotNull { mapToSingleResult(it) } ?: emptyList()

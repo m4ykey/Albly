@@ -70,6 +70,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -93,8 +94,12 @@ import com.m4ykey.core.ext.showToast
 import com.m4ykey.core.ui.AlbumGridCard
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.koin.compose.viewmodel.koinViewModel
 import java.net.URL
+import java.util.Locale
+import kotlin.time.Clock
 
 @Composable
 fun CollectionScreen(
@@ -165,6 +170,13 @@ fun CollectionScreen(
             ModalDrawerSheet(
                 modifier = modifier.width(300.dp)
             ) {
+                Text(
+                    text = getGreeting(context),
+                    modifier = Modifier
+                        .padding(horizontal = 28.dp)
+                        .padding(top = 24.dp),
+                    fontSize = 25.sp
+                )
                 Spacer(modifier.height(16.dp))
                 items.forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -254,6 +266,24 @@ fun CollectionScreen(
             }
         }
     }
+}
+
+private fun getGreeting(context : Context) : String {
+    val now = Clock.System.now()
+    val hour = now.toLocalDateTime(TimeZone.currentSystemDefault()).hour
+    val language = Locale.getDefault().language
+
+    val resId = if (language == "pl") {
+        if (hour in 6..18) R.string.good_afternoon else R.string.good_evening
+    } else {
+        when (hour) {
+            in 5..11 -> R.string.good_morning
+            in 12..16 -> R.string.good_afternoon
+            else -> R.string.good_evening
+        }
+    }
+
+    return context.getString(resId)
 }
 
 @Composable

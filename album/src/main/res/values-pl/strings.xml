@@ -9,4 +9,6 @@
     <string name="album_count">Ilość Albumów:</string>
     <string name="random_album">Losowy Album</string>
     <string name="discover_new_release">Odkryj Nowe Wydania</string>
+    <string name="info">Informacje</string>
+    <string name="album_list_is_empty">Lista albumów jest pusta</string>
 </resources>

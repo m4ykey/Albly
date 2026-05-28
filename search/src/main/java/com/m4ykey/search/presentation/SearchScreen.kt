@@ -78,8 +78,10 @@ import com.m4ykey.core.ext.CenteredContent
 import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard
+import com.m4ykey.core.ui.ArtistCard
 import com.m4ykey.search.R
-import com.m4ykey.search.domain.model.search.ResultsAlbum
+import com.m4ykey.search.domain.model.search.album.ResultsAlbum
+import com.m4ykey.search.domain.model.search.artist.ResultsArtist
 import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
 
@@ -93,7 +95,7 @@ fun SearchScreen(
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
     val albumSearchItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
-    //val artistSearchItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
+    val artistSearchItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
 
     val targetWeight = if (searchQuery.isEmpty()) 1f else 0.8f
 
@@ -151,7 +153,7 @@ fun SearchScreen(
         }
         try {
             launcher.launch(intent)
-        } catch (e : Exception) {
+        } catch (_ : Exception) {
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
@@ -236,7 +238,7 @@ fun SearchScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 val currentSelectedItem = when (type) {
-                    //SearchType.ARTIST -> artistSearchItems
+                    SearchType.ARTIST -> artistSearchItems
                     else -> albumSearchItems
                 }
 
@@ -259,22 +261,23 @@ fun SearchScreen(
                                 contentType = { type.name },
                                 key = { index ->
                                     when (val item = items.peek(index)) {
-                                        //is ArtistItem -> "artist_${item.id}"
+                                        is ResultsArtist -> "artist_${item.id}"
                                         is ResultsAlbum -> "album_${item.id}"
                                         else -> "placeholder_$index"
                                     }
                                 }
                             ) { index ->
                                 val item = items[index]
-
                                 when (type) {
                                     SearchType.ARTIST -> {
-//                                        (item as? ArtistItem)?.let { artist ->
-//                                            ArtistCard(
-//                                                item = artist,
-//                                                onArtistClick = {}
-//                                            )
-//                                        }
+                                        (item as? ResultsArtist)?.let { artist ->
+                                            ArtistCard(
+                                                onArtistClick = {},
+                                                title = artist.title,
+                                                cover = artist.cover_image,
+                                                id = artist.id
+                                            )
+                                        }
                                     }
                                     else -> {
                                         (item as? ResultsAlbum)?.let { album ->
@@ -338,9 +341,9 @@ fun SearchTypeChipList(
 @Composable
 fun SearchType.getLabel(): String {
     return when (this) {
-        //SearchType.ALL -> stringResource(id = R.string.all)
         SearchType.ALBUM -> stringResource(id = R.string.album)
         SearchType.ARTIST -> stringResource(id = R.string.artist)
+        SearchType.LYRICS -> stringResource(id = R.string.lyrics)
     }
 }
 

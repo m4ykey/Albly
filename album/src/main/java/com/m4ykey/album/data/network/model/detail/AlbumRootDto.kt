@@ -15,5 +15,6 @@ data class AlbumRootDto(
     val title : String? = null,
     val images : List<ImageDto>? = emptyList(),
     val tracklist : List<TrackListDto>? = emptyList(),
-    val artists : List<ArtistsDto>? = emptyList()
+    val artists : List<ArtistsDto>? = emptyList(),
+    val uri : String? = null
 )

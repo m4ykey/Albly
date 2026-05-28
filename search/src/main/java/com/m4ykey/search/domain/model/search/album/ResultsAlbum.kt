@@ -1,4 +1,4 @@
-package com.m4ykey.search.domain.model.search
+package com.m4ykey.search.domain.model.search.album
 
 data class ResultsAlbum(
     val artist : String?,

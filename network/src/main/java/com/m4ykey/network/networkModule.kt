@@ -6,7 +6,9 @@ import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
 import com.m4ykey.lyrics.data.network.service.LyricsService
 import com.m4ykey.lyrics.data.network.service.RemoteLyricsService
+import com.m4ykey.search.data.network.service.RemoteSearchLyricsService
 import com.m4ykey.search.data.network.service.RemoteSearchService
+import com.m4ykey.search.data.network.service.SearchLyricsService
 import com.m4ykey.search.data.network.service.SearchService
 import io.ktor.client.plugins.defaultRequest
 import org.koin.core.qualifier.named
@@ -16,8 +18,18 @@ private const val LRCLIB = "LrcLibClient"
 private const val SEARCH_DISCOGS = "SearchDiscogsClient"
 private const val ALBUM_DISCOGS = "AlbumDiscogsClient"
 private const val NEW_RELEASE = "NewReleaseDiscogsClient"
+private const val GENIUS_SEARCH = "GeniusSearchClient"
 
 val networkModule = module {
+
+    single(named(GENIUS_SEARCH)) {
+        HttpClientFactory.create(enableLogging = true).config {
+            defaultRequest {
+                //header("Authorization", "Bearer " + BuildConfig)
+                url("https://api.genius.com/")
+            }
+        }
+    }
 
     single(named(ALBUM_DISCOGS)) {
         HttpClientFactory.create(enableLogging = true).config {
@@ -52,6 +64,10 @@ val networkModule = module {
                 url("https://lrclib.net/api/")
             }
         }
+    }
+
+    single<RemoteSearchLyricsService> {
+        SearchLyricsService(httpClient = get(named(GENIUS_SEARCH)))
     }
 
     single<RemoteNewReleaseAlbumService> {

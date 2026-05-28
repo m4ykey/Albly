@@ -1,18 +1,18 @@
 package com.m4ykey.search.domain.use_case
 
 import androidx.paging.PagingData
+import com.m4ykey.search.domain.model.search.artist.ResultsArtist
 import com.m4ykey.search.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
 
 class SearchArtistUseCase(
     private val repository: SearchRepository
 ) {
-//    operator fun invoke(limit : Int = 20, offset : Int = 0, q : String, type: String) : Flow<PagingData<>> {
-////        return repository.searchArtist(
-////            limit = limit,
-////            offset = offset,
-////            q = q,
-////            type = type
-////        )
-//    }
+    operator fun invoke(perPage : Int = 20, page : Int = 1, query : String, type : String) : Flow<PagingData<ResultsArtist>> {
+        return repository.searchArtist(
+            page = page,
+            perPage = perPage,
+            query = query
+        )
+    }
 }

@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.m4ykey.albly"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     signingConfigs {
@@ -136,6 +136,7 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    debugImplementation(libs.leakcanary)
 }
 
 afterEvaluate {

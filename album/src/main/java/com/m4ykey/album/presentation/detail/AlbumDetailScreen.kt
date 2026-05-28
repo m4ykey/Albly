@@ -2,6 +2,7 @@
 
 package com.m4ykey.album.presentation.detail
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -31,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
@@ -68,6 +70,13 @@ fun AlbumDetailScreen(
                 onClick = onBack,
                 textRes = R.string.back,
                 iconRes = R.drawable.ic_arrow_left
+            )
+        },
+        actions = {
+            ActionIconButton(
+                onClick = {},
+                textRes = R.string.info,
+                iconRes = R.drawable.ic_info
             )
         },
         content = { padding ->
@@ -225,7 +234,7 @@ fun AlbumDetailContent(
         item {
             AlbumButtonRow(
                 onAlbumClick = {
-                    //context.startActivity(Intent(Intent.ACTION_VIEW, albumUrl.toUri()))
+                    context.startActivity(Intent(Intent.ACTION_VIEW, item.uri.toUri()))
                 },
                 onArtistClick = {
                     //context.startActivity(Intent(Intent.ACTION_VIEW, artistUrl.toUri()))

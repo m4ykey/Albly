@@ -55,7 +55,8 @@ object AlbumMapper {
             save_time = System.currentTimeMillis(),
             image = domain.images.firstOrNull()?.uri.orEmpty(),
             artistList = mapDomainArtistsToEntity(domain.artists),
-            trackList = mapDomainTrackListToEntity(domain.tracklist)
+            trackList = mapDomainTrackListToEntity(domain.tracklist),
+            uri = domain.uri
         )
     }
 
@@ -88,7 +89,8 @@ object AlbumMapper {
             year = entity.year,
             tracklist = mapEntityToTrackList(entity.trackList),
             artists = mapEntityToArtistsList(entity.artistList),
-            images = mapStringPathToImageList(entity.image)
+            images = mapStringPathToImageList(entity.image),
+            uri = entity.uri
         )
     }
 
@@ -131,7 +133,8 @@ object AlbumMapper {
             year = dto.year ?: 0,
             images = mapDtoToImageList(dto.images),
             artists = mapDtoToArtistsList(dto.artists),
-            tracklist = mapDtoToTrackList(dto.tracklist)
+            tracklist = mapDtoToTrackList(dto.tracklist),
+            uri = dto.uri.orEmpty()
         )
     }
 

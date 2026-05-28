@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.m4ykey.search"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {

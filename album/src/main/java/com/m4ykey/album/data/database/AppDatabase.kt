@@ -15,7 +15,7 @@ import com.m4ykey.album.data.local.model.IsListenLaterSaved
         IsAlbumSaved::class,
         IsListenLaterSaved::class
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(AlbumConverters::class)
 abstract class AppDatabase : RoomDatabase() {

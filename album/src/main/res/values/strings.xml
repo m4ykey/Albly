@@ -11,4 +11,6 @@
     <string name="album_count">Album Count:</string>
     <string name="random_album">Random Album</string>
     <string name="discover_new_release">Discover New Release</string>
+    <string name="info">Information</string>
+    <string name="album_list_is_empty">The album list is empty</string>
 </resources>

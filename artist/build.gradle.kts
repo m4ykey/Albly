@@ -5,7 +5,7 @@ plugins {
 android {
     namespace = "com.m4ykey.artist"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {

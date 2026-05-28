@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +39,7 @@ import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
+import com.m4ykey.core.ext.showToast
 import com.m4ykey.core.ui.AlbumGridCard
 import org.koin.androidx.compose.koinViewModel
 
@@ -53,14 +55,17 @@ fun ListenLaterScreen(
     val randomAlbum by viewModel.randomAlbum.collectAsStateWithLifecycle()
 
     val state = rememberLazyGridState()
+    val context = LocalContext.current
+    val errorMessage = stringResource(R.string.album_list_is_empty)
 
     LaunchedEffect(viewModel) {
         viewModel.loadAlbums()
     }
 
     LaunchedEffect(randomAlbum) {
-        randomAlbum?.let { item ->
-            onAlbumClick(item.id)
+        val album = randomAlbum
+        if (album != null) {
+            onAlbumClick(album.id)
             viewModel.clearAlbum()
         }
     }
@@ -83,7 +88,13 @@ fun ListenLaterScreen(
         content = { padding ->
             ListenLaterContent(
                 modifier = Modifier.padding(padding),
-                onRandomAlbumClick = { viewModel.getRandomAlbum() },
+                onRandomAlbumClick = {
+                    if (albums.isEmpty()) {
+                        showToast(context, errorMessage)
+                    } else {
+                        viewModel.getRandomAlbum()
+                    }
+                },
                 albums = albums,
                 isLoading = isLoading,
                 state = state,

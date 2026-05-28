@@ -7,4 +7,5 @@
     <string name="compatible_with_device">Zgodnie z motywem urządzenia</string>
     <string name="open_source">Kod Źródłowy</string>
     <string name="open_source_message">Odwiedź projekt na Githubie</string>
+    <string name="default_mode">Domyślne</string>
 </resources>

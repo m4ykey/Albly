@@ -12,7 +12,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -49,23 +48,23 @@ class SearchViewModel(
         _searchType.update { it.copy(type = type) }
     }
 
-//    val searchArtistResults = combine(
-//        _activeSearchQuery,
-//        _searchType
-//    ) { query, typeState -> query to typeState.type }
-//        .flatMapLatest { (query, type) ->
-//            if (query.isBlank()) {
-//                emptyFlow()
-//            } else {
-//                artistUseCase(q = query, type = type.name.lowercase())
-//            }
-//    }
-//        .cachedIn(viewModelScope)
-//        .stateIn(
-//            scope = viewModelScope,
-//            initialValue = PagingData.empty(),
-//            started = SharingStarted.Lazily
-//        )
+    val searchArtistResults = combine(
+        _activeSearchQuery,
+        _searchType
+    ) { query, typeState -> query to typeState.type }
+        .flatMapLatest { (query, type) ->
+            if (query.isBlank()) {
+                emptyFlow()
+            } else {
+                artistUseCase(query = query, type = type.name.lowercase())
+            }
+    }
+        .cachedIn(viewModelScope)
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = PagingData.empty(),
+            started = SharingStarted.Lazily
+        )
 
     val searchAlbumResults = combine(
         _activeSearchQuery,

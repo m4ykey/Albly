@@ -4,7 +4,7 @@ import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.BasePagingSource
 import com.m4ykey.search.data.mapper.SearchMapper
 import com.m4ykey.search.data.network.service.RemoteSearchService
-import com.m4ykey.search.domain.model.search.ResultsAlbum
+import com.m4ykey.search.domain.model.search.album.ResultsAlbum
 
 class SearchAlbumPagingSource(
     private val service : RemoteSearchService,
