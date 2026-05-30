@@ -312,7 +312,10 @@ fun SearchScreen(
 
                     SearchType.LYRICS -> {
                         if (isActiveSearch) {
-                            if (lyricsSearchItems.isEmpty()) {
+
+                            val songs = lyricsSearchItems.flatMap { it.response.hits.map { hit -> hit.result } }
+
+                            if (songs.isEmpty()) {
                                 Text(
                                     color = isDarkTheme,
                                     modifier = Modifier.padding(16.dp),
@@ -325,18 +328,15 @@ fun SearchScreen(
                                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
                                 ) {
                                     items(
-                                        items = lyricsSearchItems,
-                                        key = { it.response.hits.firstOrNull()?.result?.id ?: it.hashCode() }
-                                    ) { geniusRoot ->
-                                        val song = geniusRoot.response.hits.firstOrNull()?.result
-                                        if (song != null) {
-                                            LyricsCard(
-                                                onClick = {},
-                                                artist = song.artistNames,
-                                                title = song.title,
-                                                imageUrl = song.songArtImageUrl
-                                            )
-                                        }
+                                        items = songs,
+                                        key = { it.id }
+                                    ) { song ->
+                                        LyricsCard(
+                                            onClick = {},
+                                            artist = song.artistNames,
+                                            title = song.title,
+                                            imageUrl = song.songArtImageUrl
+                                        )
                                     }
                                 }
                             }
