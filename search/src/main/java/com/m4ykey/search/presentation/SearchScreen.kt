@@ -81,6 +81,7 @@ import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ui.ArtistCard
+import com.m4ykey.core.ui.LyricsCard
 import com.m4ykey.search.R
 import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
@@ -329,12 +330,11 @@ fun SearchScreen(
                                     ) { geniusRoot ->
                                         val song = geniusRoot.response.hits.firstOrNull()?.result
                                         if (song != null) {
-                                            Text(
-                                                text = "${song.title} - ${song.artistNames}",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(8.dp),
-                                                color = isDarkTheme
+                                            LyricsCard(
+                                                onClick = {},
+                                                artist = song.artistNames,
+                                                title = song.title,
+                                                imageUrl = song.songArtImageUrl
                                             )
                                         }
                                     }
