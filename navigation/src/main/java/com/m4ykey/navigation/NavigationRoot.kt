@@ -79,6 +79,9 @@ fun NavigationRoot(
                         if (rootBackStack.isNotEmpty()) {
                             rootBackStack.removeAt(rootBackStack.lastIndex)
                         }
+                    },
+                    onTrackClick = { title, artist, img ->
+                        rootBackStack.add(Route.Lyrics(title, artist, img))
                     }
                 )
             }
@@ -113,8 +116,8 @@ fun NavigationRoot(
                             rootBackStack.removeAt(rootBackStack.lastIndex)
                         }
                     },
-                    onTrackClick = { artist, track, img ->
-                        rootBackStack.add(Route.Lyrics(artist = artist, track = track, img = img))
+                    onTrackClick = { artist, title, img ->
+                        rootBackStack.add(Route.Lyrics(title = title, artist = artist, img = img))
                     },
                     id = key.albumId
                 )
@@ -139,7 +142,7 @@ fun NavigationRoot(
                         }
                     },
                     artistName = key.artist,
-                    trackName = key.track,
+                    trackName = key.title,
                     imageUrl = key.img
                 )
             }

@@ -91,7 +91,8 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     viewModel: SearchViewModel = koinViewModel(),
-    onAlbumClick : (Int) -> Unit
+    onAlbumClick : (Int) -> Unit,
+    onTrackClick : (String, String, String) -> Unit
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -121,6 +122,7 @@ fun SearchScreen(
             when (event) {
                 is SearchUiEvent.ChangeType -> viewModel.updateType(event.type)
                 is SearchUiEvent.OnAlbumClick -> onAlbumClick(event.id)
+                is SearchUiEvent.OnTrackClick -> onTrackClick(event.title, event.artist, event.img)
             }
         }
     }
@@ -312,7 +314,10 @@ fun SearchScreen(
 
                     SearchType.LYRICS -> {
                         if (isActiveSearch) {
-                            if (lyricsSearchItems.isEmpty()) {
+
+                            val songs = lyricsSearchItems.flatMap { it.response.hits.map { hit -> hit.result } }
+
+                            if (songs.isEmpty()) {
                                 Text(
                                     color = isDarkTheme,
                                     modifier = Modifier.padding(16.dp),
@@ -325,18 +330,21 @@ fun SearchScreen(
                                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
                                 ) {
                                     items(
-                                        items = lyricsSearchItems,
-                                        key = { it.response.hits.firstOrNull()?.result?.id ?: it.hashCode() }
-                                    ) { geniusRoot ->
-                                        val song = geniusRoot.response.hits.firstOrNull()?.result
-                                        if (song != null) {
-                                            LyricsCard(
-                                                onClick = {},
-                                                artist = song.artistNames,
-                                                title = song.title,
-                                                imageUrl = song.songArtImageUrl
-                                            )
-                                        }
+                                        items = songs,
+                                        key = { it.id }
+                                    ) { song ->
+                                        LyricsCard(
+                                            onClick = {
+                                                onAction(SearchTypeAction.OnTrackClick(
+                                                    title = song.title,
+                                                    img = song.songArtImageUrl,
+                                                    artist = song.artistNames)
+                                                )
+                                            },
+                                            artist = song.artistNames,
+                                            title = song.title,
+                                            imageUrl = song.songArtImageUrl
+                                        )
                                     }
                                 }
                             }
