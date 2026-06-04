@@ -108,6 +108,9 @@ class SearchViewModel(
     fun onAction(action: SearchTypeAction) {
         viewModelScope.launch {
             when (action) {
+                is SearchTypeAction.OnTrackClick -> {
+                    _searchUiEvent.emit(SearchUiEvent.OnTrackClick(action.title, action.artist, action.img))
+                }
                 is SearchTypeAction.OnTypeClick -> {
                     updateType(action.type)
                     _searchUiEvent.emit(SearchUiEvent.ChangeType(action.type))

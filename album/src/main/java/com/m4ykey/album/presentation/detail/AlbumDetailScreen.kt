@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,6 +61,8 @@ fun AlbumDetailScreen(
 
     val state = rememberLazyListState()
 
+    val currentOnTrackClick by rememberUpdatedState(onTrackClick)
+
     LaunchedEffect(viewModel) {
         viewModel.getAlbumById(id)
     }
@@ -81,7 +84,7 @@ fun AlbumDetailScreen(
         },
         content = { padding ->
             AlbumDetailDisplay(
-                onTrackClick = onTrackClick,
+                onTrackClick = currentOnTrackClick,
                 state = state,
                 albumDetail = albumDetail,
                 paddingValues = padding,
@@ -244,18 +247,21 @@ fun AlbumDetailContent(
 
         items(
             count = item.tracklist.size,
-            key = { index ->
-                item.tracklist[index].position
-            },
+            key = { index -> "${item.tracklist[index].title}_${item.tracklist[index].position}" },
             contentType = { "track_item" }
         ) { index ->
-            val currentItem = item.tracklist[index]
+            val currentDuration = item.tracklist[index].duration
+            val currentTitle = item.tracklist[index].title
+            val currentPosition = item.tracklist[index].position
+
             TrackListItem(
-                onTrackClick = onTrackClick,
-                duration = currentItem.duration,
-                title = currentItem.title,
+                onTrackClick = { title, artist, img ->
+                    onTrackClick(title, artist, img)
+                },
+                duration = currentDuration,
+                title = currentTitle,
                 artists = artists,
-                position = currentItem.position,
+                position = currentPosition,
                 img = imageUrl.orEmpty()
             )
         }
