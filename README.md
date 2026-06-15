@@ -4,11 +4,13 @@
 1. Clone repository and open in the latest version of Android Studio
 2. Create ```local.properties``` file
 3. Add your [Discogs](https://www.discogs.com/developers) key:
-3. Add your [Genius](https://docs.genius.com/) key:
+4. Add your [Genius](https://docs.genius.com/) key:
 ```
 token=YOUR_DISCOGS_KEY
 genius_token=YOUR_GENIUS_KEY
 ```
+
+## Screenshots
 
 ## Tech Stack
 - **Kotlin** — primary language for all modules
