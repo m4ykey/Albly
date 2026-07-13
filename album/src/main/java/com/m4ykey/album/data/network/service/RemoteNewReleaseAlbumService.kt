@@ -11,7 +11,9 @@ interface RemoteNewReleaseAlbumService {
         type : String = "master",
         format : String = "album",
         year : Int = LocalDate.now().year,
-        releaseDate : String
+        releaseDate : String,
+        sort : String = "year",
+        sortOrder : String = "desc"
     ) : NewReleaseRootDto
 
 }

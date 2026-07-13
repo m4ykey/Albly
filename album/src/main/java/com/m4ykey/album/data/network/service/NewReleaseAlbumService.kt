@@ -16,7 +16,9 @@ class NewReleaseAlbumService(
         type: String,
         format: String,
         year: Int,
-        releaseDate: String
+        releaseDate: String,
+        sort : String,
+        sortOrder : String
     ): NewReleaseRootDto {
         return httpClient.get("search") {
             parameter("per_page", perPage)
@@ -25,6 +27,8 @@ class NewReleaseAlbumService(
             parameter("format", format)
             parameter("year", year)
             parameter("release_date", releaseDate)
+            parameter("sort", sort)
+            parameter("sort_order", sortOrder)
         }.body()
     }
 
