@@ -7,16 +7,13 @@ interface RemoteSearchService {
 
     suspend fun searchAlbum(
         query : String,
-        format : String = "album",
         perPage : Int = 20,
-        page : Int,
-        type : String = "master"
+        page : Int = 1
     ) : SearchAlbumRootDto
 
     suspend fun searchArtist(
         query : String,
         perPage : Int = 20,
-        page : Int,
-        type : String = "artist"
+        page : Int = 1
     ) : SearchArtistRootDto
 }

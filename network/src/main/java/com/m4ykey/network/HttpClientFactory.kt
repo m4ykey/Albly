@@ -10,6 +10,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -17,7 +18,7 @@ object HttpClientFactory {
 
     fun create(
         engine : HttpClientEngine = CIO.create(),
-        enableLogging : Boolean = true,
+        enableLogging : Boolean = false,
         token: String? = null,
         baseUrl : String? = null,
         isTokenInUrl : Boolean = false
@@ -30,7 +31,11 @@ object HttpClientFactory {
         if (enableLogging) {
             install(Logging) {
                 logger = Logger.DEFAULT
-                level = LogLevel.BODY
+                level = LogLevel.INFO
+
+                sanitizeHeader { header ->
+                    header == HttpHeaders.Authorization
+                }
             }
         }
 

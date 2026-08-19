@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchArtistRootDto(
-    val results : List<ResultsArtistDto>? = emptyList()
+    val results : List<ResultsArtistDto>
 )
 

@@ -7,13 +7,9 @@ interface RemoteNewReleaseAlbumService {
 
     suspend fun getNewReleases(
         perPage : Int = 20,
-        page : Int,
-        type : String = "master",
-        format : String = "album",
+        page : Int = 1,
         year : Int = LocalDate.now().year,
-        releaseDate : String,
-        sort : String = "year",
-        sortOrder : String = "desc"
+        releaseDate : String
     ) : NewReleaseRootDto
 
 }

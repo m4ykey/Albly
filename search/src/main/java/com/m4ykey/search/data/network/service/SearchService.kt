@@ -13,31 +13,28 @@ class SearchService(
 
     override suspend fun searchAlbum(
         query : String,
-        format : String,
         perPage : Int,
-        page : Int,
-        type : String
+        page : Int
     ): SearchAlbumRootDto {
         return httpClient.get("search") {
             parameter("q", query)
-            parameter("format", format)
+            parameter("format", "album")
             parameter("per_page", perPage)
             parameter("page", page)
-            parameter("type", type)
+            parameter("type", "master")
         }.body()
     }
 
     override suspend fun searchArtist(
         query: String,
         perPage: Int,
-        page: Int,
-        type: String
+        page: Int
     ): SearchArtistRootDto {
         return httpClient.get("search") {
             parameter("q", query)
             parameter("page", page)
             parameter("per_page", perPage)
-            parameter("type", type)
+            parameter("type", "artist")
         }.body()
     }
 }
