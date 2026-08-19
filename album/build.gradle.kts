@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
 
+    implementation(libs.landscapist)
+
     implementation(libs.ktx.serialization.json)
 
     implementation(libs.bundles.koin)

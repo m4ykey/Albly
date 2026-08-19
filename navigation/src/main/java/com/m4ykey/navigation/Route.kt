@@ -22,6 +22,9 @@ sealed interface Route : NavKey {
     data class AlbumDetail(val albumId : Int) : Route
 
     @Serializable
+    data class Cover(val imageUrl : String) : Route
+
+    @Serializable
     data object NewRelease : Route
 
     @Serializable

@@ -1,56 +1,47 @@
 package com.m4ykey.network
 
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.engine.cio.endpoint
-import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.ANDROID
+import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 object HttpClientFactory {
 
     fun create(
+        engine : HttpClientEngine = CIO.create(),
         enableLogging : Boolean = true,
-        timeoutMs: Long = 15_000L
-    ) : HttpClient = HttpClient(CIO) {
+        token: String? = null,
+        baseUrl : String? = null,
+        isTokenInUrl : Boolean = false
+    ) : HttpClient = HttpClient(engine) {
 
         install(ContentNegotiation) {
-            json(Json {
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
-        }
-
-        install(HttpTimeout) {
-            requestTimeoutMillis = timeoutMs
-            connectTimeoutMillis = timeoutMs
-            socketTimeoutMillis = timeoutMs
+            json(Json { isLenient = true; ignoreUnknownKeys = true })
         }
 
         if (enableLogging) {
             install(Logging) {
-                logger = Logger.ANDROID
+                logger = Logger.DEFAULT
                 level = LogLevel.BODY
             }
         }
 
         defaultRequest {
-            headers.append("Accept", "application/json")
-        }
-
-        engine {
-            maxConnectionsCount = 64
-            endpoint {
-                connectTimeout = timeoutMs
-                socketTimeout = timeoutMs
-                keepAliveTime = 5_000
-                connectAttempts  = 3
+            baseUrl?.let { url(it) }
+            token?.let {
+                if (isTokenInUrl) {
+                    url.parameters.append("token", it)
+                } else {
+                    header("Authorization", "Bearer $it")
+                }
             }
         }
     }

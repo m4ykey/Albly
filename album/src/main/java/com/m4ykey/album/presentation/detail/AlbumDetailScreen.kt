@@ -54,7 +54,8 @@ fun AlbumDetailScreen(
     id : Int,
     onBack : () -> Unit,
     viewModel : AlbumDetailViewModel = koinViewModel(),
-    onTrackClick : (String, String, String) -> Unit
+    onTrackClick : (String, String, String) -> Unit,
+    onCoverClick: (String) -> Unit
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
@@ -97,7 +98,8 @@ fun AlbumDetailScreen(
                     viewModel.toggleListenLater(
                         album = entity
                     )
-                }
+                },
+                onCoverClick = onCoverClick
             )
         }
     )
@@ -111,7 +113,8 @@ fun AlbumDetailDisplay(
     onTrackClick: (String, String, String) -> Unit,
     state : LazyListState,
     onSaveToggle: (AlbumEntity) -> Unit,
-    onListenLaterToggle: (AlbumEntity) -> Unit
+    onListenLaterToggle: (AlbumEntity) -> Unit,
+    onCoverClick: (String) -> Unit
 ) {
     when (albumDetail) {
         is DetailUiState.Loading -> {
@@ -140,7 +143,8 @@ fun AlbumDetailDisplay(
                     onSaveToggle = onSaveToggle,
                     onListenLaterToggle = onListenLaterToggle,
                     isSaved = albumDetail.isSaved,
-                    isListenLaterSaved = albumDetail.isListenLaterSaved
+                    isListenLaterSaved = albumDetail.isListenLaterSaved,
+                    onCoverClick = onCoverClick
                 )
             }
         }
@@ -156,7 +160,8 @@ fun AlbumDetailContent(
     onListenLaterToggle : (AlbumEntity) -> Unit,
     isSaved : Boolean,
     isListenLaterSaved : Boolean,
-    item : AlbumRoot
+    item : AlbumRoot,
+    onCoverClick : (String) -> Unit
 ) {
     val albumEntity = remember(item) { AlbumMapper.mapToEntity(item) }
 
@@ -186,7 +191,9 @@ fun AlbumDetailContent(
             ) {
                 LoadImage(
                     imageUrl = imageUrl.orEmpty(),
-                    modifier = Modifier.size(260.dp)
+                    modifier = Modifier
+                        .size(260.dp)
+                        .clickable { onCoverClick(imageUrl.orEmpty()) }
                 )
             }
         }

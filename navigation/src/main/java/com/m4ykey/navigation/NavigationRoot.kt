@@ -9,6 +9,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.m4ykey.album.presentation.detail.AlbumCoverScreen
 import com.m4ykey.album.presentation.detail.AlbumDetailScreen
 import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
@@ -34,11 +35,22 @@ fun NavigationRoot(
                     subclass(Route.AlbumDetail::class, Route.AlbumDetail.serializer())
                     subclass(Route.ListenLater::class, Route.ListenLater.serializer())
                     subclass(Route.Lyrics::class, Route.Lyrics.serializer())
+                    subclass(Route.Cover::class, Route.Cover.serializer())
                 }
             }
         },
         Route.Collection
     )
+
+    fun navigateBack() {
+        if (rootBackStack.size > 1) {
+            rootBackStack.removeAt(rootBackStack.lastIndex)
+        }
+    }
+
+    fun navigateTo(route: Route) {
+        rootBackStack.add(route)
+    }
 
     NavDisplay(
         modifier = modifier,
@@ -50,100 +62,73 @@ fun NavigationRoot(
         entryProvider = entryProvider {
             entry<Route.Collection> {
                 CollectionScreen(
-                    navigateToSettings = {
-                        rootBackStack.add(Route.Settings)
-                    },
-                    navigateToNewRelease = {
-                        rootBackStack.add(Route.NewRelease)
-                    },
-                    navigateToListenLater = {
-                        rootBackStack.add(Route.ListenLater)
-                    },
-                    onAlbumClick = {
-                        rootBackStack.add(Route.AlbumDetail(it))
-                    },
-                    onSearch = {
-                        rootBackStack.add(Route.Search)
-                    },
-                    onLinkClick = {
-                        //rootBackStack.add(Route.AlbumDetail(it))
-                    }
+                    navigateToSettings = { navigateTo(Route.Settings) },
+                    navigateToNewRelease = { navigateTo(Route.NewRelease) },
+                    navigateToListenLater = { navigateTo(Route.ListenLater) },
+                    onAlbumClick = { navigateTo(Route.AlbumDetail(it)) },
+                    onSearch = { navigateTo(Route.Search) },
+                    onLinkClick = {  }
                 )
             }
             entry<Route.Search> {
                 SearchScreen(
                     onAlbumClick = { albumId ->
-                        rootBackStack.add(Route.AlbumDetail(albumId = albumId))
+                        navigateTo(Route.AlbumDetail(albumId = albumId))
                     },
-                    onBack = {
-                        if (rootBackStack.isNotEmpty()) {
-                            rootBackStack.removeAt(rootBackStack.lastIndex)
-                        }
-                    },
+                    onBack = ::navigateBack,
                     onTrackClick = { title, artist, img ->
-                        rootBackStack.add(Route.Lyrics(title, artist, img))
+                        navigateTo(Route.Lyrics(title, artist, img))
                     }
                 )
             }
             entry<Route.Settings> {
                 SettingsScreen(
-                    onBack = {
-                        if (rootBackStack.isNotEmpty()) {
-                            rootBackStack.removeAt(rootBackStack.lastIndex)
-                        }
-                    }
+                    onBack = ::navigateBack
                 )
             }
             entry<Route.ListenLater> {
                 ListenLaterScreen(
-                    onBack = {
-                        if (rootBackStack.isNotEmpty()) {
-                            rootBackStack.removeAt(rootBackStack.lastIndex)
-                        }
-                    },
+                    onBack = ::navigateBack,
                     onAlbumClick = {
-                        rootBackStack.add(Route.AlbumDetail(it))
+                        navigateTo(Route.AlbumDetail(it))
                     },
                     onSearchClick = {
-                        rootBackStack.add(Route.Search)
+                        navigateTo(Route.Search)
                     }
                 )
             }
             entry<Route.AlbumDetail> { key ->
                 AlbumDetailScreen(
-                    onBack = {
-                        if (rootBackStack.isNotEmpty()) {
-                            rootBackStack.removeAt(rootBackStack.lastIndex)
-                        }
-                    },
+                    onBack = ::navigateBack,
                     onTrackClick = { artist, title, img ->
-                        rootBackStack.add(Route.Lyrics(title = title, artist = artist, img = img))
+                        navigateTo(Route.Lyrics(title = title, artist = artist, img = img))
                     },
-                    id = key.albumId
+                    id = key.albumId,
+                    onCoverClick = { image ->
+                        navigateTo(Route.Cover(image))
+                    }
                 )
             }
             entry<Route.NewRelease> {
                 AlbumNewReleaseScreen(
-                    onBack = {
-                        if (rootBackStack.isNotEmpty()) {
-                            rootBackStack.removeAt(rootBackStack.lastIndex)
-                        }
-                    },
+                    onBack = ::navigateBack,
                     onAlbumClick = {
-                        rootBackStack.add(Route.AlbumDetail(it))
+                        navigateTo(Route.AlbumDetail(it))
                     }
                 )
             }
             entry<Route.Lyrics> { key ->
                 LyricsScreen(
-                    onBack = {
-                        if (rootBackStack.isNotEmpty()) {
-                            rootBackStack.removeAt(rootBackStack.lastIndex)
-                        }
-                    },
+                    onBack = ::navigateBack,
                     artistName = key.artist,
                     trackName = key.title,
                     imageUrl = key.img
+                )
+            }
+            entry<Route.Cover> { key ->
+                AlbumCoverScreen(
+                    imageUrl = key.imageUrl,
+                    onBack = ::navigateBack
                 )
             }
         }

@@ -53,4 +53,7 @@ dependencies {
 
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
+
+    testImplementation(libs.ktor.client.mock)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

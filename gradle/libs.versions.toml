@@ -1,15 +1,15 @@
 [versions]
-agp = "9.2.1"
-kotlin = "2.4.0"
+agp = "9.3.1"
+kotlin = "2.4.10"
 core-ktx = "1.19.0"
 junit = "4.13.2"
 junit-version = "1.3.0"
 espresso-core = "3.7.0"
 lifecycle-runtime-ktx = "2.11.0"
 activity-compose = "1.13.0"
-compose-bom = "2026.06.01"
-serialization = "2.4.0"
-paging = "3.5.0"
+compose-bom = "2026.08.00"
+serialization = "2.4.10"
+paging = "3.5.1"
 room = "2.8.4"
 coroutines = "1.11.0"
 ksp = "2.3.4"
@@ -18,20 +18,20 @@ gms = "4.5.0"
 firebase-analytics = "23.2.0"
 firebase-crashlytics = "20.1.0"
 crashlytics = "3.0.7"
-material3 = "1.5.0-alpha23"
+material3 = "1.5.0-alpha26"
 landscapist = "2.11.0"
 kotlinx-datetime = "0.8.0"
 koin = "4.2.2"
-ktor = "3.5.1"
+ktor = "3.5.2"
 serialization-json = "1.11.0"
 mockk = "1.14.11"
 coroutines-test = "1.11.0"
-about-libraries = "15.0.3"
-constraintlayout = "1.1.1"
+about-libraries = "15.0.4"
+constraintlayout = "1.1.2"
 permissions = "0.37.3"
 turbine = "1.2.1"
-stability-analyzer = "0.10.0"
-navigation3 = "1.1.4"
+stability-analyzer = "0.12.0"
+navigation3 = "1.1.6"
 lottie = "6.7.1"
 lifecycle-viewmodel-navigation3 = "2.11.0"
 leakcanary = "3.0-alpha-9"
@@ -67,8 +67,6 @@ androidx-icons-extended = { group = "androidx.compose.material", name = "materia
 
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref= "lottie" }
 
-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
-
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permissions" }
 
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -86,7 +84,6 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 
 landscapist = { group = "com.github.skydoves", name = "landscapist-coil3", version.ref = "landscapist" }
 landscapist-animation = { group = "com.github.skydoves", name = "landscapist-animation", version.ref = "landscapist" }
-landscapist-palette = { group = "com.github.skydoves", name = "landscapist-palette", version.ref = "landscapist" }
 
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
@@ -98,6 +95,7 @@ ktor-android = { group = "io.ktor", name = "ktor-client-android", version.ref = 
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
 
 ktx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization-json" }
 

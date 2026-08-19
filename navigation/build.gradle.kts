@@ -54,4 +54,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.navigation3)
 
     implementation(libs.ktx.serialization.json)
+
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.junit)
 }
