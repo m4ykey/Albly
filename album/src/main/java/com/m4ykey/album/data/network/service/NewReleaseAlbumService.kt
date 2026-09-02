@@ -1,6 +1,6 @@
 package com.m4ykey.album.data.network.service
 
-import com.m4ykey.album.data.network.model.new_release.NewReleaseRootDto
+import com.m4ykey.album.data.network.dto.new_release.NewReleaseRootDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

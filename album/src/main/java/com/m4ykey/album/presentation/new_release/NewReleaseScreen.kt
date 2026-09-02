@@ -20,8 +20,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.m4ykey.album.R
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
-import com.m4ykey.core.ext.ActionIconButton
-import com.m4ykey.core.ext.AppScaffold
+import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.ui.AlbumCard
 import kotlinx.coroutines.flow.collectLatest

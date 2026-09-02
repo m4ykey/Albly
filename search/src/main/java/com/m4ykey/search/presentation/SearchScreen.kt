@@ -75,9 +75,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.m4ykey.core.chip.ChipItem
-import com.m4ykey.core.ext.ActionIconButton
-import com.m4ykey.core.ext.CenteredContent
+import com.m4ykey.core.ui.ChipItem
+import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.CenteredContent
 import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.AlbumCard

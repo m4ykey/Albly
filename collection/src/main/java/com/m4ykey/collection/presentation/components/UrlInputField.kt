@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.m4ykey.collection.R
-import com.m4ykey.core.ext.ActionIconButton
+import com.m4ykey.core.ui.ActionIconButton
 
 @Composable
 fun UrlInputField(

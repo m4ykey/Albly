@@ -7,13 +7,13 @@ import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
-import com.m4ykey.album.data.network.paging.NewReleasePagingSource
+import com.m4ykey.album.data.paging.NewReleasePagingSource
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.repository.AlbumRepository
-import com.m4ykey.album.mapper.AlbumMapper
+import com.m4ykey.album.data.mapper.AlbumMapper
 import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

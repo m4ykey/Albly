@@ -37,14 +37,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.domain.model.detail.AlbumRoot
-import com.m4ykey.album.mapper.AlbumMapper
+import com.m4ykey.album.data.mapper.AlbumMapper
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
-import com.m4ykey.core.ext.ActionIconButton
-import com.m4ykey.core.ext.AppScaffold
-import com.m4ykey.core.ext.LoadImage
-import com.m4ykey.core.ext.copyText
+import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AppScaffold
+import com.m4ykey.core.ui.LoadImage
+import com.m4ykey.core.ui.copyText
 import com.m4ykey.core.ui.ErrorCard
 import org.koin.androidx.compose.koinViewModel
 

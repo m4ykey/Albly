@@ -2,7 +2,7 @@ package com.m4ykey.lyrics.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.m4ykey.lyrics.domain.use_case.GetLyricsUseCase
+import com.m4ykey.lyrics.domain.usecase.GetLyricsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch

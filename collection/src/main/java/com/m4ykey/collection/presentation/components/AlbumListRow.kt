@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.core.ext.LoadImage
+import com.m4ykey.core.ui.LoadImage
 
 @Composable
 fun AlbumListRow(

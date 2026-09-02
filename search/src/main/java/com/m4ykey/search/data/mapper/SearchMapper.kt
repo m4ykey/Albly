@@ -1,21 +1,21 @@
 package com.m4ykey.search.data.mapper
 
-import com.m4ykey.search.data.network.model.dto.album.ResultsAlbumDto
-import com.m4ykey.search.data.network.model.dto.album.SearchAlbumRootDto
-import com.m4ykey.search.data.network.model.dto.artist.ResultsArtistDto
-import com.m4ykey.search.data.network.model.dto.artist.SearchArtistRootDto
-import com.m4ykey.search.data.network.model.dto.lyrics.GeniusResponseDto
-import com.m4ykey.search.data.network.model.dto.lyrics.GeniusResultDto
-import com.m4ykey.search.data.network.model.dto.lyrics.GeniusRootDto
-import com.m4ykey.search.data.network.model.dto.lyrics.HitDto
-import com.m4ykey.search.domain.model.search.album.ResultsAlbum
-import com.m4ykey.search.domain.model.search.album.SearchAlbumRoot
-import com.m4ykey.search.domain.model.search.artist.ResultsArtist
-import com.m4ykey.search.domain.model.search.artist.SearchArtistRoot
-import com.m4ykey.search.domain.model.search.lyrics.GeniusResponse
-import com.m4ykey.search.domain.model.search.lyrics.GeniusResult
-import com.m4ykey.search.domain.model.search.lyrics.GeniusRoot
-import com.m4ykey.search.domain.model.search.lyrics.Hit
+import com.m4ykey.search.data.network.dto.album.ResultsAlbumDto
+import com.m4ykey.search.data.network.dto.album.SearchAlbumRootDto
+import com.m4ykey.search.data.network.dto.artist.ResultsArtistDto
+import com.m4ykey.search.data.network.dto.artist.SearchArtistRootDto
+import com.m4ykey.search.data.network.dto.lyrics.GeniusResponseDto
+import com.m4ykey.search.data.network.dto.lyrics.GeniusResultDto
+import com.m4ykey.search.data.network.dto.lyrics.GeniusRootDto
+import com.m4ykey.search.data.network.dto.lyrics.HitDto
+import com.m4ykey.search.domain.model.album.ResultsAlbum
+import com.m4ykey.search.domain.model.album.SearchAlbumRoot
+import com.m4ykey.search.domain.model.artist.ResultsArtist
+import com.m4ykey.search.domain.model.artist.SearchArtistRoot
+import com.m4ykey.search.domain.model.lyrics.GeniusResponse
+import com.m4ykey.search.domain.model.lyrics.GeniusResult
+import com.m4ykey.search.domain.model.lyrics.GeniusRoot
+import com.m4ykey.search.domain.model.lyrics.Hit
 
 object SearchMapper {
 
@@ -32,8 +32,6 @@ object SearchMapper {
     }
 
     private fun getHitsList(dto : List<HitDto>) : List<Hit> {
-        if (dto.isEmpty()) return emptyList()
-
         return dto.map { hitDto ->
             Hit(
                 result = mapToGeniusResult(hitDto.result)

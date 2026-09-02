@@ -45,10 +45,10 @@ import androidx.compose.ui.window.DialogProperties
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.IconSource
-import com.m4ykey.collection.presentation.type.list.ListSortType
-import com.m4ykey.collection.presentation.type.list.ListType
-import com.m4ykey.collection.presentation.type.list.ListViewType
-import com.m4ykey.collection.presentation.type.list.label
+import com.m4ykey.collection.presentation.type.ListSortType
+import com.m4ykey.collection.presentation.type.ListType
+import com.m4ykey.collection.presentation.type.ListViewType
+import com.m4ykey.collection.presentation.type.label
 
 @Composable
 fun TypeChip(

@@ -6,8 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.m4ykey.album.R
-import com.m4ykey.core.ext.ActionIconButton
-import com.m4ykey.core.ext.AppScaffold
+import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AppScaffold
 
 @Composable
 fun AlbumCoverScreen(

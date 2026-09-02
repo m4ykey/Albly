@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
-import com.m4ykey.album.domain.use_case.NewReleaseUseCase
+import com.m4ykey.album.domain.usecase.NewReleaseUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

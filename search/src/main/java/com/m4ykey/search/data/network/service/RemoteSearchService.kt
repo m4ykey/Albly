@@ -1,7 +1,7 @@
 package com.m4ykey.search.data.network.service
 
-import com.m4ykey.search.data.network.model.dto.album.SearchAlbumRootDto
-import com.m4ykey.search.data.network.model.dto.artist.SearchArtistRootDto
+import com.m4ykey.search.data.network.dto.album.SearchAlbumRootDto
+import com.m4ykey.search.data.network.dto.artist.SearchArtistRootDto
 
 interface RemoteSearchService {
 

@@ -1,9 +1,9 @@
 package com.m4ykey.search.domain.repository
 
 import androidx.paging.PagingData
-import com.m4ykey.search.domain.model.search.album.ResultsAlbum
-import com.m4ykey.search.domain.model.search.artist.ResultsArtist
-import com.m4ykey.search.domain.model.search.lyrics.GeniusRoot
+import com.m4ykey.search.domain.model.album.ResultsAlbum
+import com.m4ykey.search.domain.model.artist.ResultsArtist
+import com.m4ykey.search.domain.model.lyrics.GeniusRoot
 import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {

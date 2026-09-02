@@ -40,8 +40,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import com.m4ykey.core.ext.ActionIconButton
-import com.m4ykey.core.ext.AppScaffold
+import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.settings.theme.ThemeType
 import com.m4ykey.settings.theme.label
 

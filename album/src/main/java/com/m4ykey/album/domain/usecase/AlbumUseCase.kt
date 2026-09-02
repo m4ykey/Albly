@@ -1,0 +1,13 @@
+package com.m4ykey.album.domain.usecase
+
+import com.m4ykey.album.domain.model.detail.AlbumRoot
+import com.m4ykey.album.domain.repository.AlbumRepository
+import kotlinx.coroutines.flow.Flow
+
+class AlbumUseCase (
+    private val repository : AlbumRepository
+) {
+    suspend operator fun invoke(id : Int) : Flow<AlbumRoot> {
+        return repository.getAlbum(id)
+    }
+}

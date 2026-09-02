@@ -2,7 +2,7 @@ package com.m4ykey.search.use_case
 
 import androidx.paging.PagingData
 import com.m4ykey.search.domain.repository.SearchRepository
-import com.m4ykey.search.domain.use_case.SearchAlbumUseCase
+import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

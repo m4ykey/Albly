@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.m4ykey.search.domain.use_case.SearchAlbumUseCase
-import com.m4ykey.search.domain.use_case.SearchArtistUseCase
-import com.m4ykey.search.domain.use_case.SearchLyricsUseCase
+import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
+import com.m4ykey.search.domain.usecase.SearchArtistUseCase
+import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
