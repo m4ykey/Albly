@@ -20,7 +20,6 @@ import com.m4ykey.core.ext.LoadImage
 
 @Composable
 fun LyricsCard(
-    modifier: Modifier = Modifier,
     onClick : () -> Unit,
     imageUrl : String,
     title : String,

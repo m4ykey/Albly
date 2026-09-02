@@ -3,7 +3,6 @@
 package com.m4ykey.album.presentation.detail
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -40,13 +39,13 @@ import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.mapper.AlbumMapper
 import com.m4ykey.album.presentation.components.AlbumButtonRow
-import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
 import com.m4ykey.core.ext.ActionIconButton
 import com.m4ykey.core.ext.AppScaffold
 import com.m4ykey.core.ext.LoadImage
 import com.m4ykey.core.ext.copyText
+import com.m4ykey.core.ui.ErrorCard
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -128,7 +127,6 @@ fun AlbumDetailDisplay(
         }
         is DetailUiState.Error -> {
             ErrorCard(text = albumDetail.message)
-            Log.i("AlbumDetailError", albumDetail.message)
         }
         is DetailUiState.Success -> {
             Box(

@@ -100,7 +100,7 @@ fun NavigationRoot(
             entry<Route.AlbumDetail> { key ->
                 AlbumDetailScreen(
                     onBack = ::navigateBack,
-                    onTrackClick = { artist, title, img ->
+                    onTrackClick = { title, artist, img ->
                         navigateTo(Route.Lyrics(title = title, artist = artist, img = img))
                     },
                     id = key.albumId,

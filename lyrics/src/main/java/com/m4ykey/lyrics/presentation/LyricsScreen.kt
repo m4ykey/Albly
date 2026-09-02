@@ -50,7 +50,7 @@ fun LyricsScreen(
 
     val lyricsUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(artistName, trackName) {
         viewModel.fetchLyrics(artistName, trackName)
     }
 
