@@ -31,6 +31,8 @@ class AlbumDetailViewModel(
     val detail = _detail.asStateFlow()
 
     fun getAlbumById(id : Int) {
+        if (_detail.value is DetailUiState.Success) return
+
         viewModelScope.launch {
             _detail.value = DetailUiState.Loading
 
