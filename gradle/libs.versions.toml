@@ -1,25 +1,25 @@
 [versions]
 agp = "9.4.0"
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 core-ktx = "1.19.0"
 junit = "4.13.2"
 junit-version = "1.3.0"
 espresso-core = "3.7.0"
 lifecycle-runtime-ktx = "2.11.0"
 activity-compose = "1.13.0"
-compose-bom = "2026.08.00"
-serialization = "2.4.10"
+compose-bom = "2026.09.00"
+serialization = "2.4.20"
 paging = "3.5.1"
-room = "2.8.4"
+room = "2.8.5"
 coroutines = "1.11.0"
 ksp = "2.3.6"
 datastore = "1.2.1"
 gms = "4.5.0"
 firebase-analytics = "23.2.0"
-firebase-crashlytics = "20.1.0"
+firebase-crashlytics = "20.1.1"
 crashlytics = "3.0.8"
-material3 = "1.5.0-alpha27"
-landscapist = "2.11.0"
+material3 = "1.5.0-alpha28"
+landscapist = "2.13.1"
 kotlinx-datetime = "0.8.0"
 koin = "4.2.2"
 ktor = "3.5.2"
@@ -36,6 +36,7 @@ lottie = "6.7.1"
 lifecycle-viewmodel-navigation3 = "2.11.0"
 leakcanary = "3.0-alpha-9"
 compose-nav-graph = "0.2.1"
+palette = "1.1.0-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -64,6 +65,7 @@ androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runt
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 androidx-lifecycle-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycle-viewmodel-navigation3" }
 androidx-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
+androidx-palette = { group = "androidx.palette", name = "palette", version.ref = "palette" }
 
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref= "lottie" }
 
