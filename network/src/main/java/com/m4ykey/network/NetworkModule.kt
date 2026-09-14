@@ -45,7 +45,10 @@ val networkModule = module {
     }
 
     single(named(LRCLIB)) {
-        HttpClientFactory.create(baseUrl = LRCLIB_URL)
+        HttpClientFactory.create(
+            baseUrl = LRCLIB_URL,
+            userAgent = "Albly v0.5.1 (https://github.com/m4ykey/Albly)"
+        )
     }
 
     single<RemoteSearchLyricsService> {

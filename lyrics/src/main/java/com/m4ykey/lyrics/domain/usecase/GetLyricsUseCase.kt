@@ -10,12 +10,17 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 
 class GetLyricsUseCase(private val repository: LyricsRepository) {
-    suspend operator fun invoke(artist : String, track : String) : Flow<LyricsItem> {
-        return repository.searchLyrics(q = artist, trackName = track)
+    suspend operator fun invoke(artist : String, track : String, album: String?) : Flow<LyricsItem> {
+        return repository.searchLyrics(trackName = track, artistName = artist, albumName = album)
             .flatMapLatest { results ->
-                val firstId = results.firstOrNull()?.id
-                if (firstId != null) {
-                    repository.getLyrics(id = firstId)
+                val matchingItem = results.firstOrNull { item ->
+                    item.trackName.equals(track, ignoreCase = true) &&
+                    item.artistName.equals(artist, ignoreCase = true) &&
+                            (album == null || item.albumName.equals(album, ignoreCase = true))
+                }
+
+                if (matchingItem != null) {
+                    repository.getLyrics(id = matchingItem.id)
                 } else {
                     flow { throw Exception("Lyrics not found for this track") }
                 }

@@ -22,7 +22,8 @@ fun TrackListItem(
     title : String,
     artists : String,
     duration : String,
-    onTrackClick : (String, String, String) -> Unit,
+    album : String,
+    onTrackClick : (String, String, String, String) -> Unit,
     position : String,
     img : String
 ) {
@@ -32,7 +33,7 @@ fun TrackListItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onTrackClick(title, artists, img) }
+            .clickable { onTrackClick(title, artists, img, album) }
             .padding(vertical = 8.dp, horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

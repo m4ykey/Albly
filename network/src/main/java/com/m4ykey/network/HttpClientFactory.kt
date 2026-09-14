@@ -21,7 +21,8 @@ object HttpClientFactory {
         enableLogging : Boolean = false,
         token: String? = null,
         baseUrl : String? = null,
-        isTokenInUrl : Boolean = false
+        isTokenInUrl : Boolean = false,
+        userAgent : String? = null
     ) : HttpClient = HttpClient(engine) {
 
         install(ContentNegotiation) {
@@ -41,6 +42,11 @@ object HttpClientFactory {
 
         defaultRequest {
             baseUrl?.let { url(it) }
+
+            userAgent?.let {
+                header(HttpHeaders.UserAgent, it)
+            }
+
             token?.let {
                 if (isTokenInUrl) {
                     url.parameters.append("token", it)

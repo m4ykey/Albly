@@ -53,7 +53,7 @@ fun AlbumDetailScreen(
     id : Int,
     onBack : () -> Unit,
     viewModel : AlbumDetailViewModel = koinViewModel(),
-    onTrackClick : (String, String, String) -> Unit,
+    onTrackClick : (String, String, String, String) -> Unit,
     onCoverClick: (String) -> Unit
 ) {
 
@@ -109,7 +109,7 @@ fun AlbumDetailDisplay(
     modifier: Modifier = Modifier,
     albumDetail : DetailUiState,
     paddingValues: PaddingValues,
-    onTrackClick: (String, String, String) -> Unit,
+    onTrackClick: (String, String, String, String) -> Unit,
     state : LazyListState,
     onSaveToggle: (AlbumEntity) -> Unit,
     onListenLaterToggle: (AlbumEntity) -> Unit,
@@ -153,7 +153,7 @@ fun AlbumDetailDisplay(
 fun AlbumDetailContent(
     contentPadding : PaddingValues = PaddingValues(0.dp),
     state : LazyListState,
-    onTrackClick : (String, String, String) -> Unit,
+    onTrackClick : (String, String, String, String) -> Unit,
     onSaveToggle : (AlbumEntity) -> Unit,
     onListenLaterToggle : (AlbumEntity) -> Unit,
     isSaved : Boolean,
@@ -260,14 +260,15 @@ fun AlbumDetailContent(
             val currentPosition = item.tracklist[index].position
 
             TrackListItem(
-                onTrackClick = { title, artist, img ->
-                    onTrackClick(title, artist, img)
+                onTrackClick = { title, artist, img, album ->
+                    onTrackClick(title, artist, img, album)
                 },
                 duration = currentDuration,
                 title = currentTitle,
                 artists = artists,
                 position = currentPosition,
-                img = imageUrl.orEmpty()
+                img = imageUrl.orEmpty(),
+                album = item.title
             )
         }
     }

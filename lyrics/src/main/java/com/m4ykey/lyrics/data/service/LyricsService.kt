@@ -11,12 +11,14 @@ class LyricsService(
 ) : RemoteLyricsService {
 
     override suspend fun searchLyrics(
-        q: String,
-        trackName: String
+        trackName: String,
+        artistName : String,
+        albumName : String?
     ): List<LyricsDtoItem> {
         return httpClient.get("search") {
-            parameter("q", q)
             parameter("track_name", trackName)
+            parameter("artist_name", artistName)
+            parameter("album_name", albumName)
         }.body()
     }
 

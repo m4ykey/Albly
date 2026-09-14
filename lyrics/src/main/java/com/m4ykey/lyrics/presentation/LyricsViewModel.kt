@@ -15,11 +15,11 @@ class LyricsViewModel(
     private val _uiState = MutableStateFlow<LyricsUiState>(LyricsUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    fun fetchLyrics(artist : String, track : String) {
+    fun fetchLyrics(artist : String, track : String, album : String?) {
         viewModelScope.launch {
             _uiState.value = LyricsUiState.Loading
 
-            getLyricsUseCase.invoke(artist, track)
+            getLyricsUseCase.invoke(track = track, album = album, artist = artist)
                 .catch { e ->
                     _uiState.value = LyricsUiState.Error(
                         e.localizedMessage ?: "An unexpected error occurred"

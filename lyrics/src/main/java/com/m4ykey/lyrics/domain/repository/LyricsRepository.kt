@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface LyricsRepository {
 
     suspend fun getLyrics(id : Int) : Flow<LyricsItem>
-    suspend fun searchLyrics(q : String, trackName : String) : Flow<List<LyricsItem>>
+    suspend fun searchLyrics(trackName : String, artistName : String, albumName : String?) : Flow<List<LyricsItem>>
 
 }

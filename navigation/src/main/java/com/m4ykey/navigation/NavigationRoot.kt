@@ -89,8 +89,8 @@ fun NavigationRoot(
                         navigateTo(Route.AlbumDetail(albumId = albumId))
                     },
                     onBack = ::navigateBack,
-                    onTrackClick = { title, artist, img ->
-                        navigateTo(Route.Lyrics(title, artist, img))
+                    onTrackClick = { track, artist, img, album ->
+                        navigateTo(Route.Lyrics(track, artist, img, album))
                     }
                 )
             }
@@ -113,8 +113,8 @@ fun NavigationRoot(
             entry<Route.AlbumDetail> { key ->
                 AlbumDetailScreen(
                     onBack = ::navigateBack,
-                    onTrackClick = { title, artist, img ->
-                        navigateTo(Route.Lyrics(title = title, artist = artist, img = img))
+                    onTrackClick = { track, artist, img, album ->
+                        navigateTo(Route.Lyrics(track = track, artist = artist, img = img, album = album))
                     },
                     id = key.albumId,
                     onCoverClick = { image ->
@@ -134,8 +134,9 @@ fun NavigationRoot(
                 LyricsScreen(
                     onBack = ::navigateBack,
                     artistName = key.artist,
-                    trackName = key.title,
-                    imageUrl = key.img
+                    trackName = key.track,
+                    imageUrl = key.img,
+                    albumName = key.album
                 )
             }
             entry<Route.Cover> { key ->
