@@ -10,6 +10,7 @@ import com.m4ykey.artist.domain.GetSavedArtistUseCase
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListTypeState
 import com.m4ykey.collection.presentation.type.ListViewType
+import com.m4ykey.collection.repository.CollectionRepository
 import com.m4ykey.core.ui.hide
 import com.m4ykey.core.ui.show
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +31,8 @@ import kotlinx.coroutines.launch
 
 class CollectionViewModel(
     private val getSavedAlbumsUseCase: GetSavedAlbumsUseCase,
-    private val getSavedArtistUseCase: GetSavedArtistUseCase
+    private val getSavedArtistUseCase: GetSavedArtistUseCase,
+    private val repository: CollectionRepository
 ) : ViewModel() {
 
     private val _isLinkDialogVisible = MutableStateFlow(false)
@@ -57,6 +59,10 @@ class CollectionViewModel(
     )
 
     val listTypeState = _listTypeState.asStateFlow()
+
+    init {
+        loadPreferences()
+    }
 
     val uiState : StateFlow<CollectionUiState> =
         combine(
@@ -126,16 +132,46 @@ class CollectionViewModel(
                 _listTypeState.update {
                     it.copy(sort = action.sort)
                 }
+
+                viewModelScope.launch {
+                    repository.saveSortOption(action.sort)
+                }
             }
             is CollectionTypeAction.OnChangeView -> {
                 _listTypeState.update {
                     it.copy(view = action.view)
+                }
+
+                viewModelScope.launch {
+                    repository.saveViewOption(action.view)
                 }
             }
             is CollectionTypeAction.OnChangeList -> {
                 _listTypeState.update {
                     it.copy(type = action.list)
                 }
+
+                viewModelScope.launch {
+                    repository.saveListOption(action.list)
+                }
+            }
+        }
+    }
+
+    private fun loadPreferences() {
+        viewModelScope.launch {
+            combine(
+                repository.getSelectedViewOption(),
+                repository.getSelectedListOption(),
+                repository.getSelectedSortOption()
+            ) { view, list, sort ->
+                ListTypeState(
+                    view = view,
+                    type = list,
+                    sort = sort
+                )
+            }.collect { state ->
+                _listTypeState.value = state
             }
         }
     }

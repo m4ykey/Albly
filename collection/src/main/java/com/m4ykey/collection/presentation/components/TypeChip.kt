@@ -107,14 +107,13 @@ fun SortTypeChip(
     onChange : (AlbumSort) -> Unit,
     onShowDialog : () -> Unit,
     onDismissDialog : () -> Unit,
-    isDialogVisible : Boolean
+    isDialogVisible : Boolean,
+    sort : AlbumSort
 ) {
-    var currentType by remember { mutableStateOf(AlbumSort.LATEST) }
-
     TypeChip(
         onClick = onShowDialog,
         icon = IconSource.Resource(R.drawable.ic_arrow_sort),
-        label = currentType.label(),
+        label = sort.label(),
         iconSize = 16.dp
     )
 
@@ -145,7 +144,6 @@ fun SortTypeChip(
                                 modifier = modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        currentType = type
                                         onChange(type)
                                         onDismissDialog()
                                     }
@@ -153,9 +151,8 @@ fun SortTypeChip(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 RadioButton(
-                                    selected = currentType == type,
+                                    selected = sort == type,
                                     onClick = {
-                                        currentType = type
                                         onChange(type)
                                         onDismissDialog()
                                     }
@@ -198,16 +195,15 @@ fun ViewTypeChip(
 
 @Composable
 fun ListTypeChip(
-    onChange : (ListType) -> Unit
+    onChange : (ListType) -> Unit,
+    listType: ListType
 ) {
-    var currentType by remember { mutableStateOf(ListType.ALBUM) }
-
     fun nextType(type : ListType) : ListType = when (type) {
         ListType.ALBUM -> ListType.ARTIST
         ListType.ARTIST -> ListType.ALBUM
     }
 
-    val icon = when (currentType) {
+    val icon = when (listType) {
         ListType.ALBUM -> IconSource.Vector(Icons.Outlined.Album)
         ListType.ARTIST -> IconSource.Resource(resId = R.drawable.ic_artist)
     }
@@ -216,8 +212,7 @@ fun ListTypeChip(
         icon = icon,
         label = null,
         onClick = {
-            currentType = nextType(currentType)
-            onChange(currentType)
+            onChange(nextType(listType))
         }
     )
 }

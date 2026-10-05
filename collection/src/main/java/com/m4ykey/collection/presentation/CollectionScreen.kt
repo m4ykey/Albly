@@ -552,7 +552,9 @@ fun CollectionHeader(
                 isSortDialogVisible = isSortDialogVisible,
                 onShowSortDialog = onShowSortDialog,
                 onDismissSortDialog = onDismissSortDialog,
-                viewType = listTypeState.view
+                viewType = listTypeState.view,
+                sort = listTypeState.sort,
+                listType = listTypeState.type
             )
         }
 

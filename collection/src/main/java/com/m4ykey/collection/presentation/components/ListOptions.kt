@@ -25,7 +25,9 @@ fun ListOptions(
     isSortDialogVisible : Boolean,
     onShowSortDialog : () -> Unit,
     onDismissSortDialog : () -> Unit,
-    viewType: ListViewType
+    viewType: ListViewType,
+    listType: ListType,
+    sort: AlbumSort
 ) {
     Row(
         modifier = modifier
@@ -33,13 +35,17 @@ fun ListOptions(
             .padding(start = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ListTypeChip(onChange = onListTypeChange)
+        ListTypeChip(
+            onChange = onListTypeChange,
+            listType = listType
+        )
         Spacer(modifier = Modifier.width(10.dp))
         SortTypeChip(
             onChange = onSortChange,
             isDialogVisible = isSortDialogVisible,
             onShowDialog = onShowSortDialog,
-            onDismissDialog = onDismissSortDialog
+            onDismissDialog = onDismissSortDialog,
+            sort = sort
         )
         Spacer(modifier = Modifier.width(10.dp))
         ViewTypeChip(
