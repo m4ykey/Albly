@@ -69,8 +69,7 @@ fun CoverDisplay(
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier
-            .padding(paddingValues),
+        modifier = modifier.padding(paddingValues),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
@@ -85,7 +84,7 @@ fun CoverDisplay(
         }
         LazyHorizontalGrid(
             rows = GridCells.Fixed(2),
-            modifier = modifier
+            modifier = Modifier
                 .padding(horizontal = 10.dp)
                 .fillMaxWidth()
                 .height(110.dp),
@@ -95,10 +94,9 @@ fun CoverDisplay(
             items(colors) { color ->
                 Card(
                     shape = RoundedCornerShape(5.dp),
-                    modifier = modifier
+                    modifier = Modifier
                         .clickable {
                             val hex = String.format("#%06X", color and 0xFFFFFF)
-
                             copyText(hex, context = context)
                             showToast(context = context, hex)
                         },

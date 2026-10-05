@@ -1,10 +1,10 @@
 package com.m4ykey.album.domain.usecase
 
-import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.album.data.local.model.AlbumListItem
 import com.m4ykey.album.domain.repository.AlbumRepository
 
 class GetListenLaterAlbumsUseCase(private val repository: AlbumRepository) {
-    suspend operator fun invoke() : List<AlbumEntity> {
+    suspend operator fun invoke() : List<AlbumListItem> {
         return repository.getListenLaterAlbums()
     }
 }

@@ -1,18 +1,15 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package com.m4ykey.album.presentation.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.album.data.mapper.AlbumMapper
 import com.m4ykey.album.domain.usecase.AlbumUseCase
 import com.m4ykey.album.domain.usecase.GetAlbumStateUseCase
 import com.m4ykey.album.domain.usecase.GetLocalAlbumUseCase
 import com.m4ykey.album.domain.usecase.ToggleAlbumSavedUseCase
 import com.m4ykey.album.domain.usecase.ToggleListenLaterSavedUseCase
-import com.m4ykey.album.data.mapper.AlbumMapper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch

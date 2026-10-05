@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.m4ykey.album.presentation.listen_later
 
@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -36,11 +35,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
-import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.album.data.local.model.AlbumListItem
 import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AlbumGridCard
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.showToast
-import com.m4ykey.core.ui.AlbumGridCard
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -50,20 +49,24 @@ fun ListenLaterScreen(
     viewModel: ListenLaterViewModel = koinViewModel(),
     onAlbumClick : (Int) -> Unit
 ) {
-    val albums by viewModel.albums.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-    val randomAlbum by viewModel.randomAlbum.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val state = rememberLazyGridState()
     val context = LocalContext.current
     val errorMessage = stringResource(R.string.album_list_is_empty)
 
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(Unit) {
         viewModel.loadAlbums()
     }
 
-    LaunchedEffect(randomAlbum) {
-        val album = randomAlbum
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            showToast(context, it)
+        }
+    }
+
+    LaunchedEffect(uiState.randomAlbum) {
+        val album = uiState.randomAlbum
         if (album != null) {
             onAlbumClick(album.id)
             viewModel.clearAlbum()
@@ -89,14 +92,14 @@ fun ListenLaterScreen(
             ListenLaterContent(
                 modifier = Modifier.padding(padding),
                 onRandomAlbumClick = {
-                    if (albums.isEmpty()) {
+                    if (uiState.albums.isEmpty()) {
                         showToast(context, errorMessage)
                     } else {
                         viewModel.getRandomAlbum()
                     }
                 },
-                albums = albums,
-                isLoading = isLoading,
+                albums = uiState.albums,
+                isLoading = uiState.isLoading,
                 state = state,
                 onAlbumClick = onAlbumClick
             )
@@ -109,7 +112,7 @@ fun ListenLaterContent(
     modifier: Modifier = Modifier,
     onRandomAlbumClick : () -> Unit,
     isLoading : Boolean,
-    albums : List<AlbumEntity>,
+    albums : List<AlbumListItem>,
     state : LazyGridState,
     onAlbumClick: (Int) -> Unit
 ) {
@@ -160,7 +163,7 @@ fun ListenLaterContent(
                     AlbumGridCard(
                         onAlbumClick = { onAlbumClick(item.id) },
                         albumName = item.title,
-                        artistName = item.artistList.joinToString(", ") { it.name },
+                        artistName = item.artist.joinToString(", ") { it.name },
                         id = item.id,
                         image = item.image
                     )

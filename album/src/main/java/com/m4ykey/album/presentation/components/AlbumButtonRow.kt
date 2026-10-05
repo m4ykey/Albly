@@ -27,24 +27,24 @@ fun AlbumButtonRow(
     ) {
         Button(
             onClick = { onArtistClick() },
-            modifier = modifier.weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
             Icon(
                 contentDescription = null,
                 painter = painterResource(R.drawable.ic_artist)
             )
-            Spacer(modifier.width(5.dp))
+            Spacer(modifier = Modifier.width(5.dp))
             Text(text = stringResource(R.string.artist))
         }
         Button(
             onClick = { onAlbumClick() },
-            modifier = modifier.weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
             Icon(
                 contentDescription = null,
                 painter = painterResource(R.drawable.ic_album)
             )
-            Spacer(modifier.width(5.dp))
+            Spacer(modifier = Modifier.width(5.dp))
             Text(text = stringResource(R.string.album))
         }
     }

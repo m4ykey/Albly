@@ -17,25 +17,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.album.data.local.model.ArtistEntity
 import com.m4ykey.core.ui.LoadImage
 
 @Composable
 fun AlbumListRow(
-    item : AlbumEntity,
+    image : String,
+    title : String,
+    id : Int,
+    artistList : List<ArtistEntity>,
     onAlbumClick : (Int) -> Unit
 ) {
-    val artists = item.artistList.joinToString(", ") { it.name }
+    val artists = artistList.joinToString(", ") { it.name }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .padding(bottom = 10.dp)
-            .clickable { onAlbumClick(item.id) }
+            .clickable { onAlbumClick(id) }
     ) {
         LoadImage(
-            imageUrl = item.image,
+            imageUrl = image,
             modifier = Modifier.size(90.dp)
         )
         Column(
@@ -46,7 +49,7 @@ fun AlbumListRow(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = item.title,
+                text = title,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.m4ykey.album.presentation.detail
 
@@ -17,14 +17,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,16 +34,17 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.data.mapper.AlbumMapper
+import com.m4ykey.album.domain.model.TrackClickItem
+import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
+import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
 import com.m4ykey.core.ui.copyText
-import com.m4ykey.core.ui.ErrorCard
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -53,7 +52,7 @@ fun AlbumDetailScreen(
     id : Int,
     onBack : () -> Unit,
     viewModel : AlbumDetailViewModel = koinViewModel(),
-    onTrackClick : (String, String, String, String) -> Unit,
+    onTrackClick : (TrackClickItem) -> Unit,
     onCoverClick: (String) -> Unit
 ) {
 
@@ -61,9 +60,7 @@ fun AlbumDetailScreen(
 
     val state = rememberLazyListState()
 
-    val currentOnTrackClick by rememberUpdatedState(onTrackClick)
-
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(id) {
         viewModel.getAlbumById(id)
     }
 
@@ -84,13 +81,13 @@ fun AlbumDetailScreen(
         },
         content = { padding ->
             AlbumDetailDisplay(
-                onTrackClick = currentOnTrackClick,
+                onTrackClick = onTrackClick,
                 state = state,
                 albumDetail = albumDetail,
                 paddingValues = padding,
                 onSaveToggle = { entity ->
                     viewModel.toggleSave(
-                        album = entity,
+                        album = entity
                     )
                 },
                 onListenLaterToggle = { entity ->
@@ -109,7 +106,7 @@ fun AlbumDetailDisplay(
     modifier: Modifier = Modifier,
     albumDetail : DetailUiState,
     paddingValues: PaddingValues,
-    onTrackClick: (String, String, String, String) -> Unit,
+    onTrackClick: (TrackClickItem) -> Unit,
     state : LazyListState,
     onSaveToggle: (AlbumEntity) -> Unit,
     onListenLaterToggle: (AlbumEntity) -> Unit,
@@ -153,7 +150,7 @@ fun AlbumDetailDisplay(
 fun AlbumDetailContent(
     contentPadding : PaddingValues = PaddingValues(0.dp),
     state : LazyListState,
-    onTrackClick : (String, String, String, String) -> Unit,
+    onTrackClick : (TrackClickItem) -> Unit,
     onSaveToggle : (AlbumEntity) -> Unit,
     onListenLaterToggle : (AlbumEntity) -> Unit,
     isSaved : Boolean,
@@ -219,14 +216,10 @@ fun AlbumDetailContent(
                 isSaved = isSaved,
                 isListenLaterSaved = isListenLaterSaved,
                 onSaveClick = {
-                    if (albumEntity != null) {
-                        onSaveToggle(albumEntity)
-                    }
+                    albumEntity?.let { onSaveToggle(albumEntity) }
                 },
                 onListenLaterClick = {
-                    if (albumEntity != null) {
-                        onListenLaterToggle(albumEntity)
-                    }
+                    albumEntity?.let { onListenLaterToggle(albumEntity) }
                 }
             )
         }
@@ -252,7 +245,7 @@ fun AlbumDetailContent(
 
         items(
             count = item.tracklist.size,
-            key = { index -> "${item.tracklist[index].title}_${item.tracklist[index].position}" },
+            key = { index -> item.tracklist[index].position },
             contentType = { "track_item" }
         ) { index ->
             val currentDuration = item.tracklist[index].duration
@@ -260,9 +253,7 @@ fun AlbumDetailContent(
             val currentPosition = item.tracklist[index].position
 
             TrackListItem(
-                onTrackClick = { title, artist, img, album ->
-                    onTrackClick(title, artist, img, album)
-                },
+                onTrackClick = onTrackClick,
                 duration = currentDuration,
                 title = currentTitle,
                 artists = artists,

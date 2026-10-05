@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package com.m4ykey.core.ui
 
 import android.graphics.Bitmap
@@ -8,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,8 +22,6 @@ import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.coil3.CoilImageState
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.crossfade.CrossfadePlugin
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun LoadImage(
@@ -66,7 +61,6 @@ fun LoadImage(
             val imageBitmap = currentImageState.imageBitmap
 
             LaunchedEffect(imageBitmap) {
-                delay(100.milliseconds)
                 imageBitmap?.let {
                     onImageLoaded?.invoke(it.asAndroidBitmap())
                 }

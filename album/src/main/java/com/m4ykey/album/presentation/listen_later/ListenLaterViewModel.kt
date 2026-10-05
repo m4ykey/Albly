@@ -2,12 +2,12 @@ package com.m4ykey.album.presentation.listen_later
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.domain.usecase.GetListenLaterAlbumsUseCase
 import com.m4ykey.album.domain.usecase.GetRandomAlbumUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ListenLaterViewModel(
@@ -15,47 +15,69 @@ class ListenLaterViewModel(
     private val getListenLaterAlbumsUseCase: GetListenLaterAlbumsUseCase
 ) : ViewModel() {
 
-    private val _albums = MutableStateFlow<List<AlbumEntity>>(emptyList())
-    val albums = _albums.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
-
-    private val _randomAlbum = MutableStateFlow<AlbumEntity?>(null)
-    val randomAlbum = _randomAlbum.asStateFlow()
+    private val _uiState = MutableStateFlow(ListenLaterUiState())
+    val uiState = _uiState.asStateFlow()
 
     fun getRandomAlbum() {
         viewModelScope.launch {
-            _isLoading.value = true
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
 
             try {
                 getRandomAlbumUseCase().collectLatest { album ->
-                    _randomAlbum.value = album
-                    _isLoading.value = false
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            randomAlbum = album
+                        )
+                    }
                 }
             } catch (e : Exception) {
-
-            } finally {
-                _isLoading.value = false
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.message
+                    )
+                }
             }
         }
     }
 
     fun clearAlbum() {
-        _randomAlbum.value = null
+        _uiState.update {
+            it.copy(randomAlbum = null)
+        }
     }
 
     fun loadAlbums() {
         viewModelScope.launch {
-            _isLoading.value = true
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
 
             try {
                 val result = getListenLaterAlbumsUseCase()
-                _albums.value = result
-            } catch (e : Exception) {
 
-            } finally {
-                _isLoading.value = false
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        albums = result
+                    )
+                }
+            } catch (e : Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.message
+                    )
+                }
             }
         }
     }

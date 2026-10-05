@@ -1,7 +1,5 @@
 package com.m4ykey.navigation
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -113,8 +111,13 @@ fun NavigationRoot(
             entry<Route.AlbumDetail> { key ->
                 AlbumDetailScreen(
                     onBack = ::navigateBack,
-                    onTrackClick = { track, artist, img, album ->
-                        navigateTo(Route.Lyrics(track = track, artist = artist, img = img, album = album))
+                    onTrackClick = { track ->
+                        navigateTo(Route.Lyrics(
+                            track = track.title,
+                            artist = track.artists,
+                            img = track.img,
+                            album = track.album
+                        ))
                     },
                     id = key.albumId,
                     onCoverClick = { image ->

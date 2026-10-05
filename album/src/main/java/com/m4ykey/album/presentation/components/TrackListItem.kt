@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.m4ykey.album.domain.model.TrackClickItem
 
 @Composable
 fun TrackListItem(
@@ -23,7 +24,7 @@ fun TrackListItem(
     artists : String,
     duration : String,
     album : String,
-    onTrackClick : (String, String, String, String) -> Unit,
+    onTrackClick : (TrackClickItem) -> Unit,
     position : String,
     img : String
 ) {
@@ -33,7 +34,9 @@ fun TrackListItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onTrackClick(title, artists, img, album) }
+            .clickable { onTrackClick(
+                TrackClickItem(title = title, artists = artists, album = album, img = img)
+            ) }
             .padding(vertical = 8.dp, horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

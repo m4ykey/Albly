@@ -4,16 +4,17 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.m4ykey.album.data.local.dao.AlbumDao
 import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.album.data.local.model.AlbumListItem
 import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
-import com.m4ykey.album.data.paging.NewReleasePagingSource
+import com.m4ykey.album.data.mapper.AlbumMapper
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
+import com.m4ykey.album.data.paging.NewReleasePagingSource
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.repository.AlbumRepository
-import com.m4ykey.album.data.mapper.AlbumMapper
 import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -94,11 +95,11 @@ class AlbumRepositoryImpl(
         dao.deleteSavedAlbumState(id)
     }
 
-    override fun getSavedAlbums(query : String): Flow<List<AlbumEntity>> {
+    override fun getSavedAlbums(query : String): Flow<List<AlbumListItem>> {
         return dao.getSavedAlbums(query)
     }
 
-    override suspend fun getListenLaterAlbums(): List<AlbumEntity> {
+    override suspend fun getListenLaterAlbums(): List<AlbumListItem> {
         return dao.getListenLaterAlbums()
     }
 

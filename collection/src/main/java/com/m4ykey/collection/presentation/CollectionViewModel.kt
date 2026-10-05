@@ -4,7 +4,6 @@ package com.m4ykey.collection.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.domain.usecase.GetSavedAlbumsUseCase
 import com.m4ykey.core.ui.hide
 import com.m4ykey.core.ui.show
@@ -15,7 +14,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -38,15 +40,24 @@ class CollectionViewModel(
     private val _collectionUiEvent = MutableSharedFlow<CollectionUiEvent>()
     val collectionUiEvent = _collectionUiEvent.asSharedFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
-
-    val albums : StateFlow<List<AlbumEntity>> = _searchQuery
+    val uiState : StateFlow<SavedAlbumsUiState> = _searchQuery
         .flatMapLatest { query ->
             getSavedAlbumsUseCase(query)
+                .map { albums ->
+                    SavedAlbumsUiState(
+                        albums = albums,
+                        isLoading = false
+                    )
+                }
+                .onStart {
+                    emit(SavedAlbumsUiState(isLoading = true))
+                }
+                .catch { exception ->
+                    emit(SavedAlbumsUiState(isLoading = false, error = exception.message))
+                }
         }
         .stateIn(
-            initialValue = emptyList(),
+            initialValue = SavedAlbumsUiState(),
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000)
         )

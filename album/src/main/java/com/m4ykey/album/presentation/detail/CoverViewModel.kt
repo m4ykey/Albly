@@ -1,6 +1,7 @@
 package com.m4ykey.album.presentation.detail
 
 import android.graphics.Bitmap
+import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
@@ -9,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import androidx.core.graphics.scale
 
 class CoverViewModel : ViewModel() {
 
@@ -33,5 +33,4 @@ class CoverViewModel : ViewModel() {
         val palette = Palette.from(safeBitmap).generate()
         return palette.swatches.map { it.rgb }
     }
-
 }

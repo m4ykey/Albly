@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.m4ykey.collection.presentation
 
@@ -42,7 +42,6 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -75,7 +74,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.album.data.local.model.AlbumListItem
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.DrawerItem
@@ -89,9 +88,9 @@ import com.m4ykey.collection.presentation.type.ListSortType
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
 import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AlbumGridCard
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.showToast
-import com.m4ykey.core.ui.AlbumGridCard
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -119,8 +118,7 @@ fun CollectionScreen(
     val isSearchVisible by viewModel.isSearchVisible.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
-    val albums by viewModel.albums.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val isDialogVisible by viewModel.isLinkDialogVisible.collectAsState()
     val state = rememberTextFieldState()
@@ -162,6 +160,12 @@ fun CollectionScreen(
             when (event) {
                 is CollectionUiEvent.OnLinkClick -> onLinkClick(event.link)
             }
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            showToast(context, it)
         }
     }
 
@@ -237,9 +241,9 @@ fun CollectionScreen(
                     searchQuery = searchQuery,
                     onHideSearchClick = { viewModel.hideSearch() },
                     clearTextField = { viewModel.clearTextField() },
-                    albums = albums,
+                    albums = uiState.albums,
                     onAlbumClick = onAlbumClick,
-                    isLoading = isLoading,
+                    isLoading = uiState.isLoading,
                     gridState = gridState
                 )
             },
@@ -336,9 +340,7 @@ fun AlertDialogBody(
 }
 
 private fun isValidAlbumUrl(url : String, context : Context) : Boolean {
-    if (url.isBlank()) return false
-
-    return try {
+    return url.isNotBlank() && try {
         val uri = URL(url).toURI()
         val host = uri.host ?: ""
 
@@ -371,7 +373,7 @@ fun CollectionScreenContent(
     searchQuery : String,
     onHideSearchClick : () -> Unit,
     clearTextField : () -> Unit,
-    albums : List<AlbumEntity>,
+    albums : List<AlbumListItem>,
     onAlbumClick : (Int) -> Unit,
     isLoading : Boolean,
     gridState : LazyGridState
@@ -418,7 +420,7 @@ fun CollectionScreenContent(
                         viewType = viewType
                     )
                 }
-                if (albums.isEmpty()) {
+                if (albums.isEmpty() && !isLoading) {
                     item(key = "empty_list", span = { GridItemSpan(maxLineSpan) }) {
                         EmptyList()
                     }
@@ -431,7 +433,7 @@ fun CollectionScreenContent(
                     AlbumGridCard(
                         albumName = item.title,
                         image = item.image,
-                        artistName = item.artistList.joinToString(", ") { it.name },
+                        artistName = item.artist.joinToString(", ") { it.name },
                         onAlbumClick = onAlbumClick,
                         id = item.id
                     )
@@ -463,7 +465,7 @@ fun CollectionScreenContent(
                         viewType = viewType
                     )
                 }
-                if (albums.isEmpty()) {
+                if (albums.isEmpty() && !isLoading) {
                     item {
                         EmptyList()
                     }
@@ -478,8 +480,11 @@ fun CollectionScreenContent(
                 ) { item ->
                     Box(modifier = Modifier.padding(bottom = 5.dp)) {
                         AlbumListRow(
-                            item = item,
-                            onAlbumClick = onAlbumClick
+                            onAlbumClick = onAlbumClick,
+                            title = item.title,
+                            image = item.image,
+                            id = item.id,
+                            artistList = item.artist
                         )
                     }
                 }
