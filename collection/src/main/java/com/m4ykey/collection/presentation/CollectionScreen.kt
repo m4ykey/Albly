@@ -75,6 +75,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.data.local.model.AlbumListItem
+import com.m4ykey.album.data.local.model.AlbumSort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.DrawerItem
@@ -84,8 +85,8 @@ import com.m4ykey.collection.presentation.components.EmptyList
 import com.m4ykey.collection.presentation.components.ListOptions
 import com.m4ykey.collection.presentation.components.SearchField
 import com.m4ykey.collection.presentation.components.UrlInputField
-import com.m4ykey.collection.presentation.type.ListSortType
 import com.m4ykey.collection.presentation.type.ListType
+import com.m4ykey.collection.presentation.type.ListTypeState
 import com.m4ykey.collection.presentation.type.ListViewType
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AlbumGridCard
@@ -119,6 +120,7 @@ fun CollectionScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val listTypeState by viewModel.listTypeState.collectAsStateWithLifecycle()
 
     val isDialogVisible by viewModel.isLinkDialogVisible.collectAsState()
     val state = rememberTextFieldState()
@@ -244,7 +246,8 @@ fun CollectionScreen(
                     albums = uiState.albums,
                     onAlbumClick = onAlbumClick,
                     isLoading = uiState.isLoading,
-                    gridState = gridState
+                    gridState = gridState,
+                    listTypeState = listTypeState
                 )
             },
             scrollBehavior = scrollBehavior
@@ -376,12 +379,9 @@ fun CollectionScreenContent(
     albums : List<AlbumListItem>,
     onAlbumClick : (Int) -> Unit,
     isLoading : Boolean,
-    gridState : LazyGridState
+    gridState : LazyGridState,
+    listTypeState : ListTypeState
 ) {
-    var sortType by rememberSaveable { mutableStateOf(ListSortType.LATEST) }
-    var viewType by rememberSaveable { mutableStateOf(ListViewType.GRID) }
-    var listType by rememberSaveable { mutableStateOf(ListType.ALBUM) }
-
     Box(modifier = Modifier.fillMaxSize()) {
         val headerModifier = Modifier.layout { measurable, constraints ->
             val width = constraints.maxWidth + 20.dp.roundToPx()
@@ -391,7 +391,7 @@ fun CollectionScreenContent(
             }
         }
 
-        if (viewType == ListViewType.GRID) {
+        if (listTypeState.view == ListViewType.GRID) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = modifier
@@ -414,10 +414,16 @@ fun CollectionScreenContent(
                         isSearchVisible = isSearchVisible,
                         onDismissSortDialog = onDismissSortDialog,
                         isSortDialogVisible = isSortDialogVisible,
-                        onSortChange = { sortType = it },
-                        onViewChange = { viewType = it },
-                        onListTypeChange = { listType = it },
-                        viewType = viewType
+                        onSortChange = {
+                            onAction(CollectionTypeAction.OnChangeSort(it))
+                        },
+                        onViewChange = {
+                            onAction(CollectionTypeAction.OnChangeView(it))
+                        },
+                        onListTypeChange = {
+                            onAction(CollectionTypeAction.OnChangeList(it))
+                        },
+                        listTypeState = listTypeState
                     )
                 }
                 if (albums.isEmpty() && !isLoading) {
@@ -459,10 +465,16 @@ fun CollectionScreenContent(
                         isSearchVisible = isSearchVisible,
                         onDismissSortDialog = onDismissSortDialog,
                         isSortDialogVisible = isSortDialogVisible,
-                        onSortChange = { sortType = it },
-                        onViewChange = { viewType = it },
-                        onListTypeChange = { listType = it },
-                        viewType = viewType
+                        onSortChange = {
+                            onAction(CollectionTypeAction.OnChangeSort(it))
+                        },
+                        onViewChange = {
+                            onAction(CollectionTypeAction.OnChangeView(it))
+                        },
+                        onListTypeChange = {
+                            onAction(CollectionTypeAction.OnChangeList(it))
+                        },
+                        listTypeState = listTypeState
                     )
                 }
                 if (albums.isEmpty() && !isLoading) {
@@ -504,7 +516,7 @@ fun CollectionHeader(
     modifier: Modifier = Modifier,
     onAction: (CollectionTypeAction) -> Unit,
     isSearchVisible : Boolean,
-    onSortChange : (ListSortType) -> Unit,
+    onSortChange : (AlbumSort) -> Unit,
     onViewChange : (ListViewType) -> Unit,
     onListTypeChange: (ListType) -> Unit,
     onSearchClick : () -> Unit,
@@ -514,7 +526,7 @@ fun CollectionHeader(
     searchQuery: String,
     clearTextField: () -> Unit,
     onHideSearchClick : () -> Unit,
-    viewType: ListViewType
+    listTypeState : ListTypeState
 ) {
     ConstraintLayout(
         modifier = modifier.fillMaxWidth()
@@ -540,7 +552,7 @@ fun CollectionHeader(
                 isSortDialogVisible = isSortDialogVisible,
                 onShowSortDialog = onShowSortDialog,
                 onDismissSortDialog = onDismissSortDialog,
-                viewType = viewType
+                viewType = listTypeState.view
             )
         }
 

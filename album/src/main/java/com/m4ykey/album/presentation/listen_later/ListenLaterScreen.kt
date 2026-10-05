@@ -54,6 +54,7 @@ fun ListenLaterScreen(
     val state = rememberLazyGridState()
     val context = LocalContext.current
     val errorMessage = stringResource(R.string.album_list_is_empty)
+    val randomAlbumError = stringResource(R.string.get_at_least_2_albums)
 
     LaunchedEffect(Unit) {
         viewModel.loadAlbums()
@@ -94,6 +95,8 @@ fun ListenLaterScreen(
                 onRandomAlbumClick = {
                     if (uiState.albums.isEmpty()) {
                         showToast(context, errorMessage)
+                    } else if (uiState.albums.size < 2) {
+                        showToast(context, randomAlbumError)
                     } else {
                         viewModel.getRandomAlbum()
                     }

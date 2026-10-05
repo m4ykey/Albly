@@ -22,7 +22,6 @@ import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
@@ -42,13 +41,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import com.m4ykey.album.data.local.model.AlbumSort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.IconSource
-import com.m4ykey.collection.presentation.type.ListSortType
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
-import com.m4ykey.collection.presentation.type.label
 
 @Composable
 fun TypeChip(
@@ -103,16 +101,15 @@ fun TypeChip(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SortTypeChip(
     modifier: Modifier = Modifier,
-    onChange : (ListSortType) -> Unit,
+    onChange : (AlbumSort) -> Unit,
     onShowDialog : () -> Unit,
     onDismissDialog : () -> Unit,
     isDialogVisible : Boolean
 ) {
-    var currentType by remember { mutableStateOf(ListSortType.LATEST) }
+    var currentType by remember { mutableStateOf(AlbumSort.LATEST) }
 
     TypeChip(
         onClick = onShowDialog,
@@ -143,7 +140,7 @@ fun SortTypeChip(
                             fontSize = 20.sp
                         )
 
-                        ListSortType.entries.forEach { type ->
+                        AlbumSort.entries.forEach { type ->
                             Row(
                                 modifier = modifier
                                     .fillMaxWidth()
@@ -223,4 +220,11 @@ fun ListTypeChip(
             onChange(currentType)
         }
     )
+}
+
+@Composable
+fun AlbumSort.label() : String = when (this) {
+    AlbumSort.ALPHABETICAL -> stringResource(R.string.alphabetical)
+    AlbumSort.LATEST -> stringResource(R.string.latest)
+    AlbumSort.OLDEST -> stringResource(R.string.oldest)
 }

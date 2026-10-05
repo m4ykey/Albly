@@ -13,4 +13,5 @@
     <string name="discover_new_release">Discover New Release</string>
     <string name="info">Information</string>
     <string name="album_list_is_empty">The album list is empty</string>
+    <string name="get_at_least_2_albums">Get at least 2 albums</string>
 </resources>

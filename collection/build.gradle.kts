@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":album"))
     implementation(project(":search"))
+    implementation(project(":artist"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -59,8 +60,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.bundles.koin)
-
-    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.lottie)
 

@@ -11,4 +11,5 @@
     <string name="discover_new_release">Odkryj Nowe Wydania</string>
     <string name="info">Informacje</string>
     <string name="album_list_is_empty">Lista albumów jest pusta</string>
+    <string name="get_at_least_2_albums">Musisz mieć co najmniej 2 albumy</string>
 </resources>

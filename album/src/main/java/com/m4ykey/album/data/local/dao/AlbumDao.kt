@@ -60,9 +60,45 @@ interface AlbumDao {
             OR
             album_table.artist LIKE '%' || :query || '%'
         )
-        ORDER BY save_time DESC
+        ORDER BY album_table.save_time DESC
     """)
-    fun getSavedAlbums(query : String) : Flow<List<AlbumListItem>>
+    fun getSavedAlbumsLatest(query : String) : Flow<List<AlbumListItem>>
+
+    @Query("""
+        SELECT 
+            album_table.id, 
+            album_table.title, 
+            album_table.artist,
+            album_table.image
+        FROM album_table
+        INNER JOIN is_album_saved_table ON album_table.id = is_album_saved_table.id
+        WHERE is_album_saved_table.isAlbumSaved = 1
+        AND (
+            album_table.title LIKE '%' || :query || '%'
+            OR
+            album_table.artist LIKE '%' || :query || '%'
+        )
+        ORDER BY album_table.save_time ASC
+    """)
+    fun getSavedAlbumsOldest(query : String) : Flow<List<AlbumListItem>>
+
+    @Query("""
+        SELECT 
+            album_table.id, 
+            album_table.title, 
+            album_table.artist,
+            album_table.image
+        FROM album_table
+        INNER JOIN is_album_saved_table ON album_table.id = is_album_saved_table.id
+        WHERE is_album_saved_table.isAlbumSaved = 1
+        AND (
+            album_table.title LIKE '%' || :query || '%'
+            OR
+            album_table.artist LIKE '%' || :query || '%'
+        )
+        ORDER BY album_table.title ASC
+    """)
+    fun getSavedAlbumsAlphabetical(query : String) : Flow<List<AlbumListItem>>
 
     @Query("""
         SELECT 
