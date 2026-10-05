@@ -7,6 +7,7 @@ import com.m4ykey.album.domain.usecase.GetRandomAlbumUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -28,13 +29,13 @@ class ListenLaterViewModel(
             }
 
             try {
-                getRandomAlbumUseCase().collectLatest { album ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            randomAlbum = album
-                        )
-                    }
+                val album = getRandomAlbumUseCase().first()
+
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        randomAlbum = album
+                    )
                 }
             } catch (e : Exception) {
                 _uiState.update {
