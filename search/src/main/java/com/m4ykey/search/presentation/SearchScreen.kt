@@ -13,6 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -214,10 +216,10 @@ fun SearchScreen(
                     visible = searchQuery.isNotEmpty(),
                     enter = slideInHorizontally(
                         initialOffsetX = { fullWidth -> fullWidth }
-                    ),
+                    ) + expandHorizontally(),
                     exit = slideOutHorizontally(
                         targetOffsetX = { fullWidth -> fullWidth }
-                    )
+                    ) + shrinkHorizontally()
                 ) {
                     ActionIconButton(
                         onClick = { onAction(SearchTypeAction.OnQueryChange("")) },
