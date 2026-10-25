@@ -3,26 +3,44 @@
 package com.m4ykey.album.presentation.detail
 
 import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
@@ -37,6 +56,7 @@ import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.mapper.AlbumMapper
 import com.m4ykey.album.domain.model.TrackClickItem
 import com.m4ykey.album.domain.model.detail.AlbumRoot
+import com.m4ykey.album.domain.model.detail.Artists
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
@@ -45,6 +65,7 @@ import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
 import com.m4ykey.core.ui.copyText
+import com.m4ykey.core.ui.show
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -53,7 +74,8 @@ fun AlbumDetailScreen(
     onBack : () -> Unit,
     viewModel : AlbumDetailViewModel = koinViewModel(),
     onTrackClick : (TrackClickItem) -> Unit,
-    onCoverClick: (String) -> Unit
+    onCoverClick: (String) -> Unit,
+    onArtistClick: (Artists) -> Unit
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
@@ -86,16 +108,13 @@ fun AlbumDetailScreen(
                 albumDetail = albumDetail,
                 paddingValues = padding,
                 onSaveToggle = { entity ->
-                    viewModel.toggleSave(
-                        album = entity
-                    )
+                    viewModel.toggleSave(album = entity)
                 },
                 onListenLaterToggle = { entity ->
-                    viewModel.toggleListenLater(
-                        album = entity
-                    )
+                    viewModel.toggleListenLater(album = entity)
                 },
-                onCoverClick = onCoverClick
+                onCoverClick = onCoverClick,
+                onArtistClick = onArtistClick
             )
         }
     )
@@ -110,7 +129,8 @@ fun AlbumDetailDisplay(
     state : LazyListState,
     onSaveToggle: (AlbumEntity) -> Unit,
     onListenLaterToggle: (AlbumEntity) -> Unit,
-    onCoverClick: (String) -> Unit
+    onCoverClick: (String) -> Unit,
+    onArtistClick : (Artists) -> Unit
 ) {
     when (albumDetail) {
         is DetailUiState.Loading -> {
@@ -139,7 +159,8 @@ fun AlbumDetailDisplay(
                     onListenLaterToggle = onListenLaterToggle,
                     isSaved = albumDetail.isSaved,
                     isListenLaterSaved = albumDetail.isListenLaterSaved,
-                    onCoverClick = onCoverClick
+                    onCoverClick = onCoverClick,
+                    onArtistClick = onArtistClick
                 )
             }
         }
@@ -156,7 +177,8 @@ fun AlbumDetailContent(
     isSaved : Boolean,
     isListenLaterSaved : Boolean,
     item : AlbumRoot,
-    onCoverClick : (String) -> Unit
+    onCoverClick : (String) -> Unit,
+    onArtistClick : (Artists) -> Unit
 ) {
     val albumEntity = remember(item) { AlbumMapper.mapToEntity(item) }
 
@@ -170,6 +192,17 @@ fun AlbumDetailContent(
     val artists = item.artists.joinToString(", ") { it.name }
 
     val context = LocalContext.current
+    var showAlertDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showAlertDialog) {
+        ShowArtistDialog(
+            onArtistClick = { artist ->
+                showAlertDialog = false
+            },
+            onDismiss = { showAlertDialog = false },
+            artists = item.artists
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -238,7 +271,11 @@ fun AlbumDetailContent(
                     context.startActivity(Intent(Intent.ACTION_VIEW, item.uri.toUri()))
                 },
                 onArtistClick = {
-                    //context.startActivity(Intent(Intent.ACTION_VIEW, artistUrl.toUri()))
+                    when (item.artists.size) {
+                        0 -> Unit
+                        1 -> onArtistClick(item.artists.first())
+                        else -> showAlertDialog = true
+                    }
                 }
             )
         }
@@ -261,6 +298,36 @@ fun AlbumDetailContent(
                 img = imageUrl.orEmpty(),
                 album = item.title
             )
+        }
+    }
+}
+
+@Composable
+fun ShowArtistDialog(
+    artists : List<Artists>,
+    onDismiss : () -> Unit,
+    onArtistClick : (Artists) -> Unit
+) {
+    BasicAlertDialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(dismissOnBackPress = true)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 6.dp
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(R.string.choose_artist),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                LazyColumn {
+                    items(artists) { artist ->
+
+                    }
+                }
+            }
         }
     }
 }

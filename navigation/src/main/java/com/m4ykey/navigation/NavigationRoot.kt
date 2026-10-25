@@ -122,7 +122,8 @@ fun NavigationRoot(
                     id = key.albumId,
                     onCoverClick = { image ->
                         navigateTo(Route.Cover(image))
-                    }
+                    },
+                    onArtistClick = {}
                 )
             }
             entry<Route.NewRelease> {
