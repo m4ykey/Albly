@@ -5,5 +5,7 @@ data class RhymeMatch(
     val word : String,
     val groupId : Int,
     val type : RhymeType,
-    val similarity : Double
+    val similarity : Double,
+    val wordStart : Int,
+    val wordEnd : Int
 )

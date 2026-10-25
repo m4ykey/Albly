@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -46,10 +47,12 @@ import com.m4ykey.core.ui.LoadImage
 import com.m4ykey.lyrics.R
 import com.m4ykey.lyrics.domain.analyzer.RhymeDetector
 import com.m4ykey.lyrics.domain.analyzer.RhymeGroup
+import com.m4ykey.lyrics.domain.analyzer.RhymeMatch
 import com.m4ykey.lyrics.domain.model.LyricsItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.collections.copy
 
 @Composable
 fun LyricsScreen(
@@ -125,6 +128,24 @@ fun LyricsDisplay(
     }
 }
 
+private val RhymeColorsDark = listOf(
+    Color(0xFF80CBC4),
+    Color(0xFFFFCC80),
+    Color(0xFFCE93D8),
+    Color(0xFF90CAF9),
+    Color(0xFFF48FB1),
+    Color(0xFFA5D6A7)
+)
+
+private val RhymeColorsLight = listOf(
+    Color(0xFF00796B),
+    Color(0xFFB45309),
+    Color(0xFF7B1FA2),
+    Color(0xFF1565C0),
+    Color(0xFFC2185B),
+    Color(0xFF2E7D32)
+)
+
 @Composable
 fun LyricsContent(
     modifier: Modifier = Modifier,
@@ -142,11 +163,14 @@ fun LyricsContent(
         mutableStateOf(false)
     }
 
+    val lines = remember(item.plainLyrics) { item.plainLyrics.lines() }
+
     val rhymeGroups by produceState(
         key1 = item.id,
         key2 = item.plainLyrics,
         initialValue = emptyList()
     ) {
+        value = emptyList()
         value = withContext(Dispatchers.Default) {
             RhymeDetector.analyze(item.plainLyrics)
         }
@@ -155,82 +179,21 @@ fun LyricsContent(
     val matchesByLine = remember(rhymeGroups) {
         rhymeGroups
             .flatMap { it.matches }
-            .associateBy { it.lineIndex }
+            .groupBy { it.lineIndex }
+            .mapValues { (_, list) -> list.sortedBy { it.wordStart } }
     }
 
-    val rhymeColors = remember(isDarkTheme) {
-        if (isDarkTheme) {
-            listOf(
-                Color(0xFF80CBC4),
-                Color(0xFFFFCC80),
-                Color(0xFFCE93D8),
-                Color(0xFF90CAF9),
-                Color(0xFFF48FB1),
-                Color(0xFFA5D6A7)
-            )
-        } else {
-            listOf(
-                Color(0xFF00796B),
-                Color(0xFFB45309),
-                Color(0xFF7B1FA2),
-                Color(0xFF1565C0),
-                Color(0xFFC2185B),
-                Color(0xFF2E7D32)
-            )
-        }
+    val rhymeColors = if (isDarkTheme) RhymeColorsDark else RhymeColorsLight
+
+    val plainText = remember(lines) {
+        AnnotatedString(lines.joinToString("\n"))
     }
 
-    val highlightedLyrics = remember(
-        item.plainLyrics,
-        showRhymes,
-        matchesByLine,
-        rhymeColors
-    ) {
-        val lines = item.plainLyrics.lines()
-
-        buildAnnotatedString {
-            lines.forEachIndexed { index, line ->
-                val match = if (showRhymes) {
-                    matchesByLine[index]
-                } else {
-                    null
-                }
-
-                val lastWord =  Regex(
-                    """[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*"""
-                ).findAll(line).lastOrNull()
-
-                if (match != null && lastWord != null) {
-                    val start = lastWord.range.first
-                    val end = lastWord.range.last + 1
-
-                    append(line.substring(0, start))
-
-                    val color = rhymeColors[
-                            match.groupId % rhymeColors.size
-                    ]
-
-                    withStyle(
-                        SpanStyle(
-                            color = color,
-                            background = color.copy(alpha = 0.16f),
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    ) {
-                        append(line.substring(start, end))
-                    }
-
-                    append(line.substring(end))
-                } else {
-                    append(line)
-                }
-
-                if (index < lines.lastIndex) {
-                    append('\n')
-                }
-            }
-        }
+    val rhymedText = remember(lines, matchesByLine, rhymeColors) {
+        buildRhymedText(lines, matchesByLine, rhymeColors)
     }
+
+    val highlightedLyrics = if (showRhymes) rhymedText else plainText
 
     LazyColumn(
         modifier = modifier
@@ -312,5 +275,39 @@ fun LyricsContent(
                 lineHeight = 28.sp
             )
         }
+    }
+}
+
+private fun buildRhymedText(
+    lines: List<String>,
+    matchesByLine: Map<Int, List<RhymeMatch>>,
+    colors: List<Color>
+): AnnotatedString = buildAnnotatedString {
+    lines.forEachIndexed { index, line ->
+        val lineMatches = matchesByLine[index]
+
+        if (lineMatches.isNullOrEmpty()) {
+            append(line)
+        } else {
+            var cursor = 0
+            for (match in lineMatches) {
+                append(line.substring(cursor, match.wordStart))
+
+                val color = colors[match.groupId % colors.size]
+                withStyle(
+                    SpanStyle(
+                        color = color,
+                        background = color.copy(alpha = 0.16f),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                ) {
+                    append(line.substring(match.wordStart, match.wordEnd))
+                }
+                cursor = match.wordEnd
+            }
+            append(line.substring(cursor))
+        }
+
+        if (index < lines.lastIndex) append('\n')
     }
 }
