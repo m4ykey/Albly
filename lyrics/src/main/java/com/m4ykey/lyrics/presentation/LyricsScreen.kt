@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.m4ykey.lyrics.presentation
 
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,14 +18,24 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,7 +44,11 @@ import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
 import com.m4ykey.lyrics.R
+import com.m4ykey.lyrics.domain.analyzer.RhymeDetector
+import com.m4ykey.lyrics.domain.analyzer.RhymeGroup
 import com.m4ykey.lyrics.domain.model.LyricsItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -118,11 +133,107 @@ fun LyricsContent(
     item : LyricsItem,
     imageUrl : String
 ) {
-    val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
-    val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
+    val isDarkTheme = isSystemInDarkTheme()
+
+    val textColor = if (isDarkTheme) Color.White else Color.Black
+    val textColor2 = if (isDarkTheme) Color(0xFFBDBDBD) else Color(0xFF424242)
+
+    var showRhymes by remember(item.id) {
+        mutableStateOf(true)
+    }
+
+    val rhymeGroups by produceState(
+        key1 = item.id,
+        key2 = item.plainLyrics,
+        initialValue = emptyList()
+    ) {
+        value = withContext(Dispatchers.Default) {
+            RhymeDetector.analyze(item.plainLyrics)
+        }
+    }
+
+    val matchesByLine = remember(rhymeGroups) {
+        rhymeGroups
+            .flatMap { it.matches }
+            .associateBy { it.lineIndex }
+    }
+
+    val rhymeColors = remember(isDarkTheme) {
+        if (isDarkTheme) {
+            listOf(
+                Color(0xFF80CBC4),
+                Color(0xFFFFCC80),
+                Color(0xFFCE93D8),
+                Color(0xFF90CAF9),
+                Color(0xFFF48FB1),
+                Color(0xFFA5D6A7)
+            )
+        } else {
+            listOf(
+                Color(0xFF00796B),
+                Color(0xFFB45309),
+                Color(0xFF7B1FA2),
+                Color(0xFF1565C0),
+                Color(0xFFC2185B),
+                Color(0xFF2E7D32)
+            )
+        }
+    }
+
+    val highlightedLyrics = remember(
+        item.plainLyrics,
+        showRhymes,
+        matchesByLine,
+        rhymeColors
+    ) {
+        val lines = item.plainLyrics.lines()
+
+        buildAnnotatedString {
+            lines.forEachIndexed { index, line ->
+                val match = if (showRhymes) {
+                    matchesByLine[index]
+                } else {
+                    null
+                }
+
+                val lastWord =  Regex(
+                    """[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*"""
+                ).findAll(line).lastOrNull()
+
+                if (match != null && lastWord != null) {
+                    val start = lastWord.range.first
+                    val end = lastWord.range.last + 1
+
+                    append(line.substring(0, start))
+
+                    val color = rhymeColors[
+                            match.groupId % rhymeColors.size
+                    ]
+
+                    withStyle(
+                        SpanStyle(
+                            color = color,
+                            background = color.copy(alpha = 0.16f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    ) {
+                        append(line.substring(start, end))
+                    }
+
+                    append(line.substring(end))
+                } else {
+                    append(line)
+                }
+
+                if (index < lines.lastIndex) {
+                    append('\n')
+                }
+            }
+        }
+    }
 
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(contentPadding),
         contentPadding = PaddingValues(10.dp),
@@ -163,10 +274,42 @@ fun LyricsContent(
             }
         }
         item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = stringResource(R.string.rhyme_highlighting),
+                        color = textColor,
+                        fontWeight = FontWeight.Medium
+                    )
+
+                    Text(
+                        text = if (showRhymes) {
+                            "${rhymeGroups.size} ${R.string.rhyme_groups}"
+                        } else {
+                            stringResource(R.string.disabled)
+                        },
+                        color = textColor2,
+                        fontSize = 12.sp
+                    )
+                }
+
+                Switch(
+                    checked = showRhymes,
+                    onCheckedChange = { showRhymes = it }
+                )
+            }
+        }
+
+        item {
             Text(
                 fontSize = 18.sp,
                 color = textColor,
-                text = item.plainLyrics
+                text = highlightedLyrics,
+                lineHeight = 28.sp
             )
         }
     }

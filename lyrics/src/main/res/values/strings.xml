@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="back">Back</string>
+    <string name="rhyme_highlighting">Rhyme Highlighting</string>
+    <string name="rhyme_groups">rhyme groups</string>
+    <string name="disabled">Disabled</string>
 </resources>

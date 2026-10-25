@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="back">Wróć</string>
+    <string name="rhyme_highlighting">Podświetlanie rymów</string>
+    <string name="rhyme_groups">grup rymów</string>
+    <string name="disabled">Wyłączone</string>
 </resources>
