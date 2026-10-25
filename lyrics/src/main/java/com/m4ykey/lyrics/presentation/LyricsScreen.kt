@@ -15,9 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,13 +49,11 @@ import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
 import com.m4ykey.lyrics.R
 import com.m4ykey.lyrics.domain.analyzer.RhymeDetector
-import com.m4ykey.lyrics.domain.analyzer.RhymeGroup
 import com.m4ykey.lyrics.domain.analyzer.RhymeMatch
 import com.m4ykey.lyrics.domain.model.LyricsItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.collections.copy
 
 @Composable
 fun LyricsScreen(
@@ -127,24 +128,6 @@ fun LyricsDisplay(
         }
     }
 }
-
-private val RhymeColorsDark = listOf(
-    Color(0xFF80CBC4),
-    Color(0xFFFFCC80),
-    Color(0xFFCE93D8),
-    Color(0xFF90CAF9),
-    Color(0xFFF48FB1),
-    Color(0xFFA5D6A7)
-)
-
-private val RhymeColorsLight = listOf(
-    Color(0xFF00796B),
-    Color(0xFFB45309),
-    Color(0xFF7B1FA2),
-    Color(0xFF1565C0),
-    Color(0xFFC2185B),
-    Color(0xFF2E7D32)
-)
 
 @Composable
 fun LyricsContent(

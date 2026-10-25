@@ -6,71 +6,90 @@ import kotlin.math.min
 
 object RhymeDetector {
 
-    private const val NEAR_THRESHOLD = 0.7
-    private const val VOWELS =
-        "aeyiou" + "аеёиоуыэюяіїє" + "αεηιουω"
+    private const val NEAR_THRESHOLD = 0.75
+    private const val VOWELS = "aeyiou" + "аеёиоуыэюяіїє" + "αεηιουω"
     private const val MIN_WORD_LENGTH = 3
     private const val MIN_ENDING_LENGTH = 2
     private const val MAX_LINE_DISTANCE = 4
     private val WORD_REGEX = Regex("""[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*""")
     private val DIACRITICS = Regex("\\p{Mn}+")
+    private const val FREQUENT_MIN_COUNT = 4
+    private const val FREQUENT_RATIO = 0.02
 
-    fun analyze(lyrics : String) : List<RhymeGroup> {
+    fun analyze(lyrics: String): List<RhymeGroup> {
         val tokens = extractTokens(lyrics.lines())
+        val n = tokens.size
 
-        val groups = mutableListOf<RhymeGroup>()
-        val assigned = BooleanArray(tokens.size)
-        var nextGroupId = 0
+        val parent = IntArray(n) { it }
+        val bestSim = DoubleArray(n)
 
-        for (i in tokens.indices) {
-            if (assigned[i]) continue
+        for (i in 0 until n) {
+            val a = tokens[i]
 
-            val first = tokens[i]
-            val matches = ArrayList<RhymeMatch>()
+            for (j in i + 1 until n) {
+                val b = tokens[j]
 
-            for (j in i + 1 until tokens.size) {
-                val candidate = tokens[j]
+                if (b.lineIndex - a.lineIndex > MAX_LINE_DISTANCE) break
 
-                if (candidate.lineIndex - first.lineIndex > MAX_LINE_DISTANCE) break
-
-                if (assigned[j]) continue
-
-                if (candidate.normalized == first.normalized) continue
-
-                val exact = first.rhymeEnding == candidate.rhymeEnding
-                val sim = if (exact) 1.0 else similarity(first.rhymeEnding, candidate.rhymeEnding)
-
-                if (!exact && sim < NEAR_THRESHOLD) continue
-
-                if (matches.isEmpty()) {
-                    matches += first.toMatch(nextGroupId, RhymeType.EXACT, 1.0)
+                val sim = when {
+                    a.normalized == b.normalized -> 1.0
+                    a.rhymeEnding == b.rhymeEnding -> 1.0
+                    else -> similarity(a.rhymeEnding, b.rhymeEnding)
                 }
 
-                matches += candidate.toMatch(
-                    groupId = nextGroupId,
-                    type = if (exact) RhymeType.EXACT else RhymeType.NEAR,
-                    similarity = sim
-                )
-                assigned[j] = true
-            }
+                if (sim < NEAR_THRESHOLD) continue
 
-            if (matches.size >= 2) {
-                assigned[i] = true
-
-                for (k in i + 1 until tokens.size) {
-                    if (tokens[k].lineIndex - first.lineIndex > MAX_LINE_DISTANCE) break
-                    if (!assigned[k] && tokens[k].normalized == first.normalized) {
-                        matches += tokens[k].toMatch(nextGroupId, RhymeType.EXACT, 1.0)
-                        assigned[k] = true
-                    }
-                }
-
-                groups += RhymeGroup(id = nextGroupId, matches = matches)
-                nextGroupId++
+                union(parent, i, j)
+                if (sim > bestSim[i]) bestSim[i] = sim
+                if (sim > bestSim[j]) bestSim[j] = sim
             }
         }
 
+        val components = LinkedHashMap<Int, MutableList<Int>>()
+        for (i in 0 until n) {
+            components.getOrPut(find(parent, i)) { ArrayList() } += i
+        }
+
+        val groups = ArrayList<RhymeGroup>()
+        var nextGroupId = 0
+
+        for (members in components.values) {
+            val distinct = members.map { tokens[it].normalized }.toSet()
+            if (distinct.size < 2) continue
+
+            val matches = members.map { idx ->
+                val sim = if (bestSim[idx] >= 1.0) 1.0 else bestSim[idx]
+                tokens[idx].toMatch(
+                    groupId = nextGroupId,
+                    type = if (sim >= 1.0) RhymeType.EXACT else RhymeType.NEAR,
+                    similarity = sim
+                )
+            }
+
+            groups += RhymeGroup(id = nextGroupId, matches = matches)
+            nextGroupId++
+        }
+
         return groups
+    }
+
+    private fun find(parent: IntArray, x: Int): Int {
+        var root = x
+        while (parent[root] != root) root = parent[root]
+
+        var cur = x
+        while (parent[cur] != root) {
+            val next = parent[cur]
+            parent[cur] = root
+            cur = next
+        }
+        return root
+    }
+
+    private fun union(parent: IntArray, a: Int, b: Int) {
+        val ra = find(parent, a)
+        val rb = find(parent, b)
+        if (ra != rb) parent[maxOf(ra, rb)] = minOf(ra, rb)
     }
 
     private fun WordToken.toMatch(groupId : Int, type : RhymeType, similarity : Double) =
@@ -84,28 +103,46 @@ object RhymeDetector {
             wordStart = wordStart
         )
 
-    private fun extractTokens(lines : List<String>) : List<WordToken> {
-        val result = ArrayList<WordToken>(lines.size)
+    private fun extractTokens(lines: List<String>): List<WordToken> {
+        class Raw(val lineIndex: Int, val word: String, val normalized: String, val start: Int, val end: Int)
 
+        val raw = ArrayList<Raw>()
         lines.forEachIndexed { lineIndex, line ->
             for (m in WORD_REGEX.findAll(line)) {
-                val word = m.value
-                val normalized = normalize(word)
-
-                if (normalized.length < MIN_WORD_LENGTH) continue
-
-                val ending = getRhymeEnding(normalized) ?: continue
-                if (ending.length < MIN_ENDING_LENGTH) continue
-
-                result += WordToken(
-                    word = word,
+                raw += Raw(
                     lineIndex = lineIndex,
-                    normalized = normalized,
-                    rhymeEnding = ending,
-                    wordStart = m.range.first,
-                    wordEnd = m.range.last + 1
+                    word = m.value,
+                    normalized = normalize(m.value),
+                    start = m.range.first,
+                    end = m.range.last + 1
                 )
             }
+        }
+
+        val counts = HashMap<String, Int>()
+        for (r in raw) counts[r.normalized] = (counts[r.normalized] ?: 0) + 1
+
+        val frequentThreshold = max(FREQUENT_MIN_COUNT, (raw.size * FREQUENT_RATIO).toInt())
+
+        val result = ArrayList<WordToken>(raw.size)
+        for (r in raw) {
+            if (r.normalized.length < MIN_WORD_LENGTH) continue
+
+            if (r.normalized.length == 3 && r.normalized.last() in VOWELS) continue
+
+            if ((counts[r.normalized] ?: 0) >= frequentThreshold) continue
+
+            val ending = getRhymeEnding(r.normalized) ?: continue
+            if (ending.length < MIN_ENDING_LENGTH) continue
+
+            result += WordToken(
+                word = r.word,
+                lineIndex = r.lineIndex,
+                normalized = r.normalized,
+                rhymeEnding = ending,
+                wordStart = r.start,
+                wordEnd = r.end
+            )
         }
 
         return result
@@ -120,7 +157,7 @@ object RhymeDetector {
             .replace('ø', 'o')
             .replace('đ', 'd')
             .replace('ı', 'i')
-            .filter { it != '\n' && it != '’' }
+            .filter { it != '\'' && it != '’' }
 
         return Normalizer.normalize(lower, Normalizer.Form.NFD)
             .replace(DIACRITICS, "")
