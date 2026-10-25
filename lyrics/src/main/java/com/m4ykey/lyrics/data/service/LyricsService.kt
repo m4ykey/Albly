@@ -15,11 +15,15 @@ class LyricsService(
         artistName : String,
         albumName : String?
     ): List<LyricsDtoItem> {
-        return httpClient.get("search") {
-            parameter("track_name", trackName)
-            parameter("artist_name", artistName)
-            parameter("album_name", albumName)
-        }.body()
+        return try {
+            httpClient.get("search") {
+                parameter("track_name", trackName)
+                parameter("artist_name", artistName)
+                parameter("album_name", albumName)
+            }.body()
+        } catch (e : Exception) {
+            throw e
+        }
     }
 
     override suspend fun getLyrics(id: Int): LyricsDtoItem {

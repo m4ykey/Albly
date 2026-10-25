@@ -3,6 +3,7 @@ package com.m4ykey.network
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
@@ -31,7 +32,7 @@ object HttpClientFactory {
 
         if (enableLogging) {
             install(Logging) {
-                logger = Logger.DEFAULT
+                logger = LogcatLogger
                 level = LogLevel.INFO
 
                 sanitizeHeader { header ->
@@ -54,6 +55,11 @@ object HttpClientFactory {
                     header("Authorization", "Bearer $it")
                 }
             }
+        }
+
+        install(HttpRequestRetry) {
+            retryOnServerErrors(maxRetries = 2)
+            exponentialDelay()
         }
     }
 }

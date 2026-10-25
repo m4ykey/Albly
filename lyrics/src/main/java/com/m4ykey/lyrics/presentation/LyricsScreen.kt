@@ -139,7 +139,7 @@ fun LyricsContent(
     val textColor2 = if (isDarkTheme) Color(0xFFBDBDBD) else Color(0xFF424242)
 
     var showRhymes by remember(item.id) {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     val rhymeGroups by produceState(
@@ -288,7 +288,7 @@ fun LyricsContent(
 
                     Text(
                         text = if (showRhymes) {
-                            "${rhymeGroups.size} ${R.string.rhyme_groups}"
+                            "${rhymeGroups.size} ${stringResource(R.string.rhyme_groups)}"
                         } else {
                             stringResource(R.string.disabled)
                         },
