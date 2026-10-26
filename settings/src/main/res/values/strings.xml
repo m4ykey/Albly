@@ -8,4 +8,7 @@
     <string name="open_source">Open Source</string>
     <string name="open_source_message">Visit the project on Github</string>
     <string name="default_mode">Default</string>
+    <string name="data_is_provided_by">Data is provided by</string>
+    <string name="lyrics_data_is_provided_by">Lyrics data is provided by</string>
+    <string name="song_search_engine">Song search engine</string>
 </resources>

@@ -8,4 +8,7 @@
     <string name="open_source">Kod Źródłowy</string>
     <string name="open_source_message">Odwiedź projekt na Githubie</string>
     <string name="default_mode">Domyślne</string>
+    <string name="data_is_provided_by">Dane dostarcza</string>
+    <string name="lyrics_data_is_provided_by">Dane na temat tekstu utworów dostarcza</string>
+    <string name="song_search_engine">Wyszukiwarka utworów</string>
 </resources>

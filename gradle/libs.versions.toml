@@ -39,6 +39,7 @@ compose-nav-graph = "0.3.0"
 palette = "1.1.0"
 jsoup = "1.23.2"
 browser = "1.10.0"
+annotation = "1.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -113,6 +114,7 @@ mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
