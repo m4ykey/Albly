@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.room.runtime)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.browser)
 
     api(libs.androidx.icons.extended)
     api(libs.bundles.paging)

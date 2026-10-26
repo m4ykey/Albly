@@ -1,12 +1,5 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.m4ykey.settings
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -30,27 +23,40 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.settings.theme.ThemeType
 import com.m4ykey.settings.theme.label
+import org.koin.compose.viewmodel.koinViewModel
 
 @ExperimentalMaterial3Api
 @Composable
 fun SettingsScreen(
-    onBack : () -> Unit
+    onBack : () -> Unit,
+    viewModel: SettingsViewModel = koinViewModel()
 ) {
     val state = rememberLazyListState()
+
+    val context = LocalContext.current
+
+    var isThemeDialogVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val selectedTheme by viewModel.selectedTheme.collectAsStateWithLifecycle()
 
     AppScaffold(
         navigation = {
@@ -69,21 +75,30 @@ fun SettingsScreen(
                     SettingsIcon(
                         icon = R.drawable.moon,
                         title = R.string.theme,
-                        message = R.string.theme,
-                        onClick = {  }
+                        message = selectedTheme.label(),
+                        onClick = { isThemeDialogVisible = true }
                     )
                 }
                 item {
                     SettingsIcon(
                         icon = R.drawable.github,
                         title = R.string.open_source,
-                        message = R.string.open_source_message,
-                        onClick = {}
+                        message = stringResource(R.string.open_source_message),
+                        onClick = { openLink("https://github.com/m4ykey/Albly", context = context) }
                     )
                 }
             }
         },
         title = R.string.settings
+    )
+
+    OpenTheme(
+        onDismissDialog = { isThemeDialogVisible = false },
+        isDialogVisible = isThemeDialogVisible,
+        onChange = { type ->
+            viewModel.changeTheme(type)
+        },
+        currentType = selectedTheme
     )
 }
 
@@ -92,58 +107,49 @@ fun OpenTheme(
     modifier: Modifier = Modifier,
     isDialogVisible : Boolean,
     onDismissDialog : () -> Unit,
-    onChange : (ThemeType) -> Unit
+    onChange : (ThemeType) -> Unit,
+    currentType: ThemeType
 ) {
-    var currentType by remember { mutableStateOf(ThemeType.DEFAULT) }
+    if (!isDialogVisible) return
 
-    if (isDialogVisible) {
-        AnimatedVisibility(
-            visible = isDialogVisible,
-            enter = scaleIn() + fadeIn(),
-            exit = scaleOut() + fadeOut()
+    BasicAlertDialog(
+        onDismissRequest = onDismissDialog,
+        properties = DialogProperties(dismissOnBackPress = true)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 6.dp,
+            modifier = modifier.padding(16.dp)
         ) {
-            BasicAlertDialog(
-                onDismissRequest = onDismissDialog,
-                properties = DialogProperties(dismissOnBackPress = true)
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    tonalElevation = 6.dp,
-                    modifier = modifier.padding(16.dp)
-                ) {
-                    Column(modifier = modifier.padding(16.dp)) {
-                        Text(
-                            text = stringResource(R.string.theme),
-                            modifier = modifier.padding(bottom = 8.dp),
-                            fontSize = 20.sp
-                        )
+            Column(modifier = modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(R.string.theme),
+                    modifier = modifier.padding(bottom = 8.dp),
+                    fontSize = 20.sp
+                )
 
-                        ThemeType.entries.forEach { type ->
-                            Row(
-                                modifier = modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        currentType = type
-                                        onChange(type)
-                                        onDismissDialog()
-                                    }
-                                    .padding(vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = currentType == type,
-                                    onClick = {
-                                        currentType = type
-                                        onChange(type)
-                                        onDismissDialog()
-                                    }
-                                )
-                                Text(
-                                    text = type.label(),
-                                    modifier = modifier.padding(start = 8.dp)
-                                )
+                ThemeType.entries.forEach { type ->
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onChange(type)
+                                onDismissDialog()
                             }
-                        }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = currentType == type,
+                            onClick = {
+                                onChange(type)
+                                onDismissDialog()
+                            }
+                        )
+                        Text(
+                            text = type.label(),
+                            modifier = modifier.padding(start = 8.dp)
+                        )
                     }
                 }
             }
@@ -156,12 +162,9 @@ fun SettingsIcon(
     modifier: Modifier = Modifier,
     icon : Int,
     title : Int,
-    message : Int,
+    message : String,
     onClick : () -> Unit
 ) {
-    val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
-    val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -180,12 +183,10 @@ fun SettingsIcon(
         ) {
             Text(
                 text = stringResource(title),
-                fontSize = 17.sp,
-                color = textColor
+                fontSize = 17.sp
             )
             Text(
-                text = stringResource(message),
-                color = textColor2,
+                text = message,
                 fontSize = 14.sp
             )
         }

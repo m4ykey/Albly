@@ -52,6 +52,7 @@ import com.m4ykey.album.domain.model.detail.Artists
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
+import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
@@ -259,7 +260,7 @@ fun AlbumDetailContent(
         item {
             AlbumButtonRow(
                 onAlbumClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, item.uri.toUri()))
+                    openLink(item.uri, context)
                 },
                 onArtistClick = {
                     when (item.artists.size) {

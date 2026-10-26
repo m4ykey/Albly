@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
+    implementation(libs.koin.android)
+    implementation(libs.koin.jetpack.compose)
+
     implementation(libs.androidx.datastore.preferences)
 
     testImplementation(libs.junit)

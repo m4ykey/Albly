@@ -23,7 +23,7 @@ landscapist = "2.13.2"
 kotlinx-datetime = "0.8.0"
 koin = "4.2.2"
 ktor = "3.6.0"
-serialization-json = "1.11.0"
+serialization-json = "1.12.0"
 mockk = "1.14.11"
 coroutines-test = "1.11.0"
 about-libraries = "15.3.0"
@@ -38,6 +38,7 @@ leakcanary = "3.0-alpha-9"
 compose-nav-graph = "0.3.0"
 palette = "1.1.0"
 jsoup = "1.23.2"
+browser = "1.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -67,6 +68,7 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 androidx-lifecycle-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycle-viewmodel-navigation3" }
 androidx-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version = "1.7.8" }
 androidx-palette = { group = "androidx.palette", name = "palette", version.ref = "palette" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref= "lottie" }
 

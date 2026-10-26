@@ -7,6 +7,7 @@ import com.m4ykey.collection.di.collectionViewModel
 import com.m4ykey.lyrics.di.lyricsModule
 import com.m4ykey.network.networkModule
 import com.m4ykey.search.di.searchModule
+import com.m4ykey.settings.di.settingsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -17,7 +18,8 @@ val modules = listOf(
     databaseModule,
     albumModule,
     collectionViewModel,
-    networkModule
+    networkModule,
+    settingsModule
 )
 
 class AlblyApp : Application() {
