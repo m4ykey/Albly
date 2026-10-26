@@ -6,7 +6,6 @@ import com.m4ykey.album.domain.usecase.GetListenLaterAlbumsUseCase
 import com.m4ykey.album.domain.usecase.GetRandomAlbumUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
