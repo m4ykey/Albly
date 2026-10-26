@@ -4,6 +4,8 @@ import com.m4ykey.album.data.network.service.AlbumService
 import com.m4ykey.album.data.network.service.NewReleaseAlbumService
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
+import com.m4ykey.artist.data.service.ArtistService
+import com.m4ykey.artist.data.service.RemoteArtistService
 import com.m4ykey.lyrics.data.service.LyricsService
 import com.m4ykey.lyrics.data.service.RemoteLyricsService
 import com.m4ykey.network.BuildConfig.genius_token
@@ -21,6 +23,7 @@ private const val ALBUM_DISCOGS = "AlbumDiscogsClient"
 private const val NEW_RELEASE = "NewReleaseDiscogsClient"
 private const val GENIUS_SEARCH = "GeniusSearchClient"
 private const val RED_LYRICS = "RedLyricsClient"
+private const val ARTIST_DISCOGS = "ArtistDiscogsClient"
 
 private const val GENIUS_DEFAULT_URL = "https://api.genius.com/"
 private const val DISCOGS_DEFAULT_URL = "https://api.discogs.com/"
@@ -58,6 +61,14 @@ val networkModule = module {
             baseUrl = RED_LYRICS_URL,
             userAgent = "Albly v0.5.1 (https://github.com/m4ykey/Albly); contact ${BuildConfig.contact_mail}"
         )
+    }
+
+    single(named(ARTIST_DISCOGS)) {
+        HttpClientFactory.create(baseUrl = DISCOGS_DEFAULT_URL, token = token, isTokenInUrl = true)
+    }
+
+    single<RemoteArtistService> {
+        ArtistService(httpClient = get(named(ARTIST_DISCOGS)))
     }
 
     single<RemoteSearchLyricsService> {

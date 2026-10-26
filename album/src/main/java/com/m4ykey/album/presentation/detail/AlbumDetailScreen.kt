@@ -2,13 +2,13 @@
 
 package com.m4ykey.album.presentation.detail
 
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +43,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
@@ -52,6 +53,9 @@ import com.m4ykey.album.domain.model.detail.Artists
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
+import com.m4ykey.artist.domain.model.Artist
+import com.m4ykey.artist.presentation.ArtistDialogState
+import com.m4ykey.artist.presentation.ArtistViewModel
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
@@ -67,7 +71,8 @@ fun AlbumDetailScreen(
     viewModel : AlbumDetailViewModel = koinViewModel(),
     onTrackClick : (TrackClickItem) -> Unit,
     onCoverClick: (String) -> Unit,
-    onArtistClick: (Artists) -> Unit
+    onArtistClick: (Artists) -> Unit,
+    artistViewModel : ArtistViewModel = koinViewModel()
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
@@ -106,7 +111,8 @@ fun AlbumDetailScreen(
                     viewModel.toggleListenLater(album = entity)
                 },
                 onCoverClick = onCoverClick,
-                onArtistClick = onArtistClick
+                onArtistClick = onArtistClick,
+                artistViewModel = artistViewModel
             )
         }
     )
@@ -122,7 +128,8 @@ fun AlbumDetailDisplay(
     onSaveToggle: (AlbumEntity) -> Unit,
     onListenLaterToggle: (AlbumEntity) -> Unit,
     onCoverClick: (String) -> Unit,
-    onArtistClick : (Artists) -> Unit
+    onArtistClick : (Artists) -> Unit,
+    artistViewModel : ArtistViewModel
 ) {
     when (albumDetail) {
         is DetailUiState.Loading -> {
@@ -152,7 +159,8 @@ fun AlbumDetailDisplay(
                     isSaved = albumDetail.isSaved,
                     isListenLaterSaved = albumDetail.isListenLaterSaved,
                     onCoverClick = onCoverClick,
-                    onArtistClick = onArtistClick
+                    onArtistClick = onArtistClick,
+                    artistViewModel = artistViewModel
                 )
             }
         }
@@ -170,7 +178,8 @@ fun AlbumDetailContent(
     isListenLaterSaved : Boolean,
     item : AlbumRoot,
     onCoverClick : (String) -> Unit,
-    onArtistClick : (Artists) -> Unit
+    onArtistClick : (Artists) -> Unit,
+    artistViewModel : ArtistViewModel
 ) {
     val albumEntity = remember(item) { AlbumMapper.mapToEntity(item) }
 
@@ -192,7 +201,7 @@ fun AlbumDetailContent(
                 showAlertDialog = false
             },
             onDismiss = { showAlertDialog = false },
-            artists = item.artists
+            state = artistViewModel.artistDialogState.collectAsState().value
         )
     }
 
@@ -266,7 +275,10 @@ fun AlbumDetailContent(
                     when (item.artists.size) {
                         0 -> Unit
                         1 -> onArtistClick(item.artists.first())
-                        else -> showAlertDialog = true
+                        else -> {
+                            showAlertDialog = true
+                            artistViewModel.loadArtists(item.artists.map { it.id })
+                        }
                     }
                 }
             )
@@ -296,9 +308,9 @@ fun AlbumDetailContent(
 
 @Composable
 fun ShowArtistDialog(
-    artists : List<Artists>,
+    state : ArtistDialogState?,
     onDismiss : () -> Unit,
-    onArtistClick : (Artists) -> Unit
+    onArtistClick : (Artist) -> Unit
 ) {
     BasicAlertDialog(
         onDismissRequest = onDismiss,
@@ -314,12 +326,43 @@ fun ShowArtistDialog(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                LazyColumn {
-                    items(artists) { artist ->
 
+                when (state) {
+                    null, ArtistDialogState.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is ArtistDialogState.Error -> {
+                        Text(state.message)
+                    }
+                    is ArtistDialogState.Success -> {
+                        LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            items(state.artists) { artist ->
+                                AlbumArtistItem(artist = artist)
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AlbumArtistItem(
+    modifier: Modifier = Modifier,
+    artist : Artist
+) {
+    val imageUrl = artist.images.find { it.type == "primary" }?.uri ?: artist.images.firstOrNull()?.uri
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        LoadImage(
+            imageUrl = imageUrl.orEmpty(),
+            modifier = Modifier.size(50.dp)
+        )
+        Text(text = artist.name)
     }
 }

@@ -96,7 +96,7 @@ object AlbumMapper {
 
     private fun mapEntityToArtistsList(entities : List<ArtistEntity>?) : List<Artists> {
         return entities?.map { entity ->
-            Artists(entity.name)
+            Artists(entity.name, entity.artist_id)
         } ?: emptyList()
     }
 
@@ -150,7 +150,7 @@ object AlbumMapper {
 
     private fun mapDtoToArtistsList(dto : List<ArtistsDto>?) : List<Artists> {
         return dto?.map { a ->
-            Artists(name = a.name.orEmpty())
+            Artists(name = a.name.orEmpty(), id = a.id ?: 0)
         } ?: emptyList()
     }
 

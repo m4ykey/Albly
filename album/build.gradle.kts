@@ -47,6 +47,7 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":artist"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

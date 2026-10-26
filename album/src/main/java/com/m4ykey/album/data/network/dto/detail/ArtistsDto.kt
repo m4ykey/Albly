@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ArtistsDto(
-    val name : String? = null
+    val name : String? = null,
+    val id : Int? = null
 )
