@@ -11,6 +11,7 @@ val localProps = Properties().apply {
 
 val token : String = localProps.getProperty("token")
 val genius_token : String = localProps.getProperty("genius_token")
+val contact_mail : String = localProps.getProperty("contact_mail")
 
 android {
     namespace = "com.m4ykey.network"
@@ -26,6 +27,7 @@ android {
 
         buildConfigField("String", "token", "\"${token}\"")
         buildConfigField("String", "genius_token", "\"${genius_token}\"")
+        buildConfigField("String", "contact_mail", "\"${contact_mail}\"")
     }
 
     buildTypes {

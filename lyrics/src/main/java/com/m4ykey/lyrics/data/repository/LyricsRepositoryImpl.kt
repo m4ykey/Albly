@@ -4,6 +4,7 @@ import com.m4ykey.core.network.safeApi
 import com.m4ykey.lyrics.data.mapper.toDomain
 import com.m4ykey.lyrics.data.service.RemoteLyricsService
 import com.m4ykey.lyrics.domain.model.LyricsItem
+import com.m4ykey.lyrics.domain.model.LyricsRedItem
 import com.m4ykey.lyrics.domain.repository.LyricsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +36,37 @@ class LyricsRepositoryImpl(
         albumName : String?
     ): Flow<List<LyricsItem>> = flow {
         val result = safeApi {
-            service.searchLyrics(trackName = trackName, artistName = artistName, albumName = albumName).map { it.toDomain() }
+            service.searchLyrics(
+                trackName = trackName,
+                artistName = artistName,
+                albumName = albumName
+            ).map { it.toDomain() }
+        }
+
+        result.fold(
+            onSuccess = { lyricsItem ->
+                emit(lyricsItem)
+            },
+            onFailure = { error ->
+                throw error
+            }
+        )
+    }
+
+    override suspend fun getRedLyrics(isrc: String): Flow<String> = flow {
+        val result = safeApi {
+            service.getRedLyrics(isrc)
+        }
+
+        result.fold(
+            onSuccess = { emit(it) },
+            onFailure = { throw it }
+        )
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun searchRedLyrics(q: String): Flow<List<LyricsRedItem>> = flow {
+        val result = safeApi {
+            service.searchRedLyrics(q).hits.map { it.toDomain() }
         }
 
         result.fold(

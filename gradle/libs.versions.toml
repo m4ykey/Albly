@@ -1,42 +1,43 @@
 [versions]
 agp = "9.4.1"
-kotlin = "2.4.20"
-core-ktx = "1.19.0"
+kotlin = "2.4.21"
+core-ktx = "1.19.1"
 junit = "4.13.2"
 junit-version = "1.3.0"
 espresso-core = "3.7.0"
 lifecycle-runtime-ktx = "2.11.0"
 activity-compose = "1.13.0"
 compose-bom = "2026.09.00"
-serialization = "2.4.20"
-paging = "3.5.1"
+serialization = "2.4.21"
+paging = "3.5.3"
 room = "2.8.5"
 coroutines = "1.11.0"
-ksp = "2.3.6"
-datastore = "1.2.1"
+ksp = "2.3.12"
+datastore = "1.3.0"
 gms = "4.5.0"
-firebase-analytics = "23.2.0"
-firebase-crashlytics = "20.1.1"
+firebase-analytics = "24.0.0"
+firebase-crashlytics = "21.0.1"
 crashlytics = "3.0.8"
-material3 = "1.5.0-alpha28"
-landscapist = "2.13.1"
+material3 = "1.5.0-beta02"
+landscapist = "2.13.2"
 kotlinx-datetime = "0.8.0"
 koin = "4.2.2"
-ktor = "3.5.2"
+ktor = "3.6.0"
 serialization-json = "1.11.0"
 mockk = "1.14.11"
 coroutines-test = "1.11.0"
-about-libraries = "15.2.0"
+about-libraries = "15.3.0"
 constraintlayout = "1.1.2"
 permissions = "0.37.3"
 turbine = "1.2.1"
-stability-analyzer = "0.13.0"
-navigation3 = "1.1.7"
+stability-analyzer = "0.15.0"
+navigation3 = "1.2.0"
 lottie = "6.7.1"
 lifecycle-viewmodel-navigation3 = "2.11.0"
 leakcanary = "3.0-alpha-9"
-compose-nav-graph = "0.2.1"
-palette = "1.1.0-alpha01"
+compose-nav-graph = "0.3.0"
+palette = "1.1.0"
+jsoup = "1.23.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -108,6 +109,8 @@ aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-com
 mockk = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

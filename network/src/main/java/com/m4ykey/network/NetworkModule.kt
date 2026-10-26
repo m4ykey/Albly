@@ -20,11 +20,13 @@ private const val SEARCH_DISCOGS = "SearchDiscogsClient"
 private const val ALBUM_DISCOGS = "AlbumDiscogsClient"
 private const val NEW_RELEASE = "NewReleaseDiscogsClient"
 private const val GENIUS_SEARCH = "GeniusSearchClient"
+private const val RED_LYRICS = "RedLyricsClient"
 
 private const val GENIUS_DEFAULT_URL = "https://api.genius.com/"
 private const val DISCOGS_DEFAULT_URL = "https://api.discogs.com/"
 private const val DISCOGS_DATABASE_URL = "https://api.discogs.com/database/"
 private const val LRCLIB_URL = "https://lrclib.net/api/"
+private const val RED_LYRICS_URL = "https://lrc.red/"
 
 val networkModule = module {
 
@@ -51,6 +53,13 @@ val networkModule = module {
         )
     }
 
+    single(named(RED_LYRICS)) {
+        HttpClientFactory.create(
+            baseUrl = RED_LYRICS_URL,
+            userAgent = "Albly v0.5.1 (https://github.com/m4ykey/Albly); contact ${BuildConfig.contact_mail}"
+        )
+    }
+
     single<RemoteSearchLyricsService> {
         SearchLyricsService(httpClient = get(named(GENIUS_SEARCH)))
     }
@@ -67,6 +76,6 @@ val networkModule = module {
         SearchService(httpClient = get(named(SEARCH_DISCOGS)))
     }
     single<RemoteLyricsService> {
-        LyricsService(httpClient = get(named(LRCLIB)))
+        LyricsService(lrcLibClient = get(named(LRCLIB)), redLyricsClient = get(named(RED_LYRICS)))
     }
 }

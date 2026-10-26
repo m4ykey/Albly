@@ -3,6 +3,7 @@ package com.m4ykey.lyrics.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.m4ykey.lyrics.domain.usecase.GetLyricsUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -15,8 +16,11 @@ class LyricsViewModel(
     private val _uiState = MutableStateFlow<LyricsUiState>(LyricsUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
+    private var job : Job? = null
+
     fun fetchLyrics(artist : String, track : String, album : String?) {
-        viewModelScope.launch {
+        job?.cancel()
+        job = viewModelScope.launch {
             _uiState.value = LyricsUiState.Loading
 
             getLyricsUseCase.invoke(track = track, album = album, artist = artist)
