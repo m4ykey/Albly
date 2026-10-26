@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.m4ykey.album.data.local.model.AlbumSort
 import com.m4ykey.album.domain.usecase.GetSavedAlbumsUseCase
-import com.m4ykey.artist.domain.GetSavedArtistUseCase
+import com.m4ykey.artist.domain.use_case.GetSavedArtistUseCase
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListTypeState
 import com.m4ykey.collection.presentation.type.ListViewType

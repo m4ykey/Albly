@@ -15,9 +15,12 @@ import com.m4ykey.album.data.paging.NewReleasePagingSource
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.repository.AlbumRepository
+import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
@@ -28,14 +31,22 @@ class AlbumRepositoryImpl(
     private val newReleaseService : RemoteNewReleaseAlbumService
 ) : AlbumRepository {
 
-    override suspend fun getAlbum(id: Int): Flow<AlbumRoot> = flow {
-        val response = service.getAlbum(id)
+    override suspend fun getAlbum(id: Int): Flow<AlbumRoot> = flow<AlbumRoot> {
+        val response = safeApi { service.getAlbum(id) }
 
-        val domainAlbum =  AlbumMapper.mapToDomain(response)
-            ?: throw Exception("")
 
-        emit(domainAlbum)
-    }
+        response.fold(
+            onSuccess = { item ->
+                val domainAlbum =  AlbumMapper.mapToDomain(item)
+                    ?: throw IllegalStateException("Failed to map album with id: $id")
+
+                emit(domainAlbum)
+            },
+            onFailure = { error ->
+                throw error
+            }
+        )
+    }.flowOn(Dispatchers.IO)
 
     override fun getNewRelease(): Flow<PagingData<NewReleaseResult>> {
         val today = LocalDate.now()

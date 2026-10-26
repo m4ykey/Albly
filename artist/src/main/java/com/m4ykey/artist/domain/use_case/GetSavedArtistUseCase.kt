@@ -1,6 +1,6 @@
-package com.m4ykey.artist.domain
+package com.m4ykey.artist.domain.use_case
 
-import com.m4ykey.artist.local.ArtistListItem
+import com.m4ykey.artist.data.local.ArtistListItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 

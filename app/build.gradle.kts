@@ -104,6 +104,7 @@ dependencies {
     implementation(project(":collection"))
     implementation(project(":settings"))
     implementation(project(":network"))
+    implementation(project(":artist"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

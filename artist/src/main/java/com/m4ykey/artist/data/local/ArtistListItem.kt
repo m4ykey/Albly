@@ -1,4 +1,4 @@
-package com.m4ykey.artist.local
+package com.m4ykey.artist.data.local
 
 data class ArtistListItem(
     val id : Int,
