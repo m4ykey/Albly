@@ -2,6 +2,7 @@
 
 package com.m4ykey.lyrics.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,7 +59,8 @@ fun LyricsScreen(
     albumName : String?,
     onBack : () -> Unit,
     imageUrl : String,
-    viewModel: LyricsViewModel = koinViewModel()
+    viewModel: LyricsViewModel = koinViewModel(),
+    onImageClick : (String) -> Unit
 ) {
 
     val state = rememberLazyListState()
@@ -82,7 +84,8 @@ fun LyricsScreen(
                 state = state,
                 imageUrl = imageUrl,
                 paddingValues = padding,
-                lyricsUiState = lyricsUiState
+                lyricsUiState = lyricsUiState,
+                onImageClick = onImageClick
             )
         }
     )
@@ -94,7 +97,8 @@ fun LyricsDisplay(
     lyricsUiState: LyricsUiState,
     paddingValues: PaddingValues,
     state: LazyListState,
-    imageUrl: String
+    imageUrl: String,
+    onImageClick: (String) -> Unit
 ) {
     when (lyricsUiState) {
         is LyricsUiState.Loading -> {
@@ -118,7 +122,8 @@ fun LyricsDisplay(
                     state = state,
                     contentPadding = paddingValues,
                     item = lyricsUiState.item,
-                    imageUrl = imageUrl
+                    imageUrl = imageUrl,
+                    onImageClick = onImageClick
                 )
             }
         }
@@ -131,7 +136,8 @@ fun LyricsContent(
     state : LazyListState,
     contentPadding : PaddingValues = PaddingValues(0.dp),
     item : LyricsItem,
-    imageUrl : String
+    imageUrl : String,
+    onImageClick : (String) -> Unit
 ) {
     val isDarkTheme = isSystemInDarkTheme()
 
@@ -188,7 +194,9 @@ fun LyricsContent(
                 contentAlignment = Alignment.Center
             ) {
                 LoadImage(
-                    modifier = Modifier.size(260.dp),
+                    modifier = Modifier
+                        .clickable { onImageClick(imageUrl) }
+                        .size(260.dp),
                     imageUrl = imageUrl
                 )
             }

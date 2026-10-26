@@ -140,7 +140,10 @@ fun NavigationRoot(
                     artistName = key.artist,
                     trackName = key.track,
                     imageUrl = key.img,
-                    albumName = key.album
+                    albumName = key.album,
+                    onImageClick = { item ->
+                        navigateTo(Route.Cover(item))
+                    }
                 )
             }
             entry<Route.Cover> { key ->
