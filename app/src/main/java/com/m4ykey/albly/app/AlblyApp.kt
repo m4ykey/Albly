@@ -1,6 +1,7 @@
 package com.m4ykey.albly.app
 
 import android.app.Application
+import com.m4ykey.albly.app.di.appModule
 import com.m4ykey.album.di.albumModule
 import com.m4ykey.album.di.databaseModule
 import com.m4ykey.collection.di.collectionViewModel
@@ -19,7 +20,8 @@ val modules = listOf(
     albumModule,
     collectionViewModel,
     networkModule,
-    settingsModule
+    settingsModule,
+    appModule
 )
 
 class AlblyApp : Application() {
