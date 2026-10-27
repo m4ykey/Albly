@@ -46,7 +46,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.album.data.mapper.AlbumMapper
+import com.m4ykey.album.data.mapper.toAlbumEntity
 import com.m4ykey.album.domain.model.TrackClickItem
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.model.detail.Artists
@@ -181,7 +181,9 @@ fun AlbumDetailContent(
     onArtistClick : (Artists) -> Unit,
     artistViewModel : ArtistViewModel
 ) {
-    val albumEntity = remember(item) { AlbumMapper.mapToEntity(item) }
+    val albumEntity = remember(item) {
+        item.toAlbumEntity()
+    }
 
     val imageUrl = item.images.find { it.type == "primary" }?.uri ?: item.images.firstOrNull()?.uri
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -250,10 +252,10 @@ fun AlbumDetailContent(
                 isSaved = isSaved,
                 isListenLaterSaved = isListenLaterSaved,
                 onSaveClick = {
-                    albumEntity?.let { onSaveToggle(albumEntity) }
+                    onSaveToggle(albumEntity)
                 },
                 onListenLaterClick = {
-                    albumEntity?.let { onListenLaterToggle(albumEntity) }
+                    onListenLaterToggle(albumEntity)
                 }
             )
         }

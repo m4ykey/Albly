@@ -92,14 +92,14 @@ fun NewReleaseContent(
                 items(
                     count = items.itemCount,
                     contentType = { "album_item" },
-                    key = items.itemKey { item -> item.master_id }
+                    key = items.itemKey { item -> item.masterId }
                 ) { index ->
                     items[index]?.let { item ->
                         AlbumCard(
                             albumName = item.title,
-                            image = item.cover_image,
+                            image = item.coverImage,
                             artistName = item.artist,
-                            onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.master_id)) }
+                            onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.masterId)) }
                         )
                     }
                 }

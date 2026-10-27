@@ -2,7 +2,7 @@ package com.m4ykey.search.data.paging
 
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.BasePagingSource
-import com.m4ykey.search.data.mapper.SearchMapper
+import com.m4ykey.search.data.mapper.toResultsArtist
 import com.m4ykey.search.data.network.service.RemoteSearchService
 import com.m4ykey.search.domain.model.artist.ResultsArtist
 
@@ -18,11 +18,11 @@ class SearchArtistPagingSource(
         return safeApi {
             service.searchArtist(
                 page = page,
-                query = query
+                query = query,
+                perPage = limit
             )
         }.map { response ->
-            SearchMapper.mapToArtistDomain(response).results
+            response.results.map { it.toResultsArtist() }
         }
     }
-
 }

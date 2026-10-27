@@ -17,77 +17,64 @@ import com.m4ykey.search.domain.model.lyrics.GeniusResult
 import com.m4ykey.search.domain.model.lyrics.GeniusRoot
 import com.m4ykey.search.domain.model.lyrics.Hit
 
-object SearchMapper {
+fun GeniusRootDto.toGeniusRoot() : GeniusRoot {
+    return GeniusRoot(
+        response = response.toGeniusResponse()
+    )
+}
 
-    fun mapToGeniusRootDomain(dto : GeniusRootDto) : GeniusRoot {
-        return GeniusRoot(
-            response = getGeniusResponse(dto.response)
-        )
+fun GeniusResponseDto.toGeniusResponse() : GeniusResponse {
+    return GeniusResponse(
+        hits = hits?.map { it.toHit() } ?: emptyList()
+    )
+}
+
+fun HitDto.toHit() : Hit {
+    return Hit(
+        result = result.toGeniusResult()
+    )
+}
+
+fun GeniusResultDto.toGeniusResult() : GeniusResult {
+    return GeniusResult(
+        title = title.orEmpty(),
+        artistNames = artistNames.orEmpty(),
+        songArtImageUrl = songArtImageUrl.orEmpty()
+    )
+}
+
+fun SearchArtistRootDto.toSearchArtistRoot() : SearchArtistRoot {
+    return SearchArtistRoot(
+        results = results.map { it.toResultsArtist() }
+    )
+}
+
+fun ResultsArtistDto.toResultsArtist() : ResultsArtist {
+    return ResultsArtist(
+        id = id ?: 0,
+        cover_image = coverImage.orEmpty(),
+        title = title.orEmpty(),
+        thumb = thumb.orEmpty()
+    )
+}
+
+fun ResultsAlbumDto.toResultsAlbum() : ResultsAlbum {
+    val rawTitle = title
+    var artist = "Unknown artist"
+    var album = rawTitle
+
+    rawTitle?.takeIf { it.contains(" - ") }?.let {
+        val parts = it.split(" - ", limit = 2)
+        artist = parts[0].trim()
+        album = parts[1].trim()
     }
 
-    private fun getGeniusResponse(dto : GeniusResponseDto) : GeniusResponse {
-        return GeniusResponse(
-            hits = getHitsList(dto.hits ?: emptyList())
-        )
-    }
-
-    private fun getHitsList(dto : List<HitDto>) : List<Hit> {
-        return dto.map { hitDto ->
-            Hit(
-                result = mapToGeniusResult(hitDto.result)
-            )
-        }
-    }
-
-    private fun mapToGeniusResult(dto : GeniusResultDto) : GeniusResult {
-        return GeniusResult(
-            title = dto.title.orEmpty(),
-            artistNames = dto.artist_names.orEmpty(),
-            songArtImageUrl = dto.song_art_image_url.orEmpty()
-        )
-    }
-
-    fun mapToArtistDomain(dto: SearchArtistRootDto?) : SearchArtistRoot {
-        val results = dto?.results?.mapNotNull { mapToSingleArtistResult(it) } ?: emptyList()
-        return SearchArtistRoot(results)
-    }
-
-    fun mapToSingleArtistResult(dto : ResultsArtistDto?) : ResultsArtist? {
-        if (dto == null) return null
-
-        return ResultsArtist(
-            cover_image = dto.cover_image.orEmpty(),
-            id = dto.id ?: 0,
-            thumb = dto.thumb.orEmpty(),
-            title = dto.title.orEmpty()
-        )
-    }
-
-    fun mapToDomain(dto : SearchAlbumRootDto?) : SearchAlbumRoot {
-        val results = dto?.results?.mapNotNull { mapToSingleResult(it) } ?: emptyList()
-        return SearchAlbumRoot(results)
-    }
-
-    fun mapToSingleResult(dto : ResultsAlbumDto?) : ResultsAlbum? {
-        if (dto == null) return null
-
-        val rawTitle = dto.title
-        var artist = "Unknown artist"
-        var album = rawTitle
-
-        rawTitle?.takeIf { it.contains(" - ") }?.let {
-            val parts = it.split(" - ", limit = 2)
-            artist = parts[0].trim()
-            album = parts[1].trim()
-        }
-
-        return ResultsAlbum(
-            artist = artist,
-            album = album,
-            thumb = dto.thumb,
-            cover_image = dto.cover_image,
-            id = dto.id,
-            master_id = dto.master_id
-        )
-    }
+    return ResultsAlbum(
+        artist = artist,
+        album = album,
+        thumb = thumb,
+        cover_image = coverImage,
+        id = id,
+        master_id = masterId
+    )
 }

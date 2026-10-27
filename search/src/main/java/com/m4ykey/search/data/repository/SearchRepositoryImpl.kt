@@ -3,7 +3,7 @@ package com.m4ykey.search.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.m4ykey.core.paging.pagingConfig
-import com.m4ykey.search.data.mapper.SearchMapper
+import com.m4ykey.search.data.mapper.toGeniusRoot
 import com.m4ykey.search.data.network.service.RemoteSearchLyricsService
 import com.m4ykey.search.data.network.service.RemoteSearchService
 import com.m4ykey.search.data.paging.SearchAlbumPagingSource
@@ -56,7 +56,7 @@ class SearchRepositoryImpl(
         return flow {
             try {
                 val responseDto = lyricsService.searchLyrics(query)
-                val domainResults = SearchMapper.mapToGeniusRootDomain(responseDto)
+                val domainResults = responseDto.toGeniusRoot()
                 emit(listOf(domainResults))
             } catch (e : Exception) {
                 emit(emptyList())

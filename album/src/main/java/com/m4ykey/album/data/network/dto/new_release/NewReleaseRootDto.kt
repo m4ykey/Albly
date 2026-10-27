@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NewReleaseRootDto(
-    val results: List<NewReleaseResultDto>? = emptyList()
+    val results: List<NewReleaseResultDto> = emptyList()
 )

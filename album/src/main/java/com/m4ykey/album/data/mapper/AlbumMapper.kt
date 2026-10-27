@@ -16,152 +16,131 @@ import com.m4ykey.album.domain.model.detail.TrackList
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.model.new_release.NewReleaseRoot
 
-object AlbumMapper {
+fun NewReleaseRootDto.toNewReleaseRoot() : NewReleaseRoot {
+    return NewReleaseRoot(
+        results = results.map { it.toNewReleaseResult() }
+    )
+}
 
-    fun mapToNewRelease(dto : NewReleaseRootDto?) : NewReleaseRoot {
-        val results = dto?.results?.mapNotNull { mapToSingleNewRelease(it) } ?: emptyList()
-        return NewReleaseRoot(results)
+fun NewReleaseResultDto.toNewReleaseResult() : NewReleaseResult {
+    val rawTitle = title
+    var artist = "Unknown artist"
+    var album = rawTitle
+
+    rawTitle?.takeIf { it.contains(" - ") }?.let {
+        val parts = it.split(" - ", limit = 2)
+        artist = parts[0].trim()
+        album = parts[1].trim()
     }
 
-    fun mapToSingleNewRelease(dto : NewReleaseResultDto?) : NewReleaseResult? {
-        if (dto == null) return null
+    return NewReleaseResult(
+        coverImage = coverImage.orEmpty(),
+        masterId = masterId ?: 0,
+        thumb = thumb.orEmpty(),
+        title = album.orEmpty(),
+        artist = artist
+    )
+}
 
-        val rawTitle = dto.title
-        var artist = "Unknown artist"
-        var album = rawTitle
+fun AlbumRoot.toAlbumEntity() : AlbumEntity {
+    return AlbumEntity(
+        id = id,
+        title = title,
+        year = year,
+        save_time = System.currentTimeMillis(),
+        image = images.firstOrNull()?.uri.orEmpty(),
+        uri = uri,
+        trackList = tracklist.map { it.toTrackEntity() },
+        artistList = artists.map { it.toArtistEntity() }
+    )
+}
 
-        rawTitle?.takeIf { it.contains(" - ") }?.let {
-            val parts = it.split(" - ", limit = 2)
-            artist = parts[0].trim()
-            album = parts[1].trim()
-        }
+fun Artists.toArtistEntity() : ArtistEntity {
+    return ArtistEntity(
+        name = name,
+        artist_id = 0
+    )
+}
 
-        return NewReleaseResult(
-            title = album.orEmpty(),
-            master_id = dto.master_id ?: 0,
-            thumb = dto.thumb.orEmpty(),
-            cover_image = dto.cover_image.orEmpty(),
-            artist = artist
+fun TrackList.toTrackEntity() : TrackEntity {
+    return TrackEntity(
+        position = position,
+        duration = duration,
+        track_id = 0,
+        title = title
+    )
+}
+
+fun AlbumEntity.toAlbumRoot() : AlbumRoot {
+    return AlbumRoot(
+        id = id,
+        title = title,
+        year = year,
+        uri = uri,
+        tracklist = trackList.map { it.toTrackList() },
+        artists = artistList.map { it.toArtists() },
+        images = image.toImageList()
+    )
+}
+
+fun ArtistEntity.toArtists() : Artists {
+    return Artists(
+        name = name,
+        id = artist_id
+    )
+}
+
+fun TrackEntity.toTrackList() : TrackList {
+    return TrackList(
+        duration = duration,
+        type = "",
+        position = position,
+        title = title
+    )
+}
+
+fun String?.toImageList() : List<Image> {
+    if (isNullOrEmpty()) return emptyList()
+
+    return listOf(
+        Image(
+            uri = this,
+            type = "primary"
         )
-    }
+    )
+}
 
-    fun mapToEntity(domain : AlbumRoot?) : AlbumEntity? {
-        if (domain == null) return null
+fun AlbumRootDto.toAlbumRoot() : AlbumRoot {
+    return AlbumRoot(
+        id = id ?: 0,
+        title = title.orEmpty(),
+        uri = uri.orEmpty(),
+        year = year ?: 0,
+        tracklist = tracklist?.map { it.toTrackList() } ?: emptyList(),
+        artists = artists?.map { it.toArtists() } ?: emptyList(),
+        images = images?.map { it.toImage() } ?: emptyList()
+    )
+}
 
-        return AlbumEntity(
-            id = domain.id,
-            title = domain.title,
-            year = domain.year,
-            save_time = System.currentTimeMillis(),
-            image = domain.images.firstOrNull()?.uri.orEmpty(),
-            artistList = mapDomainArtistsToEntity(domain.artists),
-            trackList = mapDomainTrackListToEntity(domain.tracklist),
-            uri = domain.uri
-        )
-    }
+fun ImageDto.toImage() : Image {
+    return Image(
+        type = type.orEmpty(),
+        uri = uri.orEmpty()
+    )
+}
 
-    private fun mapDomainArtistsToEntity(artists : List<Artists>) : List<ArtistEntity> {
-        return artists.map { artists ->
-            ArtistEntity(
-                name = artists.name,
-                artist_id = 0
-            )
-        }
-    }
+fun TrackListDto.toTrackList() : TrackList {
+    return TrackList(
+        duration = duration.orEmpty(),
+        position = position.orEmpty(),
+        type = type.orEmpty(),
+        title = title.orEmpty()
+    )
+}
 
-    private fun mapDomainTrackListToEntity(tracks : List<TrackList>) : List<TrackEntity> {
-        return tracks.map { track ->
-            TrackEntity(
-                position = track.position,
-                duration = track.duration,
-                title = track.title,
-                track_id = 0
-            )
-        }
-    }
-
-    fun mapToDomain(entity : AlbumEntity?) : AlbumRoot? {
-        if (entity == null) return null
-
-        return AlbumRoot(
-            id = entity.id,
-            title = entity.title,
-            year = entity.year,
-            tracklist = mapEntityToTrackList(entity.trackList),
-            artists = mapEntityToArtistsList(entity.artistList),
-            images = mapStringPathToImageList(entity.image),
-            uri = entity.uri
-        )
-    }
-
-    private fun mapEntityToArtistsList(entities : List<ArtistEntity>?) : List<Artists> {
-        return entities?.map { entity ->
-            Artists(entity.name, entity.artist_id)
-        } ?: emptyList()
-    }
-
-    private fun mapEntityToTrackList(entities : List<TrackEntity>?) : List<TrackList> {
-        return entities?.map { entity ->
-            TrackList(
-                duration = entity.duration,
-                title = entity.title,
-                position = entity.position,
-                type = ""
-            )
-        } ?: emptyList()
-    }
-
-    private fun mapStringPathToImageList(imagePath : String?) : List<Image> {
-        return if (imagePath.isNullOrEmpty()) {
-            emptyList()
-        } else {
-            listOf(
-                Image(
-                    type = "primary",
-                    uri = imagePath
-                )
-            )
-        }
-    }
-
-    fun mapToDomain(dto : AlbumRootDto?) : AlbumRoot? {
-        if (dto == null) return null
-
-        return AlbumRoot(
-            id = dto.id ?: 0,
-            title = dto.title.orEmpty(),
-            year = dto.year ?: 0,
-            images = mapDtoToImageList(dto.images),
-            artists = mapDtoToArtistsList(dto.artists),
-            tracklist = mapDtoToTrackList(dto.tracklist),
-            uri = dto.uri.orEmpty()
-        )
-    }
-
-    private fun mapDtoToImageList(dto : List<ImageDto>?) : List<Image> {
-        return dto?.map { img ->
-            Image(type = img.type.orEmpty(), uri = img.uri.orEmpty())
-        } ?: emptyList()
-    }
-
-    private fun mapDtoToTrackList(dto : List<TrackListDto>?) : List<TrackList> {
-        return dto?.mapNotNull { mapToSingleTrack(it) } ?: emptyList()
-    }
-
-    private fun mapDtoToArtistsList(dto : List<ArtistsDto>?) : List<Artists> {
-        return dto?.map { a ->
-            Artists(name = a.name.orEmpty(), id = a.id ?: 0)
-        } ?: emptyList()
-    }
-
-    private fun mapToSingleTrack(dto : TrackListDto?) : TrackList? {
-        if (dto == null) return null
-
-        return TrackList(
-            position = dto.position.orEmpty(),
-            type = dto.type_.orEmpty(),
-            title = dto.title.orEmpty(),
-            duration = dto.duration.orEmpty()
-        )
-    }
+fun ArtistsDto.toArtists() : Artists {
+    return Artists(
+        name = name.orEmpty(),
+        id = id ?: 0
+    )
 }

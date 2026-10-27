@@ -3,7 +3,7 @@ package com.m4ykey.album.presentation.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.album.data.mapper.AlbumMapper
+import com.m4ykey.album.data.mapper.toAlbumRoot
 import com.m4ykey.album.domain.usecase.AlbumUseCase
 import com.m4ykey.album.domain.usecase.GetAlbumStateUseCase
 import com.m4ykey.album.domain.usecase.GetLocalAlbumUseCase
@@ -39,8 +39,10 @@ class AlbumDetailViewModel(
 
             useCase.invoke(id)
                 .catch { e ->
-                    val localAlbum = withContext(Dispatchers.IO) { getLocalAlbumUseCase(id) }
-                    val domainAlbum = AlbumMapper.mapToDomain(localAlbum)
+                    val localAlbum = withContext(Dispatchers.IO) {
+                        getLocalAlbumUseCase(id)
+                    }
+                    val domainAlbum = localAlbum?.toAlbumRoot()
 
                     if (domainAlbum != null) {
                         _detail.value = DetailUiState.Success(

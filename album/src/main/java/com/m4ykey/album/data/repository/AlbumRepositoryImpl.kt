@@ -8,7 +8,7 @@ import com.m4ykey.album.data.local.model.AlbumListItem
 import com.m4ykey.album.data.local.model.AlbumWithStates
 import com.m4ykey.album.data.local.model.IsAlbumSaved
 import com.m4ykey.album.data.local.model.IsListenLaterSaved
-import com.m4ykey.album.data.mapper.AlbumMapper
+import com.m4ykey.album.data.mapper.toAlbumRoot
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
 import com.m4ykey.album.data.paging.NewReleasePagingSource
@@ -37,10 +37,7 @@ class AlbumRepositoryImpl(
 
         response.fold(
             onSuccess = { item ->
-                val domainAlbum =  AlbumMapper.mapToDomain(item)
-                    ?: throw IllegalStateException("Failed to map album with id: $id")
-
-                emit(domainAlbum)
+                emit(item.toAlbumRoot())
             },
             onFailure = { error ->
                 throw error

@@ -19,7 +19,7 @@ class NewReleaseViewModel(
 
     val newRelease : Flow<PagingData<NewReleaseResult>> =
         useCase.invoke()
-            .map { pagingData -> pagingData.distinctById { it.master_id } }
+            .map { pagingData -> pagingData.distinctById { it.masterId } }
             .cachedIn(viewModelScope)
 
     private val _uiEvent = MutableSharedFlow<NewReleaseUiEvent>()
