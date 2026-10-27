@@ -92,7 +92,7 @@ fun NewReleaseContent(
                 items(
                     count = items.itemCount,
                     contentType = { "album_item" },
-                    key = items.itemKey { item -> item.master_id }
+                    key = items.itemKey { item -> "${item.master_id}_${item.title}_${item.thumb}" }
                 ) { index ->
                     items[index]?.let { item ->
                         AlbumCard(
