@@ -36,12 +36,15 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -55,13 +58,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -84,8 +87,11 @@ import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ui.ArtistCard
 import com.m4ykey.core.ui.CenteredContent
 import com.m4ykey.core.ui.ChipItem
+import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LyricsCard
 import com.m4ykey.search.R
+import com.m4ykey.search.domain.model.album.ResultsAlbum
+import com.m4ykey.search.domain.model.artist.ResultsArtist
 import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
 
@@ -99,24 +105,19 @@ fun SearchScreen(
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
-    val albumSearchItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
-    val artistSearchItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
-    val lyricsSearchItems by viewModel.searchLyricsResults.collectAsStateWithLifecycle()
 
-    val targetWeight = if (searchQuery.isEmpty()) 1f else 0.8f
-
-    val animatedWeight by animateFloatAsState(
-        label = "SearchBarWeightAnimation",
-        targetValue = targetWeight,
-        animationSpec = tween(durationMillis = 1000)
-    )
+    val albumItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
+    val artistItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
+    val lyricsItems by viewModel.searchLyricsResults.collectAsStateWithLifecycle()
 
     val type by viewModel.searchType.collectAsStateWithLifecycle()
     val activeSearchQuery by viewModel.activeSearchQuery.collectAsStateWithLifecycle()
 
     val onAction = viewModel::onAction
 
-    val state = rememberLazyGridState()
+    val albumGridState = rememberLazyGridState()
+    val artistListState = rememberLazyListState()
+    val lyricsListState = rememberLazyListState()
 
     val context = LocalContext.current
 
@@ -131,7 +132,11 @@ fun SearchScreen(
     }
 
     LaunchedEffect(type) {
-        state.scrollToItem(0)
+        when (type) {
+            SearchType.LYRICS -> lyricsListState.scrollToItem(0)
+            SearchType.ARTIST -> artistListState.scrollToItem(0)
+            SearchType.ALBUM -> albumGridState.scrollToItem(0)
+        }
     }
 
     val permissionState = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
@@ -176,189 +181,305 @@ fun SearchScreen(
         }
     }
 
+    val isActiveSearch = activeSearchQuery.isNotBlank()
+
     Surface(
         modifier = modifier
             .fillMaxSize()
-            .testTag("search_screen")
             .background(MaterialTheme.colorScheme.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
-        Column(modifier = modifier) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+        Column(modifier = Modifier.fillMaxSize()) {
+            SearchBar(
+                isDarkTheme = isDarkTheme,
+                onBack = onBack,
+                searchQuery = searchQuery,
+                onAction = onAction,
+                handleMick = handleMick
+            )
+            SearchContent(
+                onAction = onAction,
+                isDarkTheme = isDarkTheme,
+                isActiveSearch = isActiveSearch,
+                albumItems = albumItems,
+                type = type,
+                artistItems = artistItems,
+                lyricsItems = lyricsItems,
+                artistListState = artistListState,
+                albumGridState = albumGridState,
+                lyricsListState = lyricsListState
+            )
+        }
+    }
+}
+
+@Composable
+fun SearchContent(
+    modifier: Modifier = Modifier,
+    onAction: (SearchTypeAction) -> Unit,
+    isDarkTheme : Color,
+    isActiveSearch: Boolean,
+    albumItems : LazyPagingItems<ResultsAlbum>,
+    type : SearchType,
+    artistItems : LazyPagingItems<ResultsArtist>,
+    lyricsItems : LyricsSearchState,
+    artistListState : LazyListState,
+    albumGridState : LazyGridState,
+    lyricsListState : LazyListState
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        SearchTypeChipList(
+            modifier = Modifier.fillMaxWidth(),
+            onChipSelected = { selectedType ->
+                onAction(SearchTypeAction.OnTypeClick(selectedType))
+            },
+            selectedChip = type
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        when (type) {
+            SearchType.ALBUM -> AlbumSearchList(
+                items = albumItems,
+                isActiveSearch = isActiveSearch,
+                state = albumGridState,
+                onAction = onAction
+            )
+
+            SearchType.ARTIST -> ArtistSearchList(
+                isActiveSearch = isActiveSearch,
+                items = artistItems,
+                state = artistListState
+            )
+
+            SearchType.LYRICS -> LyricsSearchList(
+                isActiveSearch = isActiveSearch,
+                isDarkTheme = isDarkTheme,
+                onAction = onAction,
+                state = lyricsItems,
+                listState = lyricsListState
+            )
+        }
+    }
+}
+
+@Composable
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+    isDarkTheme: Color,
+    searchQuery : String,
+    onAction: (SearchTypeAction) -> Unit,
+    handleMick : () -> Unit
+) {
+    val targetWeight = if (searchQuery.isEmpty()) 1f else 0.8f
+
+    val animatedWeight by animateFloatAsState(
+        label = "SearchBarWeightAnimation",
+        targetValue = targetWeight,
+        animationSpec = tween(durationMillis = 1000)
+    )
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 5.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ActionIconButton(
+            tint = isDarkTheme,
+            onClick = onBack,
+            textRes = com.m4ykey.core.R.string.back,
+            iconRes = com.m4ykey.core.R.drawable.ic_arrow_left
+        )
+        SearchBarTextField(
+            searchQuery = searchQuery,
+            onValueChange = { query ->
+                onAction(SearchTypeAction.OnQueryChange(query))
+            },
+            modifier = Modifier
+                .weight(animatedWeight)
+                .padding(start = 8.dp),
+            onSearch = { onAction(SearchTypeAction.OnSearchClick) }
+        )
+        ActionIconButton(
+            tint = isDarkTheme,
+            onClick = { handleMick() },
+            textRes = R.string.mic,
+            iconRes = R.drawable.ic_mic
+        )
+        AnimatedVisibility(
+            visible = searchQuery.isNotEmpty(),
+            enter = slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth }
+            ) + expandHorizontally(),
+            exit = slideOutHorizontally(
+                targetOffsetX = { fullWidth -> fullWidth }
+            ) + shrinkHorizontally()
+        ) {
+            ActionIconButton(
+                onClick = { onAction(SearchTypeAction.OnQueryChange("")) },
+                tint = isDarkTheme,
+                textRes = R.string.clear,
+                iconRes = R.drawable.ic_close
+            )
+        }
+    }
+}
+
+@Composable
+fun ArtistSearchList(
+    modifier: Modifier = Modifier,
+    isActiveSearch : Boolean,
+    items : LazyPagingItems<ResultsArtist>,
+    state : LazyListState
+) {
+    BasePagingList(
+        isActiveSearch = isActiveSearch,
+        items = items,
+        listContent = { items ->
+            LazyColumn(
+                modifier = modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                state = state
             ) {
-                ActionIconButton(
-                    tint = isDarkTheme,
-                    onClick = onBack,
-                    textRes = com.m4ykey.core.R.string.back,
-                    iconRes = com.m4ykey.core.R.drawable.ic_arrow_left
-                )
-                SearchBarTextField(
-                    searchQuery = searchQuery,
-                    onValueChange = { query ->
-                        onAction(SearchTypeAction.OnQueryChange(query))
-                    },
-                    modifier = Modifier
-                        .weight(animatedWeight)
-                        .padding(start = 8.dp),
-                    onSearch = { onAction(SearchTypeAction.OnSearchClick) }
-                )
-                ActionIconButton(
-                    tint = isDarkTheme,
-                    onClick = { handleMick() },
-                    textRes = R.string.mic,
-                    iconRes = R.drawable.ic_mic
-                )
-                AnimatedVisibility(
-                    visible = searchQuery.isNotEmpty(),
-                    enter = slideInHorizontally(
-                        initialOffsetX = { fullWidth -> fullWidth }
-                    ) + expandHorizontally(),
-                    exit = slideOutHorizontally(
-                        targetOffsetX = { fullWidth -> fullWidth }
-                    ) + shrinkHorizontally()
-                ) {
-                    ActionIconButton(
-                        onClick = { onAction(SearchTypeAction.OnQueryChange("")) },
-                        tint = isDarkTheme,
-                        textRes = R.string.clear,
-                        iconRes = R.drawable.ic_close
-                    )
+                items(
+                    count = items.itemCount,
+                    contentType = { "artist_item" },
+                    key = { index -> items.peek(index)?.id?.let { "artist_$it" } ?: "placeholder_album_$index" }
+                ) { index ->
+                    items[index]?.let { artist ->
+                        ArtistCard(
+                            onArtistClick = {  },
+                            title = artist.title,
+                            cover = artist.cover_image,
+                            id = artist.id
+                        )
+                    }
+                }
+
+                item  {
+                    PagingAppendState(items)
                 }
             }
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+        }
+    )
+}
+
+@Composable
+fun LyricsSearchList(
+    modifier: Modifier = Modifier,
+    isActiveSearch: Boolean,
+    state : LyricsSearchState,
+    isDarkTheme : Color,
+    onAction: (SearchTypeAction) -> Unit,
+    listState : LazyListState
+) {
+    if (!isActiveSearch) return
+
+    when (state) {
+        is LyricsSearchState.Idle -> Unit
+        is LyricsSearchState.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = modifier.fillMaxSize()
             ) {
-                SearchTypeChipList(
-                    modifier = Modifier.fillMaxWidth(),
-                    onChipSelected = { selectedType ->
-                        onAction(SearchTypeAction.OnTypeClick(selectedType))
-                    },
-                    selectedChip = type
+                ContainedLoadingIndicator()
+            }
+        }
+        is LyricsSearchState.Error -> {
+            ErrorCard(text = state.message)
+        }
+        is LyricsSearchState.Success -> {
+            val songs = remember(state.songs) {
+                state.songs
+                    .flatMap { it.response.hits.map { hit -> hit.result } }
+                    .distinctBy { it.id }
+            }
+
+            if (songs.isEmpty()) {
+                Text(
+                    color = isDarkTheme,
+                    modifier = modifier.padding(16.dp),
+                    text = stringResource(R.string.no_results)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                val isActiveSearch = activeSearchQuery.isNotBlank()
-
-                when (type) {
-                    SearchType.ALBUM -> {
-                        BasePagingList(
-                            isActiveSearch = isActiveSearch,
-                            items = albumSearchItems,
-                            listContent = { items ->
-                                LazyVerticalGrid(
-                                    columns = GridCells.Fixed(3),
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentPadding = PaddingValues(horizontal = 8.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                                    state = state
-                                ) {
-                                    items(
-                                        count = items.itemCount,
-                                        contentType = { type.name },
-                                        key = { index -> items.peek(index)?.id?.let { "album_$it" } ?: "placeholder_album_$index" }
-                                    ) { index ->
-                                        items[index]?.let { album ->
-                                            AlbumCard(
-                                                image = album.cover_image.orEmpty(),
-                                                albumName = album.album.orEmpty(),
-                                                artistName = album.artist.orEmpty(),
-                                                onAlbumClick = {
-                                                    onAction(SearchTypeAction.OnAlbumClick(album.id ?: 0)) }
-                                            )
-                                        }
-                                    }
-
-                                    item (span = { GridItemSpan(maxLineSpan) }) {
-                                        PagingAppendState(items)
-                                    }
-                                }
-                            }
-                        )
-                    }
-
-                    SearchType.ARTIST -> {
-                        BasePagingList(
-                            isActiveSearch = isActiveSearch,
-                            items = artistSearchItems,
-                            listContent = { items ->
-                                LazyColumn(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentPadding = PaddingValues(horizontal = 8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    items(
-                                        count = items.itemCount,
-                                        contentType = { type.name },
-                                        key = { index -> items.peek(index)?.id?.let { "artist_$it" } ?: "placeholder_album_$index" }
-                                    ) { index ->
-                                        items[index]?.let { artist ->
-                                            ArtistCard(
-                                                onArtistClick = {  },
-                                                title = artist.title,
-                                                cover = artist.cover_image,
-                                                id = artist.id
-                                            )
-                                        }
-                                    }
-
-                                    item  {
-                                        PagingAppendState(items)
-                                    }
-                                }
-                            }
-                        )
-                    }
-
-                    SearchType.LYRICS -> {
-                        if (isActiveSearch) {
-
-                            val songs = lyricsSearchItems.flatMap { it.response.hits.map { hit -> hit.result } }
-
-                            if (songs.isEmpty()) {
-                                Text(
-                                    color = isDarkTheme,
-                                    modifier = Modifier.padding(16.dp),
-                                    text = stringResource(R.string.no_results)
+            } else {
+                LazyColumn(
+                    modifier = modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                    state = listState
+                ) {
+                    items(
+                        items = songs,
+                        key = { it.id }
+                    ) { song ->
+                        LyricsCard(
+                            onClick = {
+                                onAction(SearchTypeAction.OnTrackClick(
+                                    title = song.title,
+                                    img = song.songArtImageUrl,
+                                    artist = song.artistNames,
+                                    album = null)
                                 )
-                            } else {
-                                LazyColumn(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
-                                ) {
-                                    items(
-                                        items = songs,
-                                        key = { it.id }
-                                    ) { song ->
-                                        LyricsCard(
-                                            onClick = {
-                                                onAction(SearchTypeAction.OnTrackClick(
-                                                    title = song.title,
-                                                    img = song.songArtImageUrl,
-                                                    artist = song.artistNames,
-                                                    album = null)
-                                                )
-                                            },
-                                            artist = song.artistNames,
-                                            title = song.title,
-                                            imageUrl = song.songArtImageUrl
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                            },
+                            artist = song.artistNames,
+                            title = song.title,
+                            imageUrl = song.songArtImageUrl
+                        )
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+fun AlbumSearchList(
+    modifier: Modifier = Modifier,
+    items : LazyPagingItems<ResultsAlbum>,
+    isActiveSearch : Boolean,
+    state : LazyGridState,
+    onAction : (SearchTypeAction) -> Unit
+) {
+    BasePagingList(
+        isActiveSearch = isActiveSearch,
+        items = items,
+        listContent = { items ->
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                state = state
+            ) {
+                items(
+                    count = items.itemCount,
+                    contentType = { "album_item" },
+                    key = { index -> items.peek(index)?.id?.let { "album_$it" } ?: "placeholder_album_$index" }
+                ) { index ->
+                    items[index]?.let { album ->
+                        AlbumCard(
+                            image = album.cover_image.orEmpty(),
+                            albumName = album.album.orEmpty(),
+                            artistName = album.artist.orEmpty(),
+                            onAlbumClick = {
+                                onAction(SearchTypeAction.OnAlbumClick(album.id ?: 0)) }
+                        )
+                    }
+                }
+
+                item (span = { GridItemSpan(maxLineSpan) }) {
+                    PagingAppendState(items)
+                }
+            }
+        }
+    )
 }
 
 @Composable
@@ -433,43 +554,59 @@ fun SearchBarTextField(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(size = 20.dp)
         )
-        Spacer(modifier = modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(10.dp))
         Box(
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
             contentAlignment = Alignment.CenterStart
         ) {
-            BasicTextField(
-                value = searchQuery,
+            SearchInputTextField(
+                searchQuery = searchQuery,
                 onValueChange = onValueChange,
-                singleLine = true,
-                textStyle = TextStyle(
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Start,
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                decorationBox = { innerTextField ->
-                    Box(modifier = Modifier.padding(horizontal = 5.dp)) {
-                        if (searchQuery.isEmpty()) {
-                            Text(
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Start,
-                                text = stringResource(R.string.search),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        innerTextField()
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Search,
-                    keyboardType = KeyboardType.Text
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = { onSearch() }
-                ),
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+                onSearch = onSearch
             )
         }
     }
+}
+
+@Composable
+fun SearchInputTextField(
+    modifier: Modifier = Modifier,
+    searchQuery : String,
+    onValueChange: (String) -> Unit,
+    onSearch: () -> Unit
+) {
+    BasicTextField(
+        value = searchQuery,
+        onValueChange = onValueChange,
+        singleLine = true,
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            textAlign = TextAlign.Start,
+            color = MaterialTheme.colorScheme.onSurface
+        ),
+        modifier = modifier.fillMaxWidth(),
+        decorationBox = { innerTextField ->
+            Box(modifier = Modifier.padding(horizontal = 5.dp)) {
+                if (searchQuery.isEmpty()) {
+                    Text(
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Start,
+                        text = stringResource(R.string.search),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                innerTextField()
+            }
+        },
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Search,
+            keyboardType = KeyboardType.Text
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = { onSearch() }
+        ),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+    )
 }

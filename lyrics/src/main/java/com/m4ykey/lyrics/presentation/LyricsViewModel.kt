@@ -17,8 +17,16 @@ class LyricsViewModel(
     val uiState = _uiState.asStateFlow()
 
     private var job : Job? = null
+    private var lastRequest : Triple<String, String, String?>? = null
 
     fun fetchLyrics(artist : String, track : String, album : String?) {
+        val request = Triple(artist, track, album)
+
+        val alreadyHandled = request == lastRequest &&
+                (_uiState.value is LyricsUiState.Success || job?.isActive == true)
+        if (alreadyHandled) return
+
+        lastRequest = request
         job?.cancel()
         job = viewModelScope.launch {
             _uiState.value = LyricsUiState.Loading

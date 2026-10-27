@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
+import com.m4ykey.core.paging.distinctById
 import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
 import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
@@ -13,13 +15,16 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -51,20 +56,25 @@ class SearchViewModel(
         _searchType.update { it.copy(type = type) }
     }
 
-    val searchLyricsResults = combine(
+    val searchLyricsResults : StateFlow<LyricsSearchState> = combine(
         _activeSearchQuery,
         _searchType
     ) { query, typeState -> query to typeState.type }
         .flatMapLatest { (query, type) ->
             if (query.isBlank() || type != SearchType.LYRICS) {
-                flowOf(emptyList())
+                flowOf(LyricsSearchState.Idle)
             } else {
                 lyricsUseCase(query = query)
+                    .map<_, LyricsSearchState> { LyricsSearchState.Success(it) }
+                    .onStart { emit(LyricsSearchState.Loading) }
+                    .catch { e ->
+                        emit(LyricsSearchState.Error(e.localizedMessage ?: "An unexpected error occurred"))
+                    }
             }
         }
         .stateIn(
             scope = viewModelScope,
-            initialValue = emptyList(),
+            initialValue = LyricsSearchState.Idle,
             started = SharingStarted.Lazily
         )
 
@@ -78,6 +88,7 @@ class SearchViewModel(
             } else {
                 artistUseCase(query = query, type = type.name.lowercase())
             }
+        .map { pagingData -> pagingData.distinctById { it.id } }
     }
         .cachedIn(viewModelScope)
         .stateIn(
@@ -96,6 +107,7 @@ class SearchViewModel(
             } else {
                 albumUseCase(query = query, type = type.name.lowercase())
             }
+                .map { pagingData -> pagingData.distinctById { it.id } }
     }
         .cachedIn(viewModelScope)
         .stateIn(

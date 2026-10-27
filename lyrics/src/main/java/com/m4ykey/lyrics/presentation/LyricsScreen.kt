@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -144,7 +145,7 @@ fun LyricsContent(
     val textColor = if (isDarkTheme) Color.White else Color.Black
     val textColor2 = if (isDarkTheme) Color(0xFFBDBDBD) else Color(0xFF424242)
 
-    var showRhymes by remember(item.id) {
+    var showRhymes by rememberSaveable(item.id) {
         mutableStateOf(false)
     }
 

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -68,45 +69,49 @@ fun CoverDisplay(
     val colors by viewModel.colors.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    Column(
+    LazyColumn(
         modifier = modifier.padding(paddingValues),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            LoadImage(
-                imageUrl = imageUrl,
-                modifier = Modifier.size(260.dp),
-                onImageLoaded = viewModel::extractColors
-            )
+        item {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                LoadImage(
+                    imageUrl = imageUrl,
+                    modifier = Modifier.size(260.dp),
+                    onImageLoaded = viewModel::extractColors
+                )
+            }
         }
-        LazyHorizontalGrid(
-            rows = GridCells.Fixed(2),
-            modifier = Modifier
-                .padding(horizontal = 10.dp)
-                .fillMaxWidth()
-                .height(110.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(colors) { color ->
-                Card(
-                    shape = RoundedCornerShape(5.dp),
-                    modifier = Modifier
-                        .clickable {
-                            val hex = String.format("#%06X", color and 0xFFFFFF)
-                            copyText(hex, context = context)
-                            showToast(context = context, hex)
-                        },
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Box(
+        item {
+            LazyHorizontalGrid(
+                rows = GridCells.Fixed(2),
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .fillMaxWidth()
+                    .height(110.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(colors) { color ->
+                    Card(
+                        shape = RoundedCornerShape(5.dp),
                         modifier = Modifier
-                            .background(Color(color))
-                            .size(50.dp)
-                    )
+                            .clickable {
+                                val hex = String.format("#%06X", color and 0xFFFFFF)
+                                copyText(hex, context = context)
+                                showToast(context = context, hex)
+                            },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .background(Color(color))
+                                .size(50.dp)
+                        )
+                    }
                 }
             }
         }
