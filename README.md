@@ -3,9 +3,13 @@
 2. Create ```local.properties``` file
 3. Add your [Discogs](https://www.discogs.com/developers) key:
 4. Add your [Genius](https://docs.genius.com/) key:
+
+5. Go to [Firebase](https://firebase.google.com/)
+6. Generate and import ```google-services.json``` file and insert it into ```/app```
 ```
 token=YOUR_DISCOGS_KEY
 genius_token=YOUR_GENIUS_KEY
+contact_email=YOUR_CONTACT_EMAIL - (It is not urgently required) 
 ```
 
 # License
