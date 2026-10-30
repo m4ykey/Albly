@@ -12,6 +12,7 @@ import com.m4ykey.search.domain.model.album.ResultsAlbum
 import com.m4ykey.search.domain.model.artist.ResultsArtist
 import com.m4ykey.search.domain.model.lyrics.GeniusRoot
 import com.m4ykey.search.domain.repository.SearchRepository
+import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -52,15 +53,16 @@ class SearchRepositoryImpl(
         ).flow
     }
 
-    override fun searchLyrics(query: String): Flow<List<GeniusRoot>> {
-        return flow {
-            try {
-                val responseDto = lyricsService.searchLyrics(query)
-                val domainResults = responseDto.toGeniusRoot()
-                emit(listOf(domainResults))
-            } catch (e : Exception) {
-                emit(emptyList())
-            }
+    override fun searchLyrics(query: String): Flow<List<GeniusRoot>> = flow {
+        val domainResults = try {
+            val responseDto = lyricsService.searchLyrics(query)
+            listOf(responseDto.toGeniusRoot())
+        } catch (e : CancellationException) {
+            throw e
+        } catch (e : Exception) {
+            emptyList()
         }
+
+        emit(domainResults)
     }
 }

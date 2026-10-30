@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "9.5.0"
 kotlin = "2.4.21"
 core-ktx = "1.19.1"
 junit = "4.13.2"
@@ -72,6 +72,8 @@ androidx-palette = { group = "androidx.palette", name = "palette", version.ref =
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref= "lottie" }
+
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permissions" }
 
