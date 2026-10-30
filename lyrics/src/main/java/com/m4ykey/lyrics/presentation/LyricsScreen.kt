@@ -181,6 +181,34 @@ fun LyricsContent(
 
     val highlightedLyrics = if (showRhymes) rhymedText else plainText
 
+    val verseRanges = remember(lines) {
+        val offsets = IntArray(lines.size)
+        var o = 0
+        lines.forEachIndexed { i, l -> offsets[i] = o; o += l.length + 1 }
+
+        val groups = mutableListOf<IntRange>()
+        var s = -1
+        lines.forEachIndexed { i, l ->
+            if (l.isBlank()) {
+                if (s != -1) { groups += s until i; s = -1 }
+            } else if (s == -1) s = i
+        }
+        if (s != -1) groups += s until lines.size
+
+        val finalGroups = if (groups.size <= 1 && lines.count { it.isNotBlank() } > 8) {
+            val all = groups.firstOrNull() ?: return@remember emptyList()
+            all.chunked(4).map { it.first()..it.last() }
+        } else groups
+
+        finalGroups.map { g ->
+            offsets[g.first] until (offsets[g.last] + lines[g.last].length)
+        }
+    }
+
+    val verses = remember(highlightedLyrics, verseRanges) {
+        verseRanges.map { highlightedLyrics.subSequence(it.first, it.last + 1) }
+    }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -256,12 +284,30 @@ fun LyricsContent(
         }
 
         item {
-            Text(
-                fontSize = 18.sp,
-                color = textColor,
-                text = highlightedLyrics,
-                lineHeight = 28.sp
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+                verses.forEach { verse ->
+                    Text(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp,
+                        color = textColor,
+                        text = verse,
+                        lineHeight = 32.sp
+                    )
+                }
+            }
+        }
+        item.source?.let { source ->
+            item {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 16.dp),
+                    text = "${stringResource(R.string.lyrics_provided_by)}: ${source.displayName}",
+                    color = textColor2,
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

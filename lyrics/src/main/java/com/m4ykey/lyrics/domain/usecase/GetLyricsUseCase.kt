@@ -2,6 +2,7 @@ package com.m4ykey.lyrics.domain.usecase
 
 import com.m4ykey.lyrics.domain.model.LyricsItem
 import com.m4ykey.lyrics.domain.model.LyricsRedItem
+import com.m4ykey.lyrics.domain.model.LyricsSource
 import com.m4ykey.lyrics.domain.repository.LyricsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -17,10 +18,10 @@ class GetLyricsUseCase(
         album: String?
     ): Flow<LyricsItem> = flow {
         fetchFromLrclib(artist, track, album)?.let {
-            emit(it)
+            emit(it.copy(source = LyricsSource.LRCLIB))
             return@flow
         }
-        emit(fetchFromRedLyrics(artist, track))
+        emit(fetchFromRedLyrics(artist, track).copy(source = LyricsSource.RED_LYRICS))
     }
 
     private suspend fun fetchFromLrclib(
