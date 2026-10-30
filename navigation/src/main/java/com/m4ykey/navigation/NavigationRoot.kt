@@ -16,6 +16,7 @@ import com.m4ykey.album.presentation.detail.AlbumCoverScreen
 import com.m4ykey.album.presentation.detail.AlbumDetailScreen
 import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
+import com.m4ykey.artist.presentation.ArtistScreen
 import com.m4ykey.collection.presentation.CollectionScreen
 import com.m4ykey.lyrics.presentation.LyricsScreen
 import com.m4ykey.search.presentation.SearchScreen
@@ -39,6 +40,7 @@ fun NavigationRoot(
                     subclass(Route.ListenLater::class, Route.ListenLater.serializer())
                     subclass(Route.Lyrics::class, Route.Lyrics.serializer())
                     subclass(Route.Cover::class, Route.Cover.serializer())
+                    subclass(Route.Artist::class, Route.Artist.serializer())
                 }
             }
         },
@@ -123,7 +125,9 @@ fun NavigationRoot(
                     onCoverClick = { image ->
                         navigateTo(Route.Cover(image))
                     },
-                    onArtistClick = {}
+                    onArtistClick = { artistId ->
+                        navigateTo(Route.Artist(artistId))
+                    }
                 )
             }
             entry<Route.NewRelease> {
@@ -149,6 +153,12 @@ fun NavigationRoot(
             entry<Route.Cover> { key ->
                 AlbumCoverScreen(
                     imageUrl = key.imageUrl,
+                    onBack = ::navigateBack
+                )
+            }
+            entry<Route.Artist> { key ->
+                ArtistScreen(
+                    artistId = key.artistId,
                     onBack = ::navigateBack
                 )
             }

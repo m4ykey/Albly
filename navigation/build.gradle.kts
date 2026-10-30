@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":collection"))
     implementation(project(":album"))
     implementation(project(":settings"))
+    implementation(project(":artist"))
 
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)

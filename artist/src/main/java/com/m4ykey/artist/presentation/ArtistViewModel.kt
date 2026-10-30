@@ -2,7 +2,6 @@ package com.m4ykey.artist.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.m4ykey.artist.domain.model.Artist
 import com.m4ykey.artist.domain.repository.ArtistRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -15,21 +14,21 @@ class ArtistViewModel(
     private val repository : ArtistRepository
 ) : ViewModel() {
 
-    private val _artistDialogState = MutableStateFlow<ArtistDialogState?>(null)
+    private val _artistDialogState = MutableStateFlow<ArtistState?>(null)
     val artistDialogState = _artistDialogState.asStateFlow()
 
     fun loadArtists(artists : List<Int>) {
         viewModelScope.launch {
-            _artistDialogState.value = ArtistDialogState.Loading
+            _artistDialogState.value = ArtistState.Loading
 
             _artistDialogState.value = try {
                 val result = artists.map { id ->
                     async { repository.getArtistById(id).first() }
                 }.awaitAll()
 
-                ArtistDialogState.Success(result)
+                ArtistState.Success(result)
             } catch (e : Exception) {
-                ArtistDialogState.Error(e.message ?: "Failed to fetch artists")
+                ArtistState.Error(e.message ?: "Failed to fetch artists")
             }
         }
     }

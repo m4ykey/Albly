@@ -47,6 +47,8 @@ dependencies {
 
     implementation(libs.bundles.ktor)
 
+    implementation(libs.landscapist)
+
     implementation(libs.ktx.serialization.json)
 
     testImplementation(libs.junit)

@@ -54,7 +54,7 @@ import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
 import com.m4ykey.artist.domain.model.Artist
-import com.m4ykey.artist.presentation.ArtistDialogState
+import com.m4ykey.artist.presentation.ArtistState
 import com.m4ykey.artist.presentation.ArtistViewModel
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
@@ -71,7 +71,7 @@ fun AlbumDetailScreen(
     viewModel : AlbumDetailViewModel = koinViewModel(),
     onTrackClick : (TrackClickItem) -> Unit,
     onCoverClick: (String) -> Unit,
-    onArtistClick: (Artists) -> Unit,
+    onArtistClick: (Int) -> Unit,
     artistViewModel : ArtistViewModel = koinViewModel()
 ) {
 
@@ -128,7 +128,7 @@ fun AlbumDetailDisplay(
     onSaveToggle: (AlbumEntity) -> Unit,
     onListenLaterToggle: (AlbumEntity) -> Unit,
     onCoverClick: (String) -> Unit,
-    onArtistClick : (Artists) -> Unit,
+    onArtistClick : (Int) -> Unit,
     artistViewModel : ArtistViewModel
 ) {
     when (albumDetail) {
@@ -178,7 +178,7 @@ fun AlbumDetailContent(
     isListenLaterSaved : Boolean,
     item : AlbumRoot,
     onCoverClick : (String) -> Unit,
-    onArtistClick : (Artists) -> Unit,
+    onArtistClick : (Int) -> Unit,
     artistViewModel : ArtistViewModel
 ) {
     val albumEntity = remember(item) {
@@ -201,6 +201,7 @@ fun AlbumDetailContent(
         ShowArtistDialog(
             onArtistClick = { artist ->
                 showAlertDialog = false
+                onArtistClick(artist)
             },
             onDismiss = { showAlertDialog = false },
             state = artistViewModel.artistDialogState.collectAsState().value
@@ -276,7 +277,7 @@ fun AlbumDetailContent(
                 onArtistClick = {
                     when (item.artists.size) {
                         0 -> Unit
-                        1 -> onArtistClick(item.artists.first())
+                        1 -> onArtistClick(item.artists[0].id)
                         else -> {
                             showAlertDialog = true
                             artistViewModel.loadArtists(item.artists.map { it.id })
@@ -310,9 +311,9 @@ fun AlbumDetailContent(
 
 @Composable
 fun ShowArtistDialog(
-    state : ArtistDialogState?,
+    state : ArtistState?,
     onDismiss : () -> Unit,
-    onArtistClick : (Artist) -> Unit
+    onArtistClick : (Int) -> Unit
 ) {
     BasicAlertDialog(
         onDismissRequest = onDismiss,
@@ -330,16 +331,19 @@ fun ShowArtistDialog(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 when (state) {
-                    null, ArtistDialogState.Loading -> {
+                    null, ArtistState.Loading -> {
                         CircularProgressIndicator()
                     }
-                    is ArtistDialogState.Error -> {
+                    is ArtistState.Error -> {
                         Text(state.message)
                     }
-                    is ArtistDialogState.Success -> {
+                    is ArtistState.Success -> {
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             items(state.artists) { artist ->
-                                AlbumArtistItem(artist = artist)
+                                AlbumArtistItem(
+                                    artist = artist,
+                                    onArtistClick = onArtistClick
+                                )
                             }
                         }
                     }
@@ -352,12 +356,15 @@ fun ShowArtistDialog(
 @Composable
 fun AlbumArtistItem(
     modifier: Modifier = Modifier,
-    artist : Artist
+    artist : Artist,
+    onArtistClick: (Int) -> Unit
 ) {
     val imageUrl = artist.images.find { it.type == "primary" }?.uri ?: artist.images.firstOrNull()?.uri
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .clickable { onArtistClick(artist.id) }
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
