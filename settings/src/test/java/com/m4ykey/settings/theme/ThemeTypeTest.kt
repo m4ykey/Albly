@@ -1,6 +1,5 @@
-package com.m4ykey.settings
+package com.m4ykey.settings.theme
 
-import com.m4ykey.settings.theme.ThemeType
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.assertEquals

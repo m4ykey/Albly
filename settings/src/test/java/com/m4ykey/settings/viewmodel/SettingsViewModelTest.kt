@@ -1,8 +1,9 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package com.m4ykey.settings
+package com.m4ykey.settings.viewmodel
 
 import app.cash.turbine.test
+import com.m4ykey.settings.SettingsViewModel
 import com.m4ykey.settings.theme.ThemePreferences
 import com.m4ykey.settings.theme.ThemeType
 import io.mockk.Runs

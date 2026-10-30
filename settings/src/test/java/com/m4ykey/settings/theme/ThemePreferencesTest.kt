@@ -1,10 +1,8 @@
-package com.m4ykey.settings
+package com.m4ykey.settings.theme
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import com.m4ykey.settings.theme.ThemePreferences
-import com.m4ykey.settings.theme.ThemeType
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

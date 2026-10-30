@@ -82,7 +82,7 @@ class SearchViewModel(
         _searchType
     ) { query, typeState -> query to typeState.type }
         .flatMapLatest { (query, type) ->
-            if (query.isBlank()) {
+            if (query.isBlank() || type != SearchType.ARTIST) {
                 emptyFlow()
             } else {
                 artistUseCase(query = query, type = type.name.lowercase())
@@ -101,7 +101,7 @@ class SearchViewModel(
         _searchType
     ) { query, typeState -> query to typeState.type }
         .flatMapLatest { (query, type) ->
-            if (query.isBlank()) {
+            if (query.isBlank() || type != SearchType.ALBUM) {
                 emptyFlow()
             } else {
                 albumUseCase(query = query, type = type.name.lowercase())
