@@ -11,4 +11,6 @@
     <string name="data_is_provided_by">Dane dostarcza</string>
     <string name="lyrics_data_is_provided_by">Dane na temat tekstu utworów dostarcza</string>
     <string name="song_search_engine">Wyszukiwarka utworów</string>
+    <string name="remove_image_cache">Usuń pamięć podręczną obrazków</string>
+    <string name="remove_image_cache_message">Usuwa pamięć podręczną obrazków w aplikacji</string>
 </resources>

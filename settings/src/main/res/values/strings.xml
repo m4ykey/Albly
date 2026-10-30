@@ -11,4 +11,6 @@
     <string name="data_is_provided_by">Data is provided by</string>
     <string name="lyrics_data_is_provided_by">Lyrics data is provided by</string>
     <string name="song_search_engine">Song search engine</string>
+    <string name="remove_image_cache">Remove image cache</string>
+    <string name="remove_image_cache_message">Clears the image cache in the application</string>
 </resources>

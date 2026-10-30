@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,16 +41,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.ImageLoader
+import coil3.imageLoader
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.settings.theme.ThemeType
 import com.m4ykey.settings.theme.label
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @ExperimentalMaterial3Api
@@ -60,6 +66,7 @@ fun SettingsScreen(
     val state = rememberLazyListState()
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     var isThemeDialogVisible by rememberSaveable {
         mutableStateOf(false)
@@ -81,7 +88,12 @@ fun SettingsScreen(
                 themeLabel = selectedTheme.label(),
                 paddingValues = padding,
                 onOpenSourceClick = { openLink("https://github.com/m4ykey/Albly", context = context) },
-                onThemeClick = { isThemeDialogVisible = true }
+                onThemeClick = { isThemeDialogVisible = true },
+                onImageCacheClick = {
+                    scope.launch {
+                        clearImageCache(context.imageLoader)
+                    }
+                }
             )
         },
         title = R.string.settings
@@ -97,6 +109,11 @@ fun SettingsScreen(
     )
 }
 
+suspend fun clearImageCache(imageLoader: ImageLoader) {
+    imageLoader.memoryCache?.clear()
+    imageLoader.diskCache?.clear()
+}
+
 @Composable
 fun SettingsContent(
     modifier: Modifier = Modifier,
@@ -104,7 +121,8 @@ fun SettingsContent(
     paddingValues: PaddingValues,
     themeLabel : String,
     onThemeClick : () -> Unit,
-    onOpenSourceClick : () -> Unit
+    onOpenSourceClick : () -> Unit,
+    onImageCacheClick : () -> Unit
 ) {
     LazyColumn(
         modifier = modifier.padding(paddingValues),
@@ -127,7 +145,25 @@ fun SettingsContent(
             )
         }
         item {
+            SettingsIcon(
+                icon = R.drawable.ic_image,
+                title = R.string.remove_image_cache,
+                message = stringResource(R.string.remove_image_cache_message),
+                onClick = onImageCacheClick
+            )
+        }
+        item {
             ContentProviders(modifier = Modifier.padding(horizontal = 10.dp))
+        }
+        item {
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+        item {
+            Text(
+                text = BuildConfig.APP_VERSION,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

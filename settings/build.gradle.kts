@@ -72,6 +72,8 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.jetpack.compose)
 
+    implementation(libs.landscapist)
+
     implementation(libs.androidx.datastore.preferences)
 
     testImplementation(libs.junit)
