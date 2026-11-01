@@ -14,6 +14,7 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.m4ykey.album.presentation.detail.AlbumCoverScreen
 import com.m4ykey.album.presentation.detail.AlbumDetailScreen
+import com.m4ykey.album.presentation.detail.AlbumVideoScreen
 import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
 import com.m4ykey.artist.presentation.ArtistScreen
@@ -41,6 +42,7 @@ fun NavigationRoot(
                     subclass(Route.Lyrics::class, Route.Lyrics.serializer())
                     subclass(Route.Cover::class, Route.Cover.serializer())
                     subclass(Route.Artist::class, Route.Artist.serializer())
+                    subclass(Route.Video::class, Route.Video.serializer())
                 }
             }
         },
@@ -127,6 +129,9 @@ fun NavigationRoot(
                     },
                     onArtistClick = { artistId ->
                         navigateTo(Route.Artist(artistId))
+                    },
+                    onVideoClick = { videos ->
+                        navigateTo(Route.Video(videos))
                     }
                 )
             }
@@ -163,6 +168,12 @@ fun NavigationRoot(
                     onAlbumClick = { id ->
                         navigateTo(Route.AlbumDetail(albumId = id))
                     }
+                )
+            }
+            entry<Route.Video> { key ->
+                AlbumVideoScreen(
+                    onBack = ::navigateBack,
+                    videos = key.videos
                 )
             }
         }

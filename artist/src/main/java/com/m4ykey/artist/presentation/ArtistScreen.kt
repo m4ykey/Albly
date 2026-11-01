@@ -229,14 +229,33 @@ fun ArtistReleases(
             ) { index ->
                 releases[index]?.let { release ->
                     Column(
-                        modifier = modifier
+                        modifier = Modifier
                             .width(120.dp)
                             .clickable { onAlbumClick(release.id) }
                     ) {
-                        LoadImage(
-                            modifier = modifier.size(120.dp),
-                            imageUrl = release.thumb
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(120.dp)
+                        ) {
+                            LoadImage(imageUrl = release.thumb)
+                            Card(
+                                shape = RoundedCornerShape(12.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0xff282A2D)
+                                ),
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(3.dp)
+                            ) {
+                                Text(
+                                    text = release.year.toString(),
+                                    fontSize = 11.sp,
+                                    color = Color(0xFFFFC665),
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(vertical = 1.dp, horizontal = 7.dp)
+                                )
+                            }
+                        }
                         Text(
                             text = release.title,
                             maxLines = 2,
@@ -460,7 +479,7 @@ fun DisplayArtist(
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xff282A2D)
+                    containerColor = Color(0xff282A2D).copy(alpha = 0.8f)
                 )
             ) {
                 Row(

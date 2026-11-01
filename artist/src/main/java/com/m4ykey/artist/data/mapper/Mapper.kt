@@ -34,6 +34,7 @@ fun ReleaseItemDto.toReleaseItem() : ReleaseItem {
         resourceUrl = resourceUrl.orEmpty(),
         thumb = thumb.orEmpty(),
         title = title.orEmpty(),
-        type = type.orEmpty()
+        type = type.orEmpty(),
+        year = year ?: 0
     )
 }

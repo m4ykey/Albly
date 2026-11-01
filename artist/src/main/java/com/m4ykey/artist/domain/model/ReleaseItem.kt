@@ -5,5 +5,6 @@ data class ReleaseItem(
     val title : String,
     val type : String,
     val resourceUrl : String,
-    val thumb : String
+    val thumb : String,
+    val year : Int
 )

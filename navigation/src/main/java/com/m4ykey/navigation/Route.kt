@@ -33,4 +33,7 @@ sealed interface Route : NavKey {
     @Serializable
     data class Artist(val artistId : Int) : Route
 
+    @Serializable
+    data class Video(val videos : List<String>) : Route
+
 }

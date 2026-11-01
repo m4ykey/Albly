@@ -40,6 +40,7 @@ palette = "1.1.0"
 jsoup = "1.23.2"
 browser = "1.10.0"
 annotation = "1.11.0"
+youtube-player = "13.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -117,6 +118,8 @@ leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.re
 
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+
+youtube-player = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "youtube-player" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

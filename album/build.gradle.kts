@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.ktor)
 
+    implementation(libs.youtube.player)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)

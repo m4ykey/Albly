@@ -14,4 +14,5 @@
     <string name="get_at_least_2_albums">Musisz mieć co najmniej 2 albumy</string>
     <string name="choose_artist">Wybierz artystę</string>
     <string name="data_is_provided_by_discogs">Dane dostarcza Discogs</string>
+    <string name="videos">Wideo</string>
 </resources>

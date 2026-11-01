@@ -72,7 +72,8 @@ fun AlbumDetailScreen(
     onTrackClick : (TrackClickItem) -> Unit,
     onCoverClick: (String) -> Unit,
     onArtistClick: (Int) -> Unit,
-    artistViewModel : ArtistViewModel = koinViewModel()
+    artistViewModel : ArtistViewModel = koinViewModel(),
+    onVideoClick : (List<String>) -> Unit
 ) {
 
     val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
@@ -97,6 +98,16 @@ fun AlbumDetailScreen(
                 textRes = R.string.info,
                 iconRes = R.drawable.ic_info
             )
+            val videoUrls = (albumDetail as? DetailUiState.Success)?.item?.videos?.map { it.uri } ?: emptyList()
+            if (videoUrls.isNotEmpty()) {
+                ActionIconButton(
+                    onClick = {
+                        onVideoClick(videoUrls)
+                    },
+                    textRes = R.string.videos,
+                    iconRes = R.drawable.ic_video
+                )
+            }
         },
         content = { padding ->
             AlbumDetailDisplay(

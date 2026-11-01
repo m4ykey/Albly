@@ -7,12 +7,14 @@ import com.m4ykey.album.data.network.dto.detail.AlbumRootDto
 import com.m4ykey.album.data.network.dto.detail.ArtistsDto
 import com.m4ykey.album.data.network.dto.detail.ImageDto
 import com.m4ykey.album.data.network.dto.detail.TrackListDto
+import com.m4ykey.album.data.network.dto.detail.VideoDto
 import com.m4ykey.album.data.network.dto.new_release.NewReleaseResultDto
 import com.m4ykey.album.data.network.dto.new_release.NewReleaseRootDto
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.model.detail.Artists
 import com.m4ykey.album.domain.model.detail.Image
 import com.m4ykey.album.domain.model.detail.TrackList
+import com.m4ykey.album.domain.model.detail.Video
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.model.new_release.NewReleaseRoot
 
@@ -79,7 +81,8 @@ fun AlbumEntity.toAlbumRoot() : AlbumRoot {
         uri = uri,
         tracklist = trackList.map { it.toTrackList() },
         artists = artistList.map { it.toArtists() },
-        images = image.toImageList()
+        images = image.toImageList(),
+        videos = emptyList()
     )
 }
 
@@ -118,7 +121,8 @@ fun AlbumRootDto.toAlbumRoot() : AlbumRoot {
         year = year ?: 0,
         tracklist = tracklist?.map { it.toTrackList() } ?: emptyList(),
         artists = artists?.map { it.toArtists() } ?: emptyList(),
-        images = images?.map { it.toImage() } ?: emptyList()
+        images = images?.map { it.toImage() } ?: emptyList(),
+        videos = videos?.map { it.toVideo() } ?: emptyList()
     )
 }
 
@@ -142,5 +146,15 @@ fun ArtistsDto.toArtists() : Artists {
     return Artists(
         name = name.orEmpty(),
         id = id ?: 0
+    )
+}
+
+fun VideoDto.toVideo() : Video {
+    return Video(
+        description = description.orEmpty(),
+        title = title.orEmpty(),
+        duration = duration ?: 0,
+        embed = embed,
+        uri = uri.orEmpty()
     )
 }
