@@ -2,4 +2,8 @@
 <resources>
     <string name="realname">Imię i nazwisko</string>
     <string name="discover_the_artist">Odkryj artystę</string>
+    <string name="about_artist">O artyście</string>
+    <string name="expand_full_description">Rozwiń pełny opis</string>
+    <string name="collapse_description">Zwiń opis</string>
+    <string name="gallery">Galeria</string>
 </resources>

@@ -2,4 +2,8 @@
 <resources>
     <string name="realname">Full name</string>
     <string name="discover_the_artist">Discover the artist</string>
+    <string name="about_artist">About artist</string>
+    <string name="expand_full_description">Expand full description</string>
+    <string name="collapse_description">Collapse description</string>
+    <string name="gallery">Gallery</string>
 </resources>

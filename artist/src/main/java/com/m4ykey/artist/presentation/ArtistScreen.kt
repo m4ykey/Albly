@@ -5,17 +5,25 @@ package com.m4ykey.artist.presentation
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -33,9 +41,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -48,6 +58,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
@@ -58,10 +69,12 @@ import coil3.asDrawable
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import com.m4ykey.artist.R
+import com.m4ykey.artist.domain.model.Image
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
+import com.m4ykey.core.ui.LoadImage
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.coil3.CoilImageState
@@ -99,7 +112,7 @@ fun ArtistScreen(
         content = { padding ->
             ArtistContent(
                 state = state,
-                modifier = Modifier.padding(bottom = padding.calculateBottomPadding()),
+                modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
                 onTopLightnessDetected = { topIsLight = it }
             )
         },
@@ -142,6 +155,21 @@ fun ArtistContent(
                         realname = artist.realname
                     )
                 }
+                item {
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+                if (artist.profile.isNotBlank()) {
+                    item {
+                        AboutArtist(
+                            info = artist.profile
+                        )
+                    }
+                }
+                if (artist.images.isNotEmpty()) {
+                    item {
+                        ArtistGallery(images = artist.images)
+                    }
+                }
             }
         }
         is ArtistState.Error -> {
@@ -157,6 +185,139 @@ fun ArtistContent(
         }
         null -> {}
     }
+}
+
+@Composable
+fun ArtistGallery(
+    modifier: Modifier = Modifier,
+    images : List<Image>
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        ArtistInfo(
+            text = R.string.gallery,
+            icon = R.drawable.ic_gallery
+        )
+        LazyRow(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(images) { image ->
+                LoadImage(
+                    imageUrl = image.uri
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ArtistInfo(
+    modifier: Modifier = Modifier,
+    icon : Int,
+    text : Int
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            modifier = modifier.size(18.dp),
+            tint = Color(0xFFFFC665)
+        )
+        Text(
+            text = stringResource(text),
+            color = Color(0xffe2e2e6),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
+fun AboutArtist(
+    info : String,
+    modifier: Modifier = Modifier
+) {
+    var expanded by rememberSaveable(info) { mutableStateOf(false) }
+    var isOverflowing by remember(info) { mutableStateOf(false) }
+
+    val arrowRotation by animateFloatAsState(
+        label = "arrowRotation",
+        animationSpec = tween(300),
+        targetValue = if (expanded) 180f else 0f
+    )
+
+   Column(
+       modifier = modifier
+           .fillMaxWidth()
+           .padding(horizontal = 16.dp)
+   ) {
+       ArtistInfo(
+           icon = R.drawable.ic_artist,
+           text = R.string.about_artist
+       )
+       Spacer(modifier = Modifier.height(10.dp))
+       Card(
+           shape = RoundedCornerShape(12.dp),
+           colors = CardDefaults.cardColors(
+               containerColor = Color(0xFF1a1c1f)
+           )
+       ) {
+           Column(
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(16.dp)
+                   .animateContentSize(
+                       animationSpec = tween(
+                           easing = FastOutSlowInEasing,
+                           durationMillis = 300
+                       )
+                   )
+           ) {
+               Text(
+                   text = info,
+                   maxLines = if (expanded) Int.MAX_VALUE else 3,
+                   overflow = TextOverflow.Ellipsis,
+                   color = Color(0xFFD4C4B0),
+                   fontSize = 16.sp,
+                   onTextLayout = { result ->
+                       if (!expanded) isOverflowing = result.hasVisualOverflow
+                   }
+               )
+               Spacer(modifier = Modifier.height(10.dp))
+               if (expanded || isOverflowing) {
+                   Row(
+                       verticalAlignment = Alignment.CenterVertically,
+                       horizontalArrangement = Arrangement.spacedBy(5.dp),
+                       modifier = Modifier.clickable { expanded = !expanded }
+                   ) {
+                       Text(
+                           text = stringResource(
+                               if (expanded) R.string.collapse_description
+                               else R.string.expand_full_description
+                           ),
+                           color = Color(0xFFFFC665),
+                           fontSize = 14.sp,
+                           fontWeight = FontWeight.Medium
+                       )
+                       Icon(
+                           painter = painterResource(R.drawable.ic_arrow_down),
+                           contentDescription = null,
+                           tint = Color(0xFFFFC665),
+                           modifier = Modifier.rotate(arrowRotation)
+                       )
+                   }
+               }
+           }
+       }
+   }
 }
 
 @Composable
@@ -219,27 +380,18 @@ fun DisplayArtist(
                     )
                 )
         )
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(
-                        Brush.verticalGradient(
-                            0f to Color.Transparent,
-                            1f to Color.Black.copy(alpha = 0.8f)
-                        )
-                    )
-            )
-        }
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .background(
+                    Brush.verticalGradient(
+                        0f to Color.Transparent,
+                        0.5f to Color.Black.copy(alpha = 0.6f),
+                        1f to Color.Black.copy(alpha = 0.9f)
+                    )
+                )
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 40.dp)
         ) {
             Card(
                 shape = RoundedCornerShape(16.dp),
@@ -271,15 +423,17 @@ fun DisplayArtist(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 28.sp
             )
-            realname?.let {
+            realname?.takeIf { it.isNotBlank() }?.let { name ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         contentDescription = "",
                         painter = painterResource(R.drawable.ic_realname),
-                        tint = Color(0xffFFC665)
+                        tint = Color(0xffFFC665),
+                        modifier = Modifier.size(15.dp)
                     )
                     Text(
                         text = "${stringResource(R.string.realname)}:",
@@ -288,7 +442,7 @@ fun DisplayArtist(
                     )
                     Text(
                         color = Color.White,
-                        text = realname
+                        text = name
                     )
                 }
             }
@@ -305,7 +459,8 @@ fun DisplayArtist(
                     Icon(
                         painter = painterResource(R.drawable.ic_album),
                         contentDescription = null,
-                        tint = Color(0xFF432C00)
+                        tint = Color(0xFF432C00),
+                        modifier = Modifier.size(16.dp)
                     )
                     Text(
                         text = stringResource(R.string.discover_the_artist),
@@ -315,7 +470,7 @@ fun DisplayArtist(
                     Icon(
                         contentDescription = null,
                         painter = painterResource(R.drawable.ic_arrow_up_right),
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(16.dp),
                         tint = Color(0xFF432C00)
                     )
                 }
