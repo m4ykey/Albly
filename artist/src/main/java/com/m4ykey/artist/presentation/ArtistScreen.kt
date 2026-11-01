@@ -3,7 +3,6 @@
 package com.m4ykey.artist.presentation
 
 import android.app.Activity
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -21,10 +20,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,7 +32,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -55,8 +53,6 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -65,13 +61,17 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.get
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.asDrawable
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import com.m4ykey.artist.R
 import com.m4ykey.artist.domain.model.Image
+import com.m4ykey.artist.domain.model.ReleaseItem
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
@@ -89,15 +89,19 @@ fun ArtistScreen(
     modifier: Modifier = Modifier,
     artistId: Int,
     onBack: () -> Unit,
-    viewModel: ArtistViewModel = koinViewModel()
+    viewModel: ArtistViewModel = koinViewModel(),
+    onAlbumClick : (Int) -> Unit
 ) {
     LaunchedEffect(artistId) {
         viewModel.loadArtists(listOf(artistId))
+        viewModel.setReleaseId(artistId)
     }
 
     val state by viewModel.artistDialogState.collectAsStateWithLifecycle()
 
     var topIsLight by remember { mutableStateOf(false) }
+
+    val releases = viewModel.getArtistReleases().collectAsLazyPagingItems()
 
     val view = LocalView.current
     DisposableEffect(topIsLight) {
@@ -113,7 +117,9 @@ fun ArtistScreen(
             ArtistContent(
                 state = state,
                 modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
-                onTopLightnessDetected = { topIsLight = it }
+                onTopLightnessDetected = { topIsLight = it },
+                onAlbumClick = onAlbumClick,
+                releases = releases
             )
         },
         navigation = {
@@ -132,7 +138,9 @@ fun ArtistScreen(
 fun ArtistContent(
     modifier: Modifier = Modifier,
     state: ArtistState?,
-    onTopLightnessDetected: (isLight: Boolean) -> Unit
+    releases : LazyPagingItems<ReleaseItem>,
+    onTopLightnessDetected: (isLight: Boolean) -> Unit,
+    onAlbumClick: (Int) -> Unit
 ) {
     when (state) {
         is ArtistState.Success -> {
@@ -170,6 +178,14 @@ fun ArtistContent(
                         ArtistGallery(images = artist.images)
                     }
                 }
+                if (releases.itemCount > 0) {
+                    item {
+                        ArtistReleases(
+                            onAlbumClick = onAlbumClick,
+                            releases = releases
+                        )
+                    }
+                }
             }
         }
         is ArtistState.Error -> {
@@ -184,6 +200,54 @@ fun ArtistContent(
             }
         }
         null -> {}
+    }
+}
+
+@Composable
+fun ArtistReleases(
+    modifier: Modifier = Modifier,
+    releases : LazyPagingItems<ReleaseItem>,
+    onAlbumClick : (Int) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        ArtistInfo(
+            icon = R.drawable.ic_album,
+            text = R.string.releases
+        )
+        LazyRow(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(
+                count = releases.itemCount,
+                key = { index -> releases.peek(index)?.id ?: index }
+            ) { index ->
+                releases[index]?.let { release ->
+                    Column(
+                        modifier = modifier
+                            .width(120.dp)
+                            .clickable { onAlbumClick(release.id) }
+                    ) {
+                        LoadImage(
+                            modifier = modifier.size(120.dp),
+                            imageUrl = release.thumb
+                        )
+                        Text(
+                            text = release.title,
+                            maxLines = 2,
+                            fontSize = 15.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color(0xFFD4C4B0)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

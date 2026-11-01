@@ -159,7 +159,10 @@ fun NavigationRoot(
             entry<Route.Artist> { key ->
                 ArtistScreen(
                     artistId = key.artistId,
-                    onBack = ::navigateBack
+                    onBack = ::navigateBack,
+                    onAlbumClick = { id ->
+                        navigateTo(Route.AlbumDetail(albumId = id))
+                    }
                 )
             }
         }

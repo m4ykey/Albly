@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -49,7 +50,6 @@ import com.m4ykey.album.data.local.model.AlbumEntity
 import com.m4ykey.album.data.mapper.toAlbumEntity
 import com.m4ykey.album.domain.model.TrackClickItem
 import com.m4ykey.album.domain.model.detail.AlbumRoot
-import com.m4ykey.album.domain.model.detail.Artists
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
@@ -304,6 +304,14 @@ fun AlbumDetailContent(
                 position = currentPosition,
                 img = imageUrl.orEmpty(),
                 album = item.title
+            )
+        }
+
+        item {
+            Text(
+                text = stringResource(R.string.data_is_provided_by_discogs),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
             )
         }
     }
