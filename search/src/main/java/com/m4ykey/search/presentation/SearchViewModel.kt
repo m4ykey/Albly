@@ -11,6 +11,7 @@ import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
 import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,66 +56,20 @@ class SearchViewModel(
         _searchType.update { it.copy(type = type) }
     }
 
-    val searchLyricsResults : StateFlow<LyricsSearchState> = combine(
-        _activeSearchQuery,
-        _searchType
-    ) { query, typeState -> query to typeState.type }
-        .flatMapLatest { (query, type) ->
-            if (query.isBlank() || type != SearchType.LYRICS) {
-                flowOf(LyricsSearchState.Idle)
-            } else {
-                lyricsUseCase(query = query)
-                    .map<_, LyricsSearchState> { LyricsSearchState.Success(it) }
-                    .onStart { emit(LyricsSearchState.Loading) }
-                    .catch { e ->
-                        emit(LyricsSearchState.Error(e.localizedMessage ?: "An unexpected error occurred"))
-                    }
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = LyricsSearchState.Idle,
-            started = SharingStarted.Lazily
-        )
+    val searchLyricsResults = searchFlow(
+        SearchType.LYRICS,
+        source = { lyricsUseCase(query = it) }
+    ) { it.isrc }
 
-    val searchArtistResults = combine(
-        _activeSearchQuery,
-        _searchType
-    ) { query, typeState -> query to typeState.type }
-        .flatMapLatest { (query, type) ->
-            if (query.isBlank() || type != SearchType.ARTIST) {
-                emptyFlow()
-            } else {
-                artistUseCase(query = query, type = type.name.lowercase())
-            }
-        .map { pagingData -> pagingData.distinctById { it.id } }
-    }
-        .cachedIn(viewModelScope)
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = PagingData.empty(),
-            started = SharingStarted.Lazily
-        )
+    val searchArtistResults = searchFlow(
+        SearchType.ARTIST,
+        source = { artistUseCase(query = it, type = "artist") }
+    ) { it.id }
 
-    val searchAlbumResults = combine(
-        _activeSearchQuery,
-        _searchType
-    ) { query, typeState -> query to typeState.type }
-        .flatMapLatest { (query, type) ->
-            if (query.isBlank() || type != SearchType.ALBUM) {
-                emptyFlow()
-            } else {
-                albumUseCase(query = query, type = type.name.lowercase())
-            }
-                .map { pagingData -> pagingData.distinctById { it.id } }
-    }
-        .cachedIn(viewModelScope)
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = PagingData.empty(),
-            started = SharingStarted.Lazily
-        )
-
+    val searchAlbumResults = searchFlow(
+        SearchType.ALBUM,
+        source = { albumUseCase(query = it, type = "album") }
+    ) { it.id ?: 0 }
 
     fun onAction(action: SearchTypeAction) {
         viewModelScope.launch {
@@ -138,7 +93,26 @@ class SearchViewModel(
                 is SearchTypeAction.OnAlbumClick -> {
                     _searchUiEvent.emit(SearchUiEvent.OnAlbumClick(action.id))
                 }
+
+                is SearchTypeAction.OnArtistClick -> {
+                    _searchUiEvent.emit(SearchUiEvent.OnArtistClick(action.id))
+                }
             }
         }
     }
+
+    private fun <T: Any> searchFlow(
+        targetType : SearchType,
+        source : (query : String) -> Flow<PagingData<T>>,
+        idSelector : (T) -> Any
+    ) : Flow<PagingData<T>> =
+        combine(_activeSearchQuery, _searchType) { query, state -> query to state.type }
+            .flatMapLatest { (query, type) ->
+                if (query.isBlank() || type != targetType) {
+                    flowOf(PagingData.empty())
+                } else {
+                    source(query).map { it.distinctById(idSelector) }
+                }
+            }
+            .cachedIn(viewModelScope)
 }

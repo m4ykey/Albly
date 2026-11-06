@@ -3,22 +3,19 @@ package com.m4ykey.search.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import com.m4ykey.core.paging.pagingConfig
-import com.m4ykey.search.data.mapper.toGeniusRoot
-import com.m4ykey.search.data.network.service.RemoteSearchLyricsService
 import com.m4ykey.search.data.network.service.RemoteSearchService
 import com.m4ykey.search.data.paging.SearchAlbumPagingSource
 import com.m4ykey.search.data.paging.SearchArtistPagingSource
+import com.m4ykey.search.data.paging.SearchLyricsPagingSource
 import com.m4ykey.search.domain.model.album.ResultsAlbum
 import com.m4ykey.search.domain.model.artist.ResultsArtist
-import com.m4ykey.search.domain.model.lyrics.GeniusRoot
+import com.m4ykey.search.domain.model.lyrics.Hit
 import com.m4ykey.search.domain.repository.SearchRepository
-import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SearchRepositoryImpl(
-    private val service : RemoteSearchService,
-    private val lyricsService : RemoteSearchLyricsService
+    private val service : RemoteSearchService
 ) : SearchRepository {
 
     override fun searchAlbum(
@@ -53,16 +50,15 @@ class SearchRepositoryImpl(
         ).flow
     }
 
-    override fun searchLyrics(query: String): Flow<List<GeniusRoot>> = flow {
-        val domainResults = try {
-            val responseDto = lyricsService.searchLyrics(query)
-            listOf(responseDto.toGeniusRoot())
-        } catch (e : CancellationException) {
-            throw e
-        } catch (e : Exception) {
-            emptyList()
-        }
-
-        emit(domainResults)
+    override fun searchLyrics(query: String): Flow<PagingData<Hit>> {
+        return Pager(
+            config = pagingConfig,
+            pagingSourceFactory = {
+                SearchLyricsPagingSource(
+                    service = service,
+                    query = query
+                )
+            }
+        ).flow
     }
 }

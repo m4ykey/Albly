@@ -5,11 +5,9 @@ package com.m4ykey.search.viewmodel
 import androidx.paging.PagingData
 import app.cash.turbine.test
 import com.m4ykey.search.MainDispatcherRule
-import com.m4ykey.search.domain.model.lyrics.GeniusRoot
 import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
 import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
-import com.m4ykey.search.presentation.LyricsSearchState
 import com.m4ykey.search.presentation.SearchType
 import com.m4ykey.search.presentation.SearchTypeAction
 import com.m4ykey.search.presentation.SearchUiEvent

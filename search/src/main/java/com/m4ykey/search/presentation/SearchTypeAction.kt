@@ -6,4 +6,5 @@ sealed interface SearchTypeAction {
     data object OnSearchClick : SearchTypeAction
     data class OnAlbumClick(val id : Int) : SearchTypeAction
     data class OnTrackClick(val title : String, val artist : String, val img : String, val album : String?) : SearchTypeAction
+    data class OnArtistClick(val id : Int) : SearchTypeAction
 }

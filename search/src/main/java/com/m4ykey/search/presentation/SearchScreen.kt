@@ -58,7 +58,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -87,11 +86,11 @@ import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ui.ArtistCard
 import com.m4ykey.core.ui.CenteredContent
 import com.m4ykey.core.ui.ChipItem
-import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LyricsCard
 import com.m4ykey.search.R
 import com.m4ykey.search.domain.model.album.ResultsAlbum
 import com.m4ykey.search.domain.model.artist.ResultsArtist
+import com.m4ykey.search.domain.model.lyrics.Hit
 import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
 
@@ -101,14 +100,15 @@ fun SearchScreen(
     onBack: () -> Unit,
     viewModel: SearchViewModel = koinViewModel(),
     onAlbumClick : (Int) -> Unit,
-    onTrackClick : (String, String, String, String?) -> Unit
+    onTrackClick : (String, String, String, String?) -> Unit,
+    onArtistClick : (Int) -> Unit
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     val albumItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
     val artistItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
-    val lyricsItems by viewModel.searchLyricsResults.collectAsStateWithLifecycle()
+    val lyricsItems = viewModel.searchLyricsResults.collectAsLazyPagingItems()
 
     val type by viewModel.searchType.collectAsStateWithLifecycle()
     val activeSearchQuery by viewModel.activeSearchQuery.collectAsStateWithLifecycle()
@@ -127,6 +127,7 @@ fun SearchScreen(
                 is SearchUiEvent.ChangeType -> viewModel.updateType(event.type)
                 is SearchUiEvent.OnAlbumClick -> onAlbumClick(event.id)
                 is SearchUiEvent.OnTrackClick -> onTrackClick(event.title, event.artist, event.img, event.album)
+                is SearchUiEvent.OnArtistClick -> onArtistClick(event.id)
             }
         }
     }
@@ -199,7 +200,6 @@ fun SearchScreen(
             )
             SearchContent(
                 onAction = onAction,
-                isDarkTheme = isDarkTheme,
                 isActiveSearch = isActiveSearch,
                 albumItems = albumItems,
                 type = type,
@@ -217,12 +217,11 @@ fun SearchScreen(
 fun SearchContent(
     modifier: Modifier = Modifier,
     onAction: (SearchTypeAction) -> Unit,
-    isDarkTheme : Color,
     isActiveSearch: Boolean,
     albumItems : LazyPagingItems<ResultsAlbum>,
     type : SearchType,
     artistItems : LazyPagingItems<ResultsArtist>,
-    lyricsItems : LyricsSearchState,
+    lyricsItems : LazyPagingItems<Hit>,
     artistListState : LazyListState,
     albumGridState : LazyGridState,
     lyricsListState : LazyListState
@@ -252,15 +251,15 @@ fun SearchContent(
             SearchType.ARTIST -> ArtistSearchList(
                 isActiveSearch = isActiveSearch,
                 items = artistItems,
-                state = artistListState
+                state = artistListState,
+                onAction = onAction
             )
 
             SearchType.LYRICS -> LyricsSearchList(
                 isActiveSearch = isActiveSearch,
-                isDarkTheme = isDarkTheme,
                 onAction = onAction,
-                state = lyricsItems,
-                listState = lyricsListState
+                items = lyricsItems,
+                state = lyricsListState
             )
         }
     }
@@ -335,7 +334,8 @@ fun ArtistSearchList(
     modifier: Modifier = Modifier,
     isActiveSearch : Boolean,
     items : LazyPagingItems<ResultsArtist>,
-    state : LazyListState
+    state : LazyListState,
+    onAction : (SearchTypeAction) -> Unit
 ) {
     BasePagingList(
         isActiveSearch = isActiveSearch,
@@ -354,7 +354,11 @@ fun ArtistSearchList(
                 ) { index ->
                     items[index]?.let { artist ->
                         ArtistCard(
-                            onArtistClick = {  },
+                            onArtistClick = {
+                                onAction(
+                                    SearchTypeAction.OnArtistClick(artist.id)
+                                )
+                            },
                             title = artist.title,
                             cover = artist.cover_image,
                             id = artist.id
@@ -374,68 +378,50 @@ fun ArtistSearchList(
 fun LyricsSearchList(
     modifier: Modifier = Modifier,
     isActiveSearch: Boolean,
-    state : LyricsSearchState,
-    isDarkTheme : Color,
     onAction: (SearchTypeAction) -> Unit,
-    listState : LazyListState
+    state : LazyListState,
+    items : LazyPagingItems<Hit>
 ) {
-    if (!isActiveSearch) return
-
-    when (state) {
-        is LyricsSearchState.Idle -> Unit
-        is LyricsSearchState.Loading -> {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = modifier.fillMaxSize()
+    BasePagingList(
+        isActiveSearch = isActiveSearch,
+        items = items,
+        listContent = { items ->
+            LazyColumn(
+                modifier = modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                state = state
             ) {
-                ContainedLoadingIndicator()
-            }
-        }
-        is LyricsSearchState.Error -> {
-            ErrorCard(text = state.message)
-        }
-        is LyricsSearchState.Success -> {
-            val songs = remember(state.songs) {
-                state.songs
-                    .flatMap { it.response.hits.map { hit -> hit.result } }
-                    .distinctBy { it.id }
-            }
-
-            if (songs.isEmpty()) {
-                Text(
-                    color = isDarkTheme,
-                    modifier = modifier.padding(16.dp),
-                    text = stringResource(R.string.no_results)
-                )
-            } else {
-                LazyColumn(
-                    modifier = modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                    state = listState
-                ) {
-                    items(
-                        items = songs,
-                        key = { it.id }
-                    ) { song ->
+                items(
+                    contentType = { "lyrics_item" },
+                    key = { index -> items.peek(index)?.isrc?.let { "lyrics_$it" } ?: "placeholder_lyrics_$index" },
+                    count = items.itemCount
+                ) { index ->
+                    items[index]?.let { lyrics ->
                         LyricsCard(
+                            artist = lyrics.artist,
+                            title = lyrics.title,
+                            imageUrl = lyrics.cover,
                             onClick = {
-                                onAction(SearchTypeAction.OnTrackClick(
-                                    title = song.title,
-                                    img = song.songArtImageUrl,
-                                    artist = song.artistNames,
-                                    album = null)
+                                onAction(
+                                    SearchTypeAction.OnTrackClick(
+                                        title = lyrics.title,
+                                        img = lyrics.cover,
+                                        artist = lyrics.artist,
+                                        album = null
+                                    )
                                 )
-                            },
-                            artist = song.artistNames,
-                            title = song.title,
-                            imageUrl = song.songArtImageUrl
+                            }
                         )
                     }
                 }
+
+                item {
+                    PagingAppendState(items)
+                }
             }
         }
-    }
+    )
 }
 
 @Composable

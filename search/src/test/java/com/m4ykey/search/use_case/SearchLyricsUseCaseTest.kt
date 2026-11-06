@@ -1,6 +1,5 @@
 package com.m4ykey.search.use_case
 
-import com.m4ykey.search.domain.model.lyrics.GeniusRoot
 import com.m4ykey.search.domain.repository.SearchRepository
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
 import io.mockk.every

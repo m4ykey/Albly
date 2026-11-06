@@ -18,5 +18,5 @@ val lyricsProvider = listOf(
 )
 
 val searchProvider = listOf(
-    Provider("Genius", "https://genius.com/", R.drawable.genius)
+    Provider("LRC Red", "https://lrc.red/", R.drawable.lrc_red)
 )

@@ -63,7 +63,7 @@ class SearchServiceTest {
             enableLogging = false
         )
 
-        val service = SearchService(client)
+        val service = SearchService(client, client)
 
         val result = service.searchAlbum(query = "Tyga", page = 1)
 
@@ -117,7 +117,7 @@ class SearchServiceTest {
             enableLogging = false
         )
 
-        val service = SearchService(client)
+        val service = SearchService(client, client)
 
         val result = service.searchArtist(query = "Tyga", page = 1)
 

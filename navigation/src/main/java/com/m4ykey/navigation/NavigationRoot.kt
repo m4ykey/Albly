@@ -93,6 +93,9 @@ fun NavigationRoot(
                     onBack = ::navigateBack,
                     onTrackClick = { track, artist, img, album ->
                         navigateTo(Route.Lyrics(track, artist, img, album))
+                    },
+                    onArtistClick = { artistId ->
+                        navigateTo(Route.Artist(artistId))
                     }
                 )
             }
