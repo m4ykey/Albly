@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Switch
@@ -72,6 +75,14 @@ fun LyricsScreen(
         viewModel.fetchLyrics(track = trackName, artist = artistName, album = albumName)
     }
 
+    val isSaved = (lyricsUiState as? LyricsUiState.Success)?.isSaved == true
+
+    val icon = if (isSaved) {
+        Icons.Default.Favorite
+    } else {
+        Icons.Outlined.FavoriteBorder
+    }
+
     AppScaffold(
         navigation = {
             ActionIconButton(
@@ -88,6 +99,15 @@ fun LyricsScreen(
                 lyricsUiState = lyricsUiState,
                 onImageClick = onImageClick
             )
+        },
+        actions = {
+            if (lyricsUiState is LyricsUiState.Success) {
+                ActionIconButton(
+                    onClick = viewModel::toggleSave,
+                    icon = icon,
+                    textRes = R.string.save
+                )
+            }
         }
     )
 }

@@ -6,8 +6,8 @@ import androidx.room.Relation
 data class LyricsWithState(
     @Embedded val lyricsEntity: LyricsEntity,
     @Relation(
-        parentColumn = "track_key",
-        entityColumn = "track_key"
+        parentColumn = "remote_id",
+        entityColumn = "remote_id"
     )
     val isLyricsSaved: IsLyricsSaved?
 )

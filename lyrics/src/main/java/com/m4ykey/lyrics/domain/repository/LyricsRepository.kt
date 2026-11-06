@@ -16,11 +16,23 @@ interface LyricsRepository {
 
     suspend fun insertLyrics(lyrics : LyricsEntity)
     suspend fun insertSavedLyrics(isLyricsSaved: IsLyricsSaved)
-    fun getLyricsById(id : Int) : LyricsEntity?
-    fun getSavedLyricsState(trackKey : String) : IsLyricsSaved?
-    suspend fun getLyricsWithState(id : Int) : LyricsWithState?
-    suspend fun deleteLyrics(id : Int)
-    suspend fun deleteSavedLyricsState(trackKey: String)
+    fun getLyricsById(
+        source : String? = null,
+        remoteId : Int? = null,
+        isrc : String? = null,
+        track : String? = null,
+        artist : String? = null
+    ) : LyricsEntity?
+    fun getSavedLyricsState(source : String, remoteId : Int, isrc : String?) : IsLyricsSaved?
+    suspend fun getLyricsWithState(
+        source : String? = null,
+        remoteId : Int? = null,
+        isrc : String? = null,
+        track : String? = null,
+        artist : String? = null
+    ) : LyricsWithState?
+    suspend fun deleteLyrics(source : String, remoteId : Int, isrc : String?)
+    suspend fun deleteSavedLyricsState(source : String, remoteId : Int, isrc : String?)
     fun getSavedLyricsLatest(query : String) : Flow<List<LyricsEntity>>
     fun getSavedLyricsOldest(query: String) : Flow<List<LyricsEntity>>
     fun getSavedLyricsAlphabetical(query: String) : Flow<List<LyricsEntity>>

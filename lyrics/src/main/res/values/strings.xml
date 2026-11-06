@@ -5,4 +5,5 @@
     <string name="rhyme_groups">rhyme groups</string>
     <string name="disabled">Disabled</string>
     <string name="lyrics_provided_by">Lyrics provided by</string>
+    <string name="save">Save</string>
 </resources>

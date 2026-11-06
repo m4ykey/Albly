@@ -1,5 +1,6 @@
 package com.m4ykey.lyrics.data.mapper
 
+import com.m4ykey.core.database.model.lyrics.LyricsEntity
 import com.m4ykey.lyrics.data.dto.LyricsDtoItem
 import com.m4ykey.lyrics.data.dto.LyricsRedItemDto
 import com.m4ykey.lyrics.domain.model.LyricsItem
@@ -27,5 +28,30 @@ fun LyricsRedItemDto.toDomain() : LyricsRedItem {
         duration = duration ?: 0.0,
         year = year ?: 0,
         isrc = isrc.orEmpty()
+    )
+}
+
+fun LyricsEntity.toLyricsItem() : LyricsItem {
+    return LyricsItem(
+        albumName = album,
+        id = remoteId,
+        artistName = artist,
+        name = title,
+        plainLyrics = lyrics,
+        syncedLyrics = "",
+        trackName = title
+    )
+}
+
+fun LyricsItem.toEntity() : LyricsEntity {
+    return LyricsEntity(
+        isrc = null,
+        title = name,
+        artist = artistName,
+        lyrics = plainLyrics,
+        remoteId = id,
+        album = albumName,
+        source = source?.name?.lowercase().orEmpty(),
+        saveTime = System.currentTimeMillis()
     )
 }

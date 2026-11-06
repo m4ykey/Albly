@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "lyrics_table")
 data class LyricsEntity(
     @PrimaryKey(autoGenerate = true) val id : Int = 0,
-    @ColumnInfo(name = "track_key") val trackKey : String,
     @ColumnInfo(name = "source") val source : String,
     @ColumnInfo(name = "remote_id") val remoteId : Int,
     @ColumnInfo(name = "isrc") val isrc : String?,

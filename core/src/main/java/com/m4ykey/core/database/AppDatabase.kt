@@ -20,7 +20,7 @@ import com.m4ykey.core.database.model.lyrics.LyricsEntity
         LyricsEntity::class,
         IsLyricsSaved::class
     ],
-    version = 2
+    version = 4
 )
 @TypeConverters(AlbumConverters::class)
 abstract class AppDatabase : RoomDatabase() {

@@ -92,24 +92,36 @@ class LyricsRepositoryImpl(
         dao.insertSavedLyrics(isLyricsSaved)
     }
 
-    override fun getLyricsById(id: Int): LyricsEntity? {
-        return dao.getLyricsById(id)
+    override fun getLyricsById(
+        source : String?,
+        remoteId : Int?,
+        isrc : String?,
+        track : String?,
+        artist : String?
+    ): LyricsEntity? {
+        return dao.getLyricsById(source = source, remoteId = remoteId, isrc = isrc, artist = artist, track = track)
     }
 
-    override fun getSavedLyricsState(trackKey: String): IsLyricsSaved? {
-        return dao.getSavedLyricsState(trackKey)
+    override fun getSavedLyricsState(source : String, remoteId : Int, isrc : String?): IsLyricsSaved? {
+        return dao.getSavedLyricsState(source = source, remoteId = remoteId, isrc = isrc)
     }
 
-    override suspend fun getLyricsWithState(id: Int): LyricsWithState? {
-        return dao.getLyricsWithState(id)
+    override suspend fun getLyricsWithState(
+        source : String?,
+        remoteId : Int?,
+        isrc : String?,
+        track : String?,
+        artist : String?
+    ): LyricsWithState? {
+        return dao.getLyricsWithState(source = source, remoteId = remoteId, isrc = isrc)
     }
 
-    override suspend fun deleteLyrics(id: Int) {
-        return dao.deleteLyrics(id)
+    override suspend fun deleteLyrics(source : String, remoteId : Int, isrc : String?) {
+        return dao.deleteLyrics(source = source, remoteId = remoteId, isrc = isrc)
     }
 
-    override suspend fun deleteSavedLyricsState(trackKey: String) {
-        return dao.deleteSavedLyricsState(trackKey)
+    override suspend fun deleteSavedLyricsState(source : String, remoteId : Int, isrc : String?) {
+        return dao.deleteSavedLyricsState(source = source, remoteId = remoteId, isrc = isrc)
     }
 
     override fun getSavedLyricsLatest(query: String): Flow<List<LyricsEntity>> {
