@@ -110,7 +110,8 @@ fun CollectionScreen(
     onAlbumClick : (Int) -> Unit,
     navigateToNewRelease : () -> Unit,
     navigateToListenLater : () -> Unit,
-    navigateToSettings : () -> Unit
+    navigateToSettings : () -> Unit,
+    onLyricsClick : (track : String, artist : String, image : String, album : String) -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -246,7 +247,8 @@ fun CollectionScreen(
                     uiState = uiState,
                     onAlbumClick = onAlbumClick,
                     gridState = gridState,
-                    listTypeState = listTypeState
+                    listTypeState = listTypeState,
+                    onLyricsClick = onLyricsClick
                 )
             },
             scrollBehavior = scrollBehavior
@@ -378,7 +380,8 @@ fun CollectionScreenContent(
     uiState : CollectionUiState,
     onAlbumClick : (Int) -> Unit,
     gridState : LazyGridState,
-    listTypeState : ListTypeState
+    listTypeState : ListTypeState,
+    onLyricsClick : (track : String, artist : String, image : String, album : String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         val headerModifier = Modifier.layout { measurable, constraints ->
@@ -461,7 +464,7 @@ fun CollectionScreenContent(
                             LyricsGridCard(
                                 title = item.title,
                                 artist = item.artist,
-                                onClick = {  },
+                                onClick = { onLyricsClick(item.title, item.artist, item.image, item.album) },
                                 imageUrl = item.image
                             )
                         }
@@ -545,7 +548,7 @@ fun CollectionScreenContent(
                             LyricsCard(
                                 title = item.title,
                                 artist = item.artist,
-                                onClick = {  },
+                                onClick = { onLyricsClick(item.title, item.artist,item.image, item.album) },
                                 imageUrl = item.image,
                                 modifier = Modifier.padding(bottom = 10.dp)
                             )

@@ -28,7 +28,12 @@ sealed interface Route : NavKey {
     data object NewRelease : Route
 
     @Serializable
-    data class Lyrics(val track : String, val artist : String, val img : String, val album : String?) : Route
+    data class Lyrics(
+        val track : String,
+        val artist : String,
+        val img : String?,
+        val album : String?
+    ) : Route
 
     @Serializable
     data class Artist(val artistId : Int) : Route

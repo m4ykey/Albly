@@ -82,7 +82,14 @@ fun NavigationRoot(
                     navigateToListenLater = { navigateTo(Route.ListenLater) },
                     onAlbumClick = { navigateTo(Route.AlbumDetail(it)) },
                     onSearch = { navigateTo(Route.Search) },
-                    onLinkClick = {  }
+                    onLinkClick = {  },
+                    onLyricsClick = { track, artist, image, album ->
+                        navigateTo(Route.Lyrics(
+                            track = track,
+                            artist = artist,
+                            img = image,
+                            album = album))
+                    }
                 )
             }
             entry<Route.Search> {
@@ -151,7 +158,7 @@ fun NavigationRoot(
                     onBack = ::navigateBack,
                     artistName = key.artist,
                     trackName = key.track,
-                    imageUrl = key.img,
+                    imageUrl = key.img.orEmpty(),
                     albumName = key.album,
                     onImageClick = { item ->
                         navigateTo(Route.Cover(item))
