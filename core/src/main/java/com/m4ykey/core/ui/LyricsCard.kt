@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun LyricsCard(
+    modifier: Modifier = Modifier,
     onClick : () -> Unit,
     imageUrl : String,
     title : String,
@@ -29,7 +30,7 @@ fun LyricsCard(
     val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .clickable { onClick() }
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -76,10 +77,7 @@ fun LyricsGridCard(
             .clickable { onClick() }
             .fillMaxWidth()
     ) {
-        LoadImage(
-            imageUrl = imageUrl,
-            modifier = Modifier.size(90.dp)
-        )
+        LoadImage(imageUrl = imageUrl)
         Text(
             text = title,
             textAlign = TextAlign.Start,

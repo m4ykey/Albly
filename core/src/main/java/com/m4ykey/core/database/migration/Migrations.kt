@@ -79,3 +79,42 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         connection.execSQL("ALTER TABLE lyrics_table ADD COLUMN image TEXT NOT NULL DEFAULT ''")
     }
 }
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("DROP TABLE IF EXISTS is_lyrics_saved_table")
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS is_lyrics_saved_table (
+                isLyricsSaved INTEGER NOT NULL,
+                remote_id INTEGER NOT NULL DEFAULT 0,
+                isrc TEXT NOT NULL DEFAULT '',
+                source TEXT NOT NULL,
+                PRIMARY KEY(source, remote_id, isrc)
+            )
+        """.trimIndent())
+
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS lyrics_table_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                source TEXT NOT NULL,
+                remote_id INTEGER NOT NULL,
+                isrc TEXT NOT NULL DEFAULT '',
+                title TEXT NOT NULL,
+                artist TEXT NOT NULL,
+                album TEXT NOT NULL,
+                lyrics TEXT NOT NULL,
+                save_time INTEGER,
+                image TEXT NOT NULL DEFAULT ''
+            )
+        """.trimIndent())
+
+        connection.execSQL("""
+            INSERT INTO lyrics_table_new (id, source, remote_id, isrc, title, artist, album, lyrics, save_time, image)
+            SELECT id, source, remote_id, COALESCE(isrc, ''), title, artist, album, lyrics, save_time, image
+            FROM lyrics_table
+        """.trimIndent())
+
+        connection.execSQL("DROP TABLE lyrics_table")
+        connection.execSQL("ALTER TABLE lyrics_table_new RENAME TO lyrics_table")
+    }
+}

@@ -73,8 +73,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.m4ykey.core.database.model.album.AlbumListItem
-import com.m4ykey.core.Sort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.DrawerItem
@@ -87,13 +85,13 @@ import com.m4ykey.collection.presentation.components.UrlInputField
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListTypeState
 import com.m4ykey.collection.presentation.type.ListViewType
+import com.m4ykey.core.Sort
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AlbumGridCard
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.LyricsCard
 import com.m4ykey.core.ui.LyricsGridCard
 import com.m4ykey.core.ui.showToast
-import com.m4ykey.lyrics.presentation.components.LyricsList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -457,7 +455,7 @@ fun CollectionScreenContent(
                         }
                         items(
                             items = uiState.lyrics,
-                            key = { "lyrics_${it.id}" },
+                            key = { "lyrics_${it.id}_${it.source}_${it.title}_${it.artist}" },
                             contentType = { "album_item" }
                         ) { item ->
                             LyricsGridCard(
@@ -541,14 +539,15 @@ fun CollectionScreenContent(
                         }
                         items(
                             items = uiState.lyrics,
-                            key = { "lyrics_${it.id}" },
+                            key = { "lyrics_${it.id}_${it.source}_${it.title}_${it.artist}" },
                             contentType = { "album_item" }
                         ) { item ->
-                            LyricsList(
+                            LyricsCard(
                                 title = item.title,
                                 artist = item.artist,
                                 onClick = {  },
-                                image = item.image
+                                imageUrl = item.image,
+                                modifier = Modifier.padding(bottom = 10.dp)
                             )
                         }
                     }

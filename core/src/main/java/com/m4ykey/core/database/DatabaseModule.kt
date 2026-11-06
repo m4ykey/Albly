@@ -5,6 +5,7 @@ import com.m4ykey.core.database.migration.MIGRATION_1_2
 import com.m4ykey.core.database.migration.MIGRATION_2_3
 import com.m4ykey.core.database.migration.MIGRATION_3_4
 import com.m4ykey.core.database.migration.MIGRATION_4_5
+import com.m4ykey.core.database.migration.MIGRATION_5_6
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -20,7 +21,8 @@ val databaseModule = module {
                 MIGRATION_1_2,
                 MIGRATION_2_3,
                 MIGRATION_3_4,
-                MIGRATION_4_5
+                MIGRATION_4_5,
+                MIGRATION_5_6
             )
             .build()
     }

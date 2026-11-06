@@ -19,7 +19,8 @@ class GetLyricsUseCase(
         image: String? = null
     ): Flow<LyricsItem> = flow {
         fetchFromLrclib(artist, track, album)?.let {
-            emit(it.copy(source = LyricsSource.LRCLIB))
+            val finalImage = it.image.ifBlank { image.orEmpty() }
+            emit(it.copy(source = LyricsSource.LRCLIB, image = finalImage))
             return@flow
         }
         val redResult = fetchFromRedLyrics(artist, track)
@@ -102,7 +103,8 @@ class GetLyricsUseCase(
                         plainLyrics = text,
                         syncedLyrics = "",
                         trackName = item.title,
-                        image = item.cover
+                        image = item.cover,
+                        isrc = item.isrc
                     )
                 }
             } catch (e: CancellationException) {

@@ -39,13 +39,14 @@ fun LyricsEntity.toLyricsItem() : LyricsItem {
         name = title,
         plainLyrics = lyrics,
         syncedLyrics = "",
-        trackName = title
+        trackName = title,
+        isrc = isrc.orEmpty()
     )
 }
 
 fun LyricsItem.toEntity() : LyricsEntity {
     return LyricsEntity(
-        isrc = null,
+        isrc = isrc,
         title = name,
         artist = artistName,
         lyrics = plainLyrics,
@@ -53,6 +54,6 @@ fun LyricsItem.toEntity() : LyricsEntity {
         album = albumName,
         source = source?.name?.lowercase().orEmpty(),
         saveTime = System.currentTimeMillis(),
-        image = image
+        image = image,
     )
 }

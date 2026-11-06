@@ -71,8 +71,8 @@ fun LyricsScreen(
 
     val lyricsUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(trackName, artistName, albumName) {
-        viewModel.fetchLyrics(track = trackName, artist = artistName, album = albumName)
+    LaunchedEffect(trackName, artistName, albumName, imageUrl) {
+        viewModel.fetchLyrics(track = trackName, artist = artistName, album = albumName, image = imageUrl)
     }
 
     val isSaved = (lyricsUiState as? LyricsUiState.Success)?.isSaved == true

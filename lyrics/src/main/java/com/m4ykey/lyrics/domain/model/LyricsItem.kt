@@ -9,5 +9,6 @@ package com.m4ykey.lyrics.domain.model
         val syncedLyrics : String,
         val trackName : String,
         val source : LyricsSource? = null,
-        val image : String = ""
+        val image : String = "",
+        val isrc : String = ""
     )

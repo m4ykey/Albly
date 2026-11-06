@@ -5,11 +5,11 @@ import androidx.room.Entity
 
 @Entity(
     tableName = "is_lyrics_saved_table",
-    primaryKeys = ["source", "remote_id"]
+    primaryKeys = ["source", "remote_id", "isrc"]
 )
 data class IsLyricsSaved(
     @ColumnInfo("isLyricsSaved") val isLyricsSaved : Boolean,
     @ColumnInfo("remote_id") val remoteId : Int = 0,
-    @ColumnInfo("isrc") val isrc : String? = null,
+    @ColumnInfo("isrc") val isrc : String = "",
     @ColumnInfo("source") val source : String
 )

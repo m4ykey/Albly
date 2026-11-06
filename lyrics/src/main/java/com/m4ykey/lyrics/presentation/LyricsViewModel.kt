@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.m4ykey.core.database.model.lyrics.LyricsEntity
 import com.m4ykey.lyrics.data.mapper.toEntity
 import com.m4ykey.lyrics.data.mapper.toLyricsItem
+import com.m4ykey.lyrics.domain.model.LyricsRequest
 import com.m4ykey.lyrics.domain.usecase.GetLocalLyricsUseCase
 import com.m4ykey.lyrics.domain.usecase.GetLyricsStateUseCase
 import com.m4ykey.lyrics.domain.usecase.GetLyricsUseCase
@@ -28,10 +29,10 @@ class LyricsViewModel(
     val uiState = _uiState.asStateFlow()
 
     private var job : Job? = null
-    private var lastRequest : Triple<String, String, String?>? = null
+    private var lastRequest : LyricsRequest? = null
 
-    fun fetchLyrics(artist : String, track : String, album : String?) {
-        val request = Triple(artist, track, album)
+    fun fetchLyrics(artist : String, track : String, album : String?, image : String? = null) {
+        val request = LyricsRequest(artist, track, album, image)
 
         val alreadyHandled = request == lastRequest &&
                 (_uiState.value is LyricsUiState.Success || job?.isActive == true)
@@ -42,7 +43,7 @@ class LyricsViewModel(
         job = viewModelScope.launch {
             _uiState.value = LyricsUiState.Loading
 
-            getLyricsUseCase.invoke(track = track, album = album, artist = artist)
+            getLyricsUseCase.invoke(track = track, album = album, artist = artist, image = image)
                 .catch { e ->
                     val localLyrics = withContext(Dispatchers.IO) {
                         getLocalLyricsUseCase(track = track, artist = artist)
@@ -65,9 +66,7 @@ class LyricsViewModel(
                         getLyricsStateUseCase(
                             source = sourceStr,
                             remoteId = result.id,
-                            isrc = null,
-                            track = result.trackName,
-                            artist = result.artistName
+                            isrc = result.isrc
                         )
                     }
 
