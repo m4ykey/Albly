@@ -52,6 +52,7 @@ fun LyricsItem.toEntity() : LyricsEntity {
         remoteId = id,
         album = albumName,
         source = source?.name?.lowercase().orEmpty(),
-        saveTime = System.currentTimeMillis()
+        saveTime = System.currentTimeMillis(),
+        image = image
     )
 }

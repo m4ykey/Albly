@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.m4ykey.album.domain.model.AlbumSort
+import com.m4ykey.core.Sort
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
 import com.m4ykey.core.datastore.safeDataStoreOperations
@@ -40,7 +40,7 @@ class CollectionPreferences(
         }
     }
 
-    suspend fun saveSortOption(sort : AlbumSort) {
+    suspend fun saveSortOption(sort : Sort) {
         safeDataStoreOperations {
             dataStore.edit { pref ->
                 pref[SELECTED_SORT_KEY] = sort.name
@@ -66,7 +66,7 @@ class CollectionPreferences(
             }
     }
 
-    fun getSelectedSortOption() : Flow<AlbumSort> {
+    fun getSelectedSortOption() : Flow<Sort> {
         return dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
@@ -79,8 +79,8 @@ class CollectionPreferences(
                 val sort = pref[SELECTED_SORT_KEY]
 
                 sort?.let {
-                    AlbumSort.valueOf(it)
-                } ?: AlbumSort.LATEST
+                    Sort.valueOf(it)
+                } ?: Sort.LATEST
             }
     }
 

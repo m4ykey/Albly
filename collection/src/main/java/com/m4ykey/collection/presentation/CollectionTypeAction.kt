@@ -1,6 +1,6 @@
 package com.m4ykey.collection.presentation
 
-import com.m4ykey.album.domain.model.AlbumSort
+import com.m4ykey.core.Sort
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
 
@@ -10,5 +10,5 @@ sealed interface CollectionTypeAction {
 
     data class OnChangeList(val list : ListType) : CollectionTypeAction
     data class OnChangeView(val view : ListViewType) : CollectionTypeAction
-    data class OnChangeSort(val sort : AlbumSort) : CollectionTypeAction
+    data class OnChangeSort(val sort : Sort) : CollectionTypeAction
 }

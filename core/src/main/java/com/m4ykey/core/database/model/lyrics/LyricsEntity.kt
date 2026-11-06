@@ -14,5 +14,6 @@ data class LyricsEntity(
     @ColumnInfo(name = "artist") val artist : String,
     @ColumnInfo(name = "album") val album : String,
     @ColumnInfo(name = "lyrics") val lyrics : String,
-    @ColumnInfo(name = "save_time") val saveTime : Long? = null
+    @ColumnInfo(name = "save_time") val saveTime : Long? = null,
+    @ColumnInfo(name = "image") val image: String
 )

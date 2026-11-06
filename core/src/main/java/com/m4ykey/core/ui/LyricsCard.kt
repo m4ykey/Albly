@@ -59,3 +59,42 @@ fun LyricsCard(
         }
     }
 }
+
+@Composable
+fun LyricsGridCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    imageUrl : String,
+    title : String,
+    artist : String
+) {
+    val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
+    val textColor2 = if (isSystemInDarkTheme()) Color(0xFFBDBDBD) else Color(0xFF424242)
+
+    Column(
+        modifier = modifier
+            .clickable { onClick() }
+            .fillMaxWidth()
+    ) {
+        LoadImage(
+            imageUrl = imageUrl,
+            modifier = Modifier.size(90.dp)
+        )
+        Text(
+            text = title,
+            textAlign = TextAlign.Start,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
+            color = textColor,
+            fontSize = 17.sp
+        )
+        Text(
+            text = artist,
+            textAlign = TextAlign.Start,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
+            color = textColor2,
+            fontSize = 14.sp
+        )
+    }
+}

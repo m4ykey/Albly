@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import com.m4ykey.album.domain.model.AlbumSort
+import com.m4ykey.core.Sort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.IconSource
@@ -100,11 +100,11 @@ fun TypeChip(
 @Composable
 fun SortTypeChip(
     modifier: Modifier = Modifier,
-    onChange : (AlbumSort) -> Unit,
+    onChange : (Sort) -> Unit,
     onShowDialog : () -> Unit,
     onDismissDialog : () -> Unit,
     isDialogVisible : Boolean,
-    sort : AlbumSort
+    sort : Sort
 ) {
     TypeChip(
         onClick = onShowDialog,
@@ -135,7 +135,7 @@ fun SortTypeChip(
                             fontSize = 20.sp
                         )
 
-                        AlbumSort.entries.forEach { type ->
+                        Sort.entries.forEach { type ->
                             Row(
                                 modifier = modifier
                                     .fillMaxWidth()
@@ -216,8 +216,8 @@ fun ListTypeChip(
 }
 
 @Composable
-fun AlbumSort.label() : String = when (this) {
-    AlbumSort.ALPHABETICAL -> stringResource(R.string.alphabetical)
-    AlbumSort.LATEST -> stringResource(R.string.latest)
-    AlbumSort.OLDEST -> stringResource(R.string.oldest)
+fun Sort.label() : String = when (this) {
+    Sort.ALPHABETICAL -> stringResource(R.string.alphabetical)
+    Sort.LATEST -> stringResource(R.string.latest)
+    Sort.OLDEST -> stringResource(R.string.oldest)
 }

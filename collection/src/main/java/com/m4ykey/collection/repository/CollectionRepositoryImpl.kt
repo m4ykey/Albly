@@ -1,6 +1,6 @@
 package com.m4ykey.collection.repository
 
-import com.m4ykey.album.domain.model.AlbumSort
+import com.m4ykey.core.Sort
 import com.m4ykey.collection.preferences.CollectionPreferences
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
@@ -18,7 +18,7 @@ class CollectionRepositoryImpl(
         return pref.saveListOption(list)
     }
 
-    override suspend fun saveSortOption(sort: AlbumSort) {
+    override suspend fun saveSortOption(sort: Sort) {
         return pref.saveSortOption(sort)
     }
 
@@ -26,7 +26,7 @@ class CollectionRepositoryImpl(
         return pref.getSelectedListOption()
     }
 
-    override fun getSelectedSortOption(): Flow<AlbumSort> {
+    override fun getSelectedSortOption(): Flow<Sort> {
         return pref.getSelectedSortOption()
     }
 

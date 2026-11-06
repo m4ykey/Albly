@@ -74,7 +74,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.core.database.model.album.AlbumListItem
-import com.m4ykey.album.domain.model.AlbumSort
+import com.m4ykey.core.Sort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.DrawerItem
@@ -90,7 +90,10 @@ import com.m4ykey.collection.presentation.type.ListViewType
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AlbumGridCard
 import com.m4ykey.core.ui.AppScaffold
+import com.m4ykey.core.ui.LyricsCard
+import com.m4ykey.core.ui.LyricsGridCard
 import com.m4ykey.core.ui.showToast
+import com.m4ykey.lyrics.presentation.components.LyricsList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -242,9 +245,8 @@ fun CollectionScreen(
                     searchQuery = searchQuery,
                     onHideSearchClick = { viewModel.hideSearch() },
                     clearTextField = { viewModel.clearTextField() },
-                    albums = uiState.albums,
+                    uiState = uiState,
                     onAlbumClick = onAlbumClick,
-                    isLoading = uiState.isLoading,
                     gridState = gridState,
                     listTypeState = listTypeState
                 )
@@ -375,9 +377,8 @@ fun CollectionScreenContent(
     searchQuery : String,
     onHideSearchClick : () -> Unit,
     clearTextField : () -> Unit,
-    albums : List<AlbumListItem>,
+    uiState : CollectionUiState,
     onAlbumClick : (Int) -> Unit,
-    isLoading : Boolean,
     gridState : LazyGridState,
     listTypeState : ListTypeState
 ) {
@@ -425,23 +426,48 @@ fun CollectionScreenContent(
                         listTypeState = listTypeState
                     )
                 }
-                if (albums.isEmpty() && !isLoading) {
-                    item(key = "empty_list", span = { GridItemSpan(maxLineSpan) }) {
-                        EmptyList()
+                when (listTypeState.type) {
+                    ListType.ALBUM -> {
+                        if (uiState.albums.isEmpty() && !uiState.isLoading) {
+                            item(key = "empty_list", span = { GridItemSpan(maxLineSpan) }) {
+                                EmptyList()
+                            }
+                        }
+                        items(
+                            items = uiState.albums,
+                            key = { "album_${it.id}" },
+                            contentType = { "album_item" }
+                        ) { item ->
+                            AlbumGridCard(
+                                albumName = item.title,
+                                image = item.image,
+                                artistName = item.artist.joinToString(", ") { it.name },
+                                onAlbumClick = onAlbumClick,
+                                id = item.id
+                            )
+                        }
                     }
-                }
-                items(
-                    items = albums,
-                    key = { it.id },
-                    contentType = { "album_item" }
-                ) { item ->
-                    AlbumGridCard(
-                        albumName = item.title,
-                        image = item.image,
-                        artistName = item.artist.joinToString(", ") { it.name },
-                        onAlbumClick = onAlbumClick,
-                        id = item.id
-                    )
+
+                    ListType.ARTIST -> {}
+                    ListType.LYRICS -> {
+                        if (uiState.lyrics.isEmpty() && !uiState.isLoading) {
+                            item(key = "empty_list", span = { GridItemSpan(maxLineSpan) }) {
+                                EmptyList()
+                            }
+                        }
+                        items(
+                            items = uiState.lyrics,
+                            key = { "lyrics_${it.id}" },
+                            contentType = { "album_item" }
+                        ) { item ->
+                            LyricsGridCard(
+                                title = item.title,
+                                artist = item.artist,
+                                onClick = {  },
+                                imageUrl = item.image
+                            )
+                        }
+                    }
                 }
             }
         } else {
@@ -476,33 +502,67 @@ fun CollectionScreenContent(
                         listTypeState = listTypeState
                     )
                 }
-                if (albums.isEmpty() && !isLoading) {
-                    item {
-                        EmptyList()
+
+                when (listTypeState.type) {
+                    ListType.ALBUM -> {
+                        if (uiState.albums.isEmpty() && !uiState.isLoading) {
+                            item {
+                                EmptyList()
+                            }
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        items(
+                            items = uiState.albums,
+                            key = { "album_${it.id}" },
+                            contentType = { "album_item" }
+                        ) { item ->
+                            Box(modifier = Modifier.padding(bottom = 5.dp)) {
+                                AlbumListRow(
+                                    onAlbumClick = onAlbumClick,
+                                    title = item.title,
+                                    image = item.image,
+                                    id = item.id,
+                                    artistList = item.artist
+                                )
+                            }
+                        }
                     }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-                items(
-                    items = albums,
-                    key = { it.id },
-                    contentType = { "album_item" }
-                ) { item ->
-                    Box(modifier = Modifier.padding(bottom = 5.dp)) {
-                        AlbumListRow(
-                            onAlbumClick = onAlbumClick,
-                            title = item.title,
-                            image = item.image,
-                            id = item.id,
-                            artistList = item.artist
-                        )
+                    ListType.ARTIST -> {}
+                    ListType.LYRICS -> {
+                        if (uiState.lyrics.isEmpty() && !uiState.isLoading) {
+                            item {
+                                EmptyList()
+                            }
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        items(
+                            items = uiState.lyrics,
+                            key = { "lyrics_${it.id}" },
+                            contentType = { "album_item" }
+                        ) { item ->
+                            LyricsList(
+                                title = item.title,
+                                artist = item.artist,
+                                onClick = {  },
+                                image = item.image
+                            )
+                        }
                     }
                 }
             }
         }
 
-        if (isLoading && albums.isEmpty()) {
+        val isEmpty = when (listTypeState.type) {
+            ListType.ALBUM -> uiState.albums.isEmpty()
+            ListType.ARTIST -> uiState.artists.isEmpty()
+            ListType.LYRICS -> uiState.lyrics.isEmpty()
+        }
+
+        if (uiState.isLoading && isEmpty) {
             ContainedLoadingIndicator(
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -515,7 +575,7 @@ fun CollectionHeader(
     modifier: Modifier = Modifier,
     onAction: (CollectionTypeAction) -> Unit,
     isSearchVisible : Boolean,
-    onSortChange : (AlbumSort) -> Unit,
+    onSortChange : (Sort) -> Unit,
     onViewChange : (ListViewType) -> Unit,
     onListTypeChange: (ListType) -> Unit,
     onSearchClick : () -> Unit,

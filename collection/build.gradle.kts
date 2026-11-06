@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":album"))
     implementation(project(":search"))
     implementation(project(":artist"))
+    implementation(project(":lyrics"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

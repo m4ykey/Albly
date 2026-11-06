@@ -4,7 +4,7 @@ package com.m4ykey.collection.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.m4ykey.album.domain.model.AlbumSort
+import com.m4ykey.core.Sort
 import com.m4ykey.album.domain.usecase.GetSavedAlbumsUseCase
 import com.m4ykey.artist.domain.use_case.GetSavedArtistUseCase
 import com.m4ykey.collection.presentation.type.ListType
@@ -13,6 +13,7 @@ import com.m4ykey.collection.presentation.type.ListViewType
 import com.m4ykey.collection.repository.CollectionRepository
 import com.m4ykey.core.ui.hide
 import com.m4ykey.core.ui.show
+import com.m4ykey.lyrics.domain.usecase.GetLyricsSavedUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 class CollectionViewModel(
     private val getSavedAlbumsUseCase: GetSavedAlbumsUseCase,
     private val getSavedArtistUseCase: GetSavedArtistUseCase,
+    private val getSavedLyricsUseCase : GetLyricsSavedUseCase,
     private val repository: CollectionRepository
 ) : ViewModel() {
 
@@ -55,7 +56,7 @@ class CollectionViewModel(
         ListTypeState(
             view = ListViewType.GRID,
             type = ListType.ALBUM,
-            sort = AlbumSort.LATEST
+            sort = Sort.LATEST
         )
     )
 
@@ -93,7 +94,13 @@ class CollectionViewModel(
                         }
                 }
                 ListType.LYRICS -> {
-                    flowOf(CollectionUiState(isLoading = false))
+                    getSavedLyricsUseCase(query, listTypeState.sort)
+                        .map { lyrics ->
+                            CollectionUiState(
+                                isLoading = false,
+                                lyrics = lyrics
+                            )
+                        }
                 }
             }
                 .onStart {

@@ -3,6 +3,7 @@ package com.m4ykey.lyrics.di
 import com.m4ykey.lyrics.data.repository.LyricsRepositoryImpl
 import com.m4ykey.lyrics.domain.repository.LyricsRepository
 import com.m4ykey.lyrics.domain.usecase.GetLocalLyricsUseCase
+import com.m4ykey.lyrics.domain.usecase.GetLyricsSavedUseCase
 import com.m4ykey.lyrics.domain.usecase.GetLyricsStateUseCase
 import com.m4ykey.lyrics.domain.usecase.GetLyricsUseCase
 import com.m4ykey.lyrics.domain.usecase.ToggleLyricsSavedUseCase
@@ -20,6 +21,7 @@ val lyricsModule = module {
     factoryOf(::GetLocalLyricsUseCase)
     factoryOf(::GetLyricsStateUseCase)
     factoryOf(::ToggleLyricsSavedUseCase)
+    factoryOf(::GetLyricsSavedUseCase)
 
     viewModelOf(::LyricsViewModel)
 }

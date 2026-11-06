@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.m4ykey.album.domain.model.AlbumSort
+import com.m4ykey.core.Sort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.IconSource
 import com.m4ykey.collection.presentation.type.ListType
@@ -18,7 +18,7 @@ import com.m4ykey.collection.presentation.type.ListViewType
 @Composable
 fun ListOptions(
     modifier: Modifier = Modifier,
-    onSortChange : (AlbumSort) -> Unit,
+    onSortChange : (Sort) -> Unit,
     onListTypeChange : (ListType) -> Unit,
     onViewChange : (ListViewType) -> Unit,
     onSearchClick : () -> Unit,
@@ -27,7 +27,7 @@ fun ListOptions(
     onDismissSortDialog : () -> Unit,
     viewType: ListViewType,
     listType: ListType,
-    sort: AlbumSort
+    sort: Sort
 ) {
     Row(
         modifier = modifier
