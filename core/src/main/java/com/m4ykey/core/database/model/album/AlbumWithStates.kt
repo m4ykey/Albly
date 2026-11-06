@@ -1,4 +1,4 @@
-package com.m4ykey.album.data.local.model
+package com.m4ykey.core.database.model.album
 
 import androidx.room.Embedded
 import androidx.room.Relation

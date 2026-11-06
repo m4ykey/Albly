@@ -1,8 +1,8 @@
 package com.m4ykey.album.data.mapper
 
-import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.album.data.local.model.ArtistEntity
-import com.m4ykey.album.data.local.model.TrackEntity
+import com.m4ykey.core.database.model.album.AlbumEntity
+import com.m4ykey.core.database.model.album.ArtistEntity
+import com.m4ykey.core.database.model.album.TrackEntity
 import com.m4ykey.album.data.network.dto.detail.AlbumRootDto
 import com.m4ykey.album.data.network.dto.detail.ArtistsDto
 import com.m4ykey.album.data.network.dto.detail.ImageDto

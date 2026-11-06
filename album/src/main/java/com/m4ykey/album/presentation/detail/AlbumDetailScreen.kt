@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
-import com.m4ykey.album.data.local.model.AlbumEntity
+import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.album.data.mapper.toAlbumEntity
 import com.m4ykey.album.domain.model.TrackClickItem
 import com.m4ykey.album.domain.model.detail.AlbumRoot

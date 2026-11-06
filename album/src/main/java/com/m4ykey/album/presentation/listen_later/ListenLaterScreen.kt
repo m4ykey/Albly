@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.album.R
-import com.m4ykey.album.data.local.model.AlbumListItem
+import com.m4ykey.core.database.model.album.AlbumListItem
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AlbumGridCard
 import com.m4ykey.core.ui.AppScaffold

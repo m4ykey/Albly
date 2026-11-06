@@ -4,7 +4,7 @@ package com.m4ykey.collection.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.m4ykey.album.data.local.model.AlbumSort
+import com.m4ykey.album.domain.model.AlbumSort
 import com.m4ykey.album.domain.usecase.GetSavedAlbumsUseCase
 import com.m4ykey.artist.domain.use_case.GetSavedArtistUseCase
 import com.m4ykey.collection.presentation.type.ListType
@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -90,6 +91,9 @@ class CollectionViewModel(
                                 artists = artists
                             )
                         }
+                }
+                ListType.LYRICS -> {
+                    flowOf(CollectionUiState(isLoading = false))
                 }
             }
                 .onStart {

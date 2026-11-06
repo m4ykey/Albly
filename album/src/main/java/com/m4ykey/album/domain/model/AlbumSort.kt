@@ -1,4 +1,4 @@
-package com.m4ykey.album.data.local.model
+package com.m4ykey.album.domain.model
 
 enum class AlbumSort {
     LATEST,

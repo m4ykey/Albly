@@ -73,8 +73,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.m4ykey.album.data.local.model.AlbumListItem
-import com.m4ykey.album.data.local.model.AlbumSort
+import com.m4ykey.core.database.model.album.AlbumListItem
+import com.m4ykey.album.domain.model.AlbumSort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.DrawerItem

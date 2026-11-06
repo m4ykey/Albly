@@ -1,10 +1,10 @@
-package com.m4ykey.album.data.local.converter
+package com.m4ykey.core.database.converter
 
 import androidx.room.TypeConverter
-import com.m4ykey.album.data.database.decode
-import com.m4ykey.album.data.database.encode
-import com.m4ykey.album.data.local.model.ArtistEntity
-import com.m4ykey.album.data.local.model.TrackEntity
+import com.m4ykey.core.database.decode
+import com.m4ykey.core.database.encode
+import com.m4ykey.core.database.model.album.ArtistEntity
+import com.m4ykey.core.database.model.album.TrackEntity
 
 class AlbumConverters {
 

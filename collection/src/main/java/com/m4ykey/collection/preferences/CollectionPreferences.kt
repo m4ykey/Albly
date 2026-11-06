@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.m4ykey.album.data.local.model.AlbumSort
+import com.m4ykey.album.domain.model.AlbumSort
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
 import com.m4ykey.core.datastore.safeDataStoreOperations

@@ -1,6 +1,6 @@
 package com.m4ykey.collection.repository
 
-import com.m4ykey.album.data.local.model.AlbumSort
+import com.m4ykey.album.domain.model.AlbumSort
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
 import kotlinx.coroutines.flow.Flow

@@ -1,6 +1,6 @@
 package com.m4ykey.album.domain.usecase
 
-import com.m4ykey.album.data.local.model.AlbumListItem
+import com.m4ykey.core.database.model.album.AlbumListItem
 import com.m4ykey.album.domain.repository.AlbumRepository
 
 class GetListenLaterAlbumsUseCase(private val repository: AlbumRepository) {

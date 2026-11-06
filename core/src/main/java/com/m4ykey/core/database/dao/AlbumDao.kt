@@ -1,15 +1,15 @@
-package com.m4ykey.album.data.local.dao
+package com.m4ykey.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
-import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.album.data.local.model.AlbumListItem
-import com.m4ykey.album.data.local.model.AlbumWithStates
-import com.m4ykey.album.data.local.model.IsAlbumSaved
-import com.m4ykey.album.data.local.model.IsListenLaterSaved
+import com.m4ykey.core.database.model.album.AlbumEntity
+import com.m4ykey.core.database.model.album.AlbumListItem
+import com.m4ykey.core.database.model.album.AlbumWithStates
+import com.m4ykey.core.database.model.album.IsAlbumSaved
+import com.m4ykey.core.database.model.album.IsListenLaterSaved
 import kotlinx.coroutines.flow.Flow
 
 @Dao

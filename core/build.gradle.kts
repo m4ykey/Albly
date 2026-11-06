@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.stability.analyzer)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -45,14 +46,17 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.room.runtime)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.browser)
+    implementation(libs.bundles.room)
+    ksp(libs.room.compiler)
 
     api(libs.androidx.icons.extended)
     api(libs.bundles.paging)
 
     implementation(libs.lottie)
+
+    implementation(libs.koin.android)
 
     implementation(libs.ktx.serialization.json)
 

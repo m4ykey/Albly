@@ -2,12 +2,12 @@ package com.m4ykey.album.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.m4ykey.album.data.local.dao.AlbumDao
-import com.m4ykey.album.data.local.model.AlbumEntity
-import com.m4ykey.album.data.local.model.AlbumListItem
-import com.m4ykey.album.data.local.model.AlbumWithStates
-import com.m4ykey.album.data.local.model.IsAlbumSaved
-import com.m4ykey.album.data.local.model.IsListenLaterSaved
+import com.m4ykey.core.database.dao.AlbumDao
+import com.m4ykey.core.database.model.album.AlbumEntity
+import com.m4ykey.core.database.model.album.AlbumListItem
+import com.m4ykey.core.database.model.album.AlbumWithStates
+import com.m4ykey.core.database.model.album.IsAlbumSaved
+import com.m4ykey.core.database.model.album.IsListenLaterSaved
 import com.m4ykey.album.data.mapper.toAlbumRoot
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService

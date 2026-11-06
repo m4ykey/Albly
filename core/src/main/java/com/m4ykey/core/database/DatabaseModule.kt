@@ -1,8 +1,7 @@
-package com.m4ykey.album.di
+package com.m4ykey.core.database
 
 import androidx.room.Room
-import com.m4ykey.album.data.database.AppDatabase
-import com.m4ykey.album.data.local.migration.MIGRATION_1_2
+import com.m4ykey.core.database.migration.MIGRATION_1_2
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 

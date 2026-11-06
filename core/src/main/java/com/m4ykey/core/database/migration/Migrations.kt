@@ -1,4 +1,4 @@
-package com.m4ykey.album.data.local.migration
+package com.m4ykey.core.database.migration
 
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection

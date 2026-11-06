@@ -1,7 +1,7 @@
 package com.m4ykey.album.domain.usecase
 
-import com.m4ykey.album.data.local.model.AlbumListItem
-import com.m4ykey.album.data.local.model.AlbumSort
+import com.m4ykey.core.database.model.album.AlbumListItem
+import com.m4ykey.album.domain.model.AlbumSort
 import com.m4ykey.album.domain.repository.AlbumRepository
 import kotlinx.coroutines.flow.Flow
 

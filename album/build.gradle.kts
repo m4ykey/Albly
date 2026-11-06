@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.serialization)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -57,8 +56,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.palette)
-    implementation(libs.bundles.room)
-    ksp(libs.room.compiler)
 
     implementation(libs.landscapist)
 

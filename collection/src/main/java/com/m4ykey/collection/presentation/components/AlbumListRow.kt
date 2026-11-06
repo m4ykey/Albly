@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.m4ykey.album.data.local.model.ArtistEntity
+import com.m4ykey.core.database.model.album.ArtistEntity
 import com.m4ykey.core.ui.LoadImage
 
 @Composable

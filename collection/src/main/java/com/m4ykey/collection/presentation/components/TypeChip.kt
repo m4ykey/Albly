@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import com.m4ykey.album.data.local.model.AlbumSort
+import com.m4ykey.album.domain.model.AlbumSort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.IconSource
@@ -196,12 +196,14 @@ fun ListTypeChip(
 ) {
     fun nextType(type : ListType) : ListType = when (type) {
         ListType.ALBUM -> ListType.ARTIST
-        ListType.ARTIST -> ListType.ALBUM
+        ListType.ARTIST -> ListType.LYRICS
+        ListType.LYRICS -> ListType.ALBUM
     }
 
     val icon = when (listType) {
         ListType.ALBUM -> IconSource.Vector(Icons.Outlined.Album)
         ListType.ARTIST -> IconSource.Resource(resId = R.drawable.ic_artist)
+        ListType.LYRICS -> IconSource.Resource(resId = R.drawable.ic_lyrics)
     }
 
     TypeChip(

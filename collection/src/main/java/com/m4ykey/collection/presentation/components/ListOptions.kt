@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.m4ykey.album.data.local.model.AlbumSort
+import com.m4ykey.album.domain.model.AlbumSort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.IconSource
 import com.m4ykey.collection.presentation.type.ListType

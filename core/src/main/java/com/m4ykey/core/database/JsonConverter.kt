@@ -1,4 +1,4 @@
-package com.m4ykey.album.data.database
+package com.m4ykey.core.database
 
 import kotlinx.serialization.json.Json
 
