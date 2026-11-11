@@ -4,6 +4,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
@@ -25,39 +26,33 @@ import com.m4ykey.settings.SettingsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
+private val navConfiguration = SavedStateConfiguration {
+    serializersModule = SerializersModule {
+        polymorphic(NavKey::class) {
+            subclass(Route.Collection::class, Route.Collection.serializer())
+            subclass(Route.NewRelease::class, Route.NewRelease.serializer())
+            subclass(Route.Search::class, Route.Search.serializer())
+            subclass(Route.Settings::class, Route.Settings.serializer())
+            subclass(Route.AlbumDetail::class, Route.AlbumDetail.serializer())
+            subclass(Route.ListenLater::class, Route.ListenLater.serializer())
+            subclass(Route.Lyrics::class, Route.Lyrics.serializer())
+            subclass(Route.Cover::class, Route.Cover.serializer())
+            subclass(Route.Artist::class, Route.Artist.serializer())
+            subclass(Route.Video::class, Route.Video.serializer())
+        }
+    }
+}
+
 @Composable
 fun NavigationRoot(
     modifier : Modifier = Modifier
 ) {
     val rootBackStack = rememberNavBackStack(
-        configuration = SavedStateConfiguration {
-            serializersModule = SerializersModule {
-                polymorphic(NavKey::class) {
-                    subclass(Route.Collection::class, Route.Collection.serializer())
-                    subclass(Route.NewRelease::class, Route.NewRelease.serializer())
-                    subclass(Route.Search::class, Route.Search.serializer())
-                    subclass(Route.Settings::class, Route.Settings.serializer())
-                    subclass(Route.AlbumDetail::class, Route.AlbumDetail.serializer())
-                    subclass(Route.ListenLater::class, Route.ListenLater.serializer())
-                    subclass(Route.Lyrics::class, Route.Lyrics.serializer())
-                    subclass(Route.Cover::class, Route.Cover.serializer())
-                    subclass(Route.Artist::class, Route.Artist.serializer())
-                    subclass(Route.Video::class, Route.Video.serializer())
-                }
-            }
-        },
+        configuration = navConfiguration,
         Route.Collection
     )
 
-    fun navigateBack() {
-        if (rootBackStack.size > 1) {
-            rootBackStack.removeAt(rootBackStack.lastIndex)
-        }
-    }
-
-    fun navigateTo(route: Route) {
-        rootBackStack.add(route)
-    }
+    val navigator = remember(rootBackStack) { AppNavigator(rootBackStack) }
 
     NavDisplay(
         modifier = modifier,
@@ -73,18 +68,23 @@ fun NavigationRoot(
             slideInHorizontally { -it } togetherWith
                     slideOutHorizontally { it }
         },
+        predictivePopTransitionSpec = {
+            slideInHorizontally { -it } togetherWith
+                    slideOutHorizontally { it }
+        },
+        onBack = navigator::navigateBack,
         backStack = rootBackStack,
         entryProvider = entryProvider {
             entry<Route.Collection> {
                 CollectionScreen(
-                    navigateToSettings = { navigateTo(Route.Settings) },
-                    navigateToNewRelease = { navigateTo(Route.NewRelease) },
-                    navigateToListenLater = { navigateTo(Route.ListenLater) },
-                    onAlbumClick = { navigateTo(Route.AlbumDetail(it)) },
-                    onSearch = { navigateTo(Route.Search) },
+                    navigateToSettings = { navigator.navigateTo(Route.Settings) },
+                    navigateToNewRelease = { navigator.navigateTo(Route.NewRelease) },
+                    navigateToListenLater = { navigator.navigateTo(Route.ListenLater) },
+                    onAlbumClick = { navigator.navigateTo(Route.AlbumDetail(it)) },
+                    onSearch = { navigator.navigateTo(Route.Search) },
                     onLinkClick = {  },
                     onLyricsClick = { track, artist, image, album ->
-                        navigateTo(Route.Lyrics(
+                        navigator.navigateTo(Route.Lyrics(
                             track = track,
                             artist = artist,
                             img = image,
@@ -95,38 +95,36 @@ fun NavigationRoot(
             entry<Route.Search> {
                 SearchScreen(
                     onAlbumClick = { albumId ->
-                        navigateTo(Route.AlbumDetail(albumId = albumId))
+                        navigator.navigateTo(Route.AlbumDetail(albumId = albumId))
                     },
-                    onBack = ::navigateBack,
+                    onBack = navigator::navigateBack,
                     onTrackClick = { track, artist, img, album ->
-                        navigateTo(Route.Lyrics(track, artist, img, album))
+                        navigator.navigateTo(Route.Lyrics(track, artist, img, album))
                     },
                     onArtistClick = { artistId ->
-                        navigateTo(Route.Artist(artistId))
+                        navigator.navigateTo(Route.Artist(artistId))
                     }
                 )
             }
             entry<Route.Settings> {
-                SettingsScreen(
-                    onBack = ::navigateBack
-                )
+                SettingsScreen(onBack = navigator::navigateBack)
             }
             entry<Route.ListenLater> {
                 ListenLaterScreen(
-                    onBack = ::navigateBack,
+                    onBack = navigator::navigateBack,
                     onAlbumClick = {
-                        navigateTo(Route.AlbumDetail(it))
+                        navigator.navigateTo(Route.AlbumDetail(it))
                     },
                     onSearchClick = {
-                        navigateTo(Route.Search)
+                        navigator.navigateTo(Route.Search)
                     }
                 )
             }
             entry<Route.AlbumDetail> { key ->
                 AlbumDetailScreen(
-                    onBack = ::navigateBack,
+                    onBack = navigator::navigateBack,
                     onTrackClick = { track ->
-                        navigateTo(Route.Lyrics(
+                        navigator.navigateTo(Route.Lyrics(
                             track = track.title,
                             artist = track.artists,
                             img = track.img,
@@ -135,54 +133,54 @@ fun NavigationRoot(
                     },
                     id = key.albumId,
                     onCoverClick = { image ->
-                        navigateTo(Route.Cover(image))
+                        navigator.navigateTo(Route.Cover(image))
                     },
                     onArtistClick = { artistId ->
-                        navigateTo(Route.Artist(artistId))
+                        navigator.navigateTo(Route.Artist(artistId))
                     },
                     onVideoClick = { videos ->
-                        navigateTo(Route.Video(videos))
+                        navigator.navigateTo(Route.Video(videos))
                     }
                 )
             }
             entry<Route.NewRelease> {
                 AlbumNewReleaseScreen(
-                    onBack = ::navigateBack,
+                    onBack = navigator::navigateBack,
                     onAlbumClick = {
-                        navigateTo(Route.AlbumDetail(it))
+                        navigator.navigateTo(Route.AlbumDetail(it))
                     }
                 )
             }
             entry<Route.Lyrics> { key ->
                 LyricsScreen(
-                    onBack = ::navigateBack,
+                    onBack = navigator::navigateBack,
                     artistName = key.artist,
                     trackName = key.track,
                     imageUrl = key.img.orEmpty(),
                     albumName = key.album,
                     onImageClick = { item ->
-                        navigateTo(Route.Cover(item))
+                        navigator.navigateTo(Route.Cover(item))
                     }
                 )
             }
             entry<Route.Cover> { key ->
                 AlbumCoverScreen(
                     imageUrl = key.imageUrl,
-                    onBack = ::navigateBack
+                    onBack = navigator::navigateBack
                 )
             }
             entry<Route.Artist> { key ->
                 ArtistScreen(
                     artistId = key.artistId,
-                    onBack = ::navigateBack,
+                    onBack = navigator::navigateBack,
                     onAlbumClick = { id ->
-                        navigateTo(Route.AlbumDetail(albumId = id))
+                        navigator.navigateTo(Route.AlbumDetail(albumId = id))
                     }
                 )
             }
             entry<Route.Video> { key ->
                 AlbumVideoScreen(
-                    onBack = ::navigateBack,
+                    onBack = navigator::navigateBack,
                     videos = key.videos
                 )
             }
