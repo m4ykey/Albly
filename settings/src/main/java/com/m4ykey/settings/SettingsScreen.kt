@@ -29,6 +29,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,6 +54,7 @@ import coil3.imageLoader
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
+import com.m4ykey.core.ui.showToast
 import com.m4ykey.settings.theme.ThemeType
 import com.m4ykey.settings.theme.label
 import kotlinx.coroutines.launch
@@ -64,16 +66,22 @@ fun SettingsScreen(
     onBack : () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
-    val state = rememberLazyListState()
+    val listState = rememberLazyListState()
 
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
-    var isThemeDialogVisible by rememberSaveable {
-        mutableStateOf(false)
+    val onAction = viewModel::onAction
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel, context) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is SettingsEffect.ShowError -> showToast(context, effect.message)
+                is SettingsEffect.OpenLink -> openLink(effect.url, context = context)
+                SettingsEffect.ClearImageCache -> clearImageCache(context.imageLoader)
+            }
+        }
     }
-
-    val selectedTheme by viewModel.selectedTheme.collectAsStateWithLifecycle()
 
     AppScaffold(
         navigation = {
@@ -85,28 +93,22 @@ fun SettingsScreen(
         },
         content = { padding ->
             SettingsContent(
-                state = state,
-                themeLabel = selectedTheme.label(),
+                state = listState,
+                themeLabel = uiState.selectedTheme.label(),
                 paddingValues = padding,
-                onOpenSourceClick = { openLink("https://github.com/m4ykey/Albly", context = context) },
-                onThemeClick = { isThemeDialogVisible = true },
-                onImageCacheClick = {
-                    scope.launch {
-                        clearImageCache(context.imageLoader)
-                    }
-                }
+                onOpenSourceClick = { onAction(SettingsAction.OnOpenSource) },
+                onThemeClick = { onAction(SettingsAction.OnShowThemeDialog) },
+                onImageCacheClick = { onAction(SettingsAction.OnClearImageCache) }
             )
         },
         title = R.string.settings
     )
 
     OpenTheme(
-        onDismissDialog = { isThemeDialogVisible = false },
-        isDialogVisible = isThemeDialogVisible,
-        onChange = { type ->
-            viewModel.changeTheme(type)
-        },
-        currentType = selectedTheme
+        onDismissDialog = { onAction(SettingsAction.OnHideThemeDialog) },
+        isDialogVisible = uiState.isThemeDialogVisible,
+        onChange = { type -> onAction(SettingsAction.OnChangeTheme(type)) },
+        currentType = uiState.selectedTheme
     )
 }
 
