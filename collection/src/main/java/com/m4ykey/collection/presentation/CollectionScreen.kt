@@ -8,8 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +32,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
@@ -54,11 +53,8 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
@@ -70,7 +66,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.DrawerIcon
 import com.m4ykey.collection.model.DrawerItem
@@ -116,72 +115,70 @@ fun CollectionScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val onAction = viewModel::onAction
 
-    val state = rememberTextFieldState()
+    val textFieldState = rememberTextFieldState()
 
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val scope = rememberCoroutineScope()
-
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(-1) }
-
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    val items = remember {
-        listOf(
-            DrawerItem(
-                titleRes = R.string.new_release,
-                icon = IconSource.Resource(R.drawable.ic_new_release),
-                onClick = { navigateToNewRelease() }
-            ),
-            DrawerItem(
-                titleRes = R.string.listen_later,
-                icon = IconSource.Vector(Icons.Default.AccessTime),
-                onClick = { navigateToListenLater() }
-            ),
-            DrawerItem(
-                titleRes = R.string.settings,
-                icon = IconSource.Vector(Icons.Outlined.Settings),
-                onClick = { navigateToSettings() }
-            )
+    val greeting = remember(context) { getGreeting(context) }
+
+    val drawerItems = listOf(
+        DrawerItem(
+            titleRes = R.string.new_release,
+            icon = IconSource.Resource(R.drawable.ic_new_release),
+            onClick = { navigateToNewRelease() }
+        ),
+        DrawerItem(
+            titleRes = R.string.listen_later,
+            icon = IconSource.Vector(Icons.Default.AccessTime),
+            onClick = { navigateToListenLater() }
+        ),
+        DrawerItem(
+            titleRes = R.string.settings,
+            icon = IconSource.Vector(Icons.Outlined.Settings),
+            onClick = { navigateToSettings() }
         )
-    }
+    )
 
     val errorMessage = stringResource(R.string.invalid_album_url)
 
-    LaunchedEffect(viewModel, context) {
-        viewModel.effects.collect { effect ->
-            when (effect) {
-                is CollectionEffect.ShowError -> showToast(context, effect.message)
-                is CollectionEffect.OpenLink -> onLinkClick(effect.albumId)
-                CollectionEffect.InvalidLink -> showToast(context, errorMessage)
+    LaunchedEffect(viewModel, lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is CollectionEffect.ShowError -> showToast(context, effect.message)
+                    is CollectionEffect.OpenLink -> onLinkClick(effect.albumId)
+                    CollectionEffect.InvalidLink -> showToast(context, errorMessage)
+                }
             }
         }
     }
 
     ModalNavigationDrawer(
+        modifier = modifier,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = modifier.width(300.dp)
             ) {
                 Text(
-                    text = getGreeting(context),
+                    text = greeting,
                     modifier = Modifier
                         .padding(horizontal = 28.dp)
                         .padding(top = 24.dp),
                     fontSize = 25.sp
                 )
                 Spacer(modifier.height(16.dp))
-                items.forEachIndexed { index, item ->
+                drawerItems.forEach { item ->
                     NavigationDrawerItem(
                         label = { Text(text = stringResource(item.titleRes)) },
-                        selected = index == selectedItemIndex,
+                        selected = false,
                         onClick = {
-                            scope.launch {
-                                drawerState.close()
-                                selectedItemIndex = -1
-                            }
+                            scope.launch { drawerState.close() }
                             item.onClick()
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
@@ -198,7 +195,6 @@ fun CollectionScreen(
         drawerState = drawerState
     ) {
         AppScaffold(
-            modifier = modifier,
             navigation = {
                 ActionIconButton(
                     textRes = R.string.menu,
@@ -244,25 +240,24 @@ fun CollectionScreen(
     }
 
     if (uiState.isLinkDialogVisible) {
-        AnimatedVisibility(
-            visible = uiState.isLinkDialogVisible,
-            enter = scaleIn() + fadeIn(),
-            exit = scaleOut() + fadeOut()
+        BasicAlertDialog(
+            onDismissRequest = {
+                textFieldState.clearText()
+                viewModel.onAction(CollectionAction.OnHideLinkDialog)
+            },
+            properties = DialogProperties(dismissOnBackPress = true)
         ) {
-            BasicAlertDialog(
-                onDismissRequest = { viewModel.onAction(CollectionAction.OnHideLinkDialog) },
-                properties = DialogProperties(dismissOnBackPress = true)
-            ) {
-                AlertDialogBody(
-                    state = state,
-                    onDismiss = {
-                        viewModel.onAction(CollectionAction.OnHideLinkDialog)
-                    },
-                    onConfirm = {
-                        viewModel.onAction(CollectionAction.OnLinkClick(state.text.toString()))
-                    }
-                )
-            }
+            AlertDialogBody(
+                state = textFieldState,
+                onDismiss = {
+                    textFieldState.clearText()
+                    viewModel.onAction(CollectionAction.OnHideLinkDialog)
+                },
+                onConfirm = {
+                    viewModel.onAction(CollectionAction.OnLinkClick(textFieldState.text.toString()))
+                    textFieldState.clearText()
+                }
+            )
         }
     }
 }

@@ -44,7 +44,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.album.data.mapper.toAlbumEntity
@@ -62,6 +66,7 @@ import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
 import com.m4ykey.core.ui.copyText
+import com.m4ykey.core.ui.showToast
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -76,12 +81,24 @@ fun AlbumDetailScreen(
     onVideoClick : (List<String>) -> Unit
 ) {
 
-    val albumDetail by viewModel.detail.collectAsStateWithLifecycle()
+    val albumDetail by viewModel.uiState.collectAsStateWithLifecycle()
 
     val state = rememberLazyListState()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel, context) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is AlbumDetailEffect.ShowError -> showToast(context, effect.message)
+                }
+            }
+        }
+    }
 
     LaunchedEffect(id) {
-        viewModel.getAlbumById(id)
+        viewModel.onAction(AlbumDetailAction.OnLoadAlbum(id))
     }
 
     AppScaffold(
@@ -115,12 +132,8 @@ fun AlbumDetailScreen(
                 state = state,
                 albumDetail = albumDetail,
                 paddingValues = padding,
-                onSaveToggle = { entity ->
-                    viewModel.toggleSave(album = entity)
-                },
-                onListenLaterToggle = { entity ->
-                    viewModel.toggleListenLater(album = entity)
-                },
+                onSaveToggle = { viewModel.onAction(AlbumDetailAction.OnToggleSave) },
+                onListenLaterToggle = { viewModel.onAction(AlbumDetailAction.OnToggleListenLater) },
                 onCoverClick = onCoverClick,
                 onArtistClick = onArtistClick,
                 artistViewModel = artistViewModel
@@ -136,8 +149,8 @@ fun AlbumDetailDisplay(
     paddingValues: PaddingValues,
     onTrackClick: (TrackClickItem) -> Unit,
     state : LazyListState,
-    onSaveToggle: (AlbumEntity) -> Unit,
-    onListenLaterToggle: (AlbumEntity) -> Unit,
+    onSaveToggle: () -> Unit,
+    onListenLaterToggle: () -> Unit,
     onCoverClick: (String) -> Unit,
     onArtistClick : (Int) -> Unit,
     artistViewModel : ArtistViewModel
@@ -183,8 +196,8 @@ fun AlbumDetailContent(
     contentPadding : PaddingValues = PaddingValues(0.dp),
     state : LazyListState,
     onTrackClick : (TrackClickItem) -> Unit,
-    onSaveToggle : (AlbumEntity) -> Unit,
-    onListenLaterToggle : (AlbumEntity) -> Unit,
+    onSaveToggle : () -> Unit,
+    onListenLaterToggle : () -> Unit,
     isSaved : Boolean,
     isListenLaterSaved : Boolean,
     item : AlbumRoot,
@@ -263,12 +276,8 @@ fun AlbumDetailContent(
             SaveButtonRow(
                 isSaved = isSaved,
                 isListenLaterSaved = isListenLaterSaved,
-                onSaveClick = {
-                    onSaveToggle(albumEntity)
-                },
-                onListenLaterClick = {
-                    onListenLaterToggle(albumEntity)
-                }
+                onSaveClick = onSaveToggle,
+                onListenLaterClick = onListenLaterToggle
             )
         }
 

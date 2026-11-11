@@ -7,10 +7,12 @@ import androidx.paging.cachedIn
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.usecase.NewReleaseUseCase
 import com.m4ykey.core.paging.distinctById
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class NewReleaseViewModel(
@@ -22,14 +24,14 @@ class NewReleaseViewModel(
             .map { pagingData -> pagingData.distinctById { it.masterId } }
             .cachedIn(viewModelScope)
 
-    private val _uiEvent = MutableSharedFlow<NewReleaseUiEvent>()
-    val uiEvent = _uiEvent.asSharedFlow()
+    private val _effects = Channel<NewReleaseEffect>(Channel.BUFFERED)
+    val uiEvent : Flow<NewReleaseEffect> = _effects.receiveAsFlow()
 
     fun onAction(action : NewReleaseAction) {
         viewModelScope.launch {
             when (action) {
                 is NewReleaseAction.OnAlbumClick -> {
-                    _uiEvent.emit(NewReleaseUiEvent.OnAlbumClick(action.id))
+                    _effects.send(NewReleaseEffect.OnAlbumClick(action.id))
                 }
             }
         }

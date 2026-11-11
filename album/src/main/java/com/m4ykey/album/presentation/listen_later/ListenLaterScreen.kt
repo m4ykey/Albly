@@ -33,12 +33,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.m4ykey.album.R
 import com.m4ykey.core.database.model.album.AlbumListItem
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AlbumGridCard
 import com.m4ykey.core.ui.AppScaffold
+import com.m4ykey.core.ui.show
 import com.m4ykey.core.ui.showToast
 import org.koin.androidx.compose.koinViewModel
 
@@ -56,21 +60,18 @@ fun ListenLaterScreen(
     val errorMessage = stringResource(R.string.album_list_is_empty)
     val randomAlbumError = stringResource(R.string.get_at_least_2_albums)
 
-    LaunchedEffect(Unit) {
-        viewModel.loadAlbums()
-    }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(uiState.error) {
-        uiState.error?.let {
-            showToast(context, it)
-        }
-    }
-
-    LaunchedEffect(uiState.randomAlbum) {
-        val album = uiState.randomAlbum
-        if (album != null) {
-            onAlbumClick(album.id)
-            viewModel.clearAlbum()
+    LaunchedEffect(viewModel, lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is ListenLaterEffect.OpenAlbum -> onAlbumClick(effect.id)
+                    is ListenLaterEffect.ShowError -> showToast(context, effect.message)
+                    ListenLaterEffect.AlbumListEmpty -> showToast(context, errorMessage)
+                    ListenLaterEffect.NotEnoughAlbums -> showToast(context, randomAlbumError)
+                }
+            }
         }
     }
 
@@ -93,13 +94,7 @@ fun ListenLaterScreen(
             ListenLaterContent(
                 modifier = Modifier.padding(padding),
                 onRandomAlbumClick = {
-                    if (uiState.albums.isEmpty()) {
-                        showToast(context, errorMessage)
-                    } else if (uiState.albums.size < 2) {
-                        showToast(context, randomAlbumError)
-                    } else {
-                        viewModel.getRandomAlbum()
-                    }
+                    viewModel.onAction(ListenLaterAction.OnRandomAlbumClick)
                 },
                 albums = uiState.albums,
                 isLoading = uiState.isLoading,

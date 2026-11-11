@@ -24,13 +24,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val splash = installSplashScreen()
-        splash.setKeepOnScreenCondition { viewModel.selectedTheme.value == null }
+        splash.setKeepOnScreenCondition { !viewModel.uiState.value.isThemeLoaded }
 
         enableEdgeToEdge()
         setContent {
-            val selectedTheme by viewModel.selectedTheme.collectAsStateWithLifecycle()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-            selectedTheme?.let { theme ->
+            uiState.selectedTheme?.let { theme ->
                 val darkTheme = when (theme) {
                     ThemeType.DEFAULT -> isSystemInDarkTheme()
                     ThemeType.DARK -> true

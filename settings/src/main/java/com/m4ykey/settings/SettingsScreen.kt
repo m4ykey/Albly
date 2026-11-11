@@ -48,7 +48,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import coil3.ImageLoader
 import coil3.imageLoader
 import com.m4ykey.core.network.openLink
@@ -57,7 +60,9 @@ import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.showToast
 import com.m4ykey.settings.theme.ThemeType
 import com.m4ykey.settings.theme.label
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.viewmodel.koinViewModel
 
 @ExperimentalMaterial3Api
@@ -73,12 +78,16 @@ fun SettingsScreen(
     val onAction = viewModel::onAction
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel, context) {
-        viewModel.effects.collect { effect ->
-            when (effect) {
-                is SettingsEffect.ShowError -> showToast(context, effect.message)
-                is SettingsEffect.OpenLink -> openLink(effect.url, context = context)
-                SettingsEffect.ClearImageCache -> clearImageCache(context.imageLoader)
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel, lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is SettingsEffect.ShowError -> showToast(context, effect.message)
+                    is SettingsEffect.OpenLink -> openLink(effect.url, context = context)
+                    SettingsEffect.ClearImageCache -> clearImageCache(context.imageLoader)
+                }
             }
         }
     }
@@ -112,7 +121,7 @@ fun SettingsScreen(
     )
 }
 
-suspend fun clearImageCache(imageLoader: ImageLoader) {
+suspend fun clearImageCache(imageLoader: ImageLoader) = withContext(Dispatchers.IO) {
     imageLoader.memoryCache?.clear()
     imageLoader.diskCache?.clear()
 }
@@ -190,16 +199,16 @@ fun OpenTheme(
             tonalElevation = 6.dp,
             modifier = modifier.padding(16.dp)
         ) {
-            Column(modifier = modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = stringResource(R.string.theme),
-                    modifier = modifier.padding(bottom = 8.dp),
+                    modifier = Modifier.padding(bottom = 8.dp),
                     fontSize = 20.sp
                 )
 
                 ThemeType.entries.forEach { type ->
                     Row(
-                        modifier = modifier
+                        modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 onChange(type)
@@ -217,7 +226,7 @@ fun OpenTheme(
                         )
                         Text(
                             text = type.label(),
-                            modifier = modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp)
                         )
                     }
                 }
@@ -244,11 +253,11 @@ fun SettingsIcon(
         Icon(
             painter = painterResource(icon),
             contentDescription = stringResource(title),
-            modifier = modifier.size(22.dp)
+            modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.width(10.dp))
         Column(
-            modifier = modifier.weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
             Text(
                 text = stringResource(title),

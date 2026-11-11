@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.m4ykey.album.presentation.new_release
 
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -39,11 +40,14 @@ fun AlbumNewReleaseScreen(
     val state = rememberLazyGridState()
 
     val onAction = viewModel::onAction
+    val lifecycle = LocalLifecycleOwner.current
 
-    LaunchedEffect(viewModel) {
-        viewModel.uiEvent.collectLatest { event ->
-            when (event) {
-                is NewReleaseUiEvent.OnAlbumClick -> onAlbumClick(event.id)
+    LaunchedEffect(viewModel, lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    is NewReleaseEffect.OnAlbumClick -> onAlbumClick(event.id)
+                }
             }
         }
     }
