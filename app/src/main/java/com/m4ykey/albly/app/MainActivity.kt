@@ -7,25 +7,31 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.m4ykey.albly.app.ui.MainActivityViewModel
 import com.m4ykey.albly.app.ui.theme.AlblyTheme
 import com.m4ykey.navigation.NavigationRoot
 import com.m4ykey.settings.theme.ThemeType
-import org.koin.androidx.compose.koinViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel : MainActivityViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val splash = installSplashScreen()
+        splash.setKeepOnScreenCondition { viewModel.selectedTheme.value == null }
+
         enableEdgeToEdge()
         setContent {
-            val viewModel : MainActivityViewModel = koinViewModel()
-
             val selectedTheme by viewModel.selectedTheme.collectAsStateWithLifecycle()
 
-            if (selectedTheme != null) {
-                val darkTheme = when (selectedTheme!!) {
+            selectedTheme?.let { theme ->
+                val darkTheme = when (theme) {
                     ThemeType.DEFAULT -> isSystemInDarkTheme()
                     ThemeType.DARK -> true
                     ThemeType.LIGHT -> false
