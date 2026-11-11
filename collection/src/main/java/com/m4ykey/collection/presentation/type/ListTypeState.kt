@@ -4,6 +4,6 @@ import com.m4ykey.core.Sort
 
 data class ListTypeState(
     val view : ListViewType,
-    val type : ListType,
+    val list : ListType,
     val sort : Sort
 )
