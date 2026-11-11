@@ -51,6 +51,7 @@ import com.m4ykey.album.R
 import com.m4ykey.album.data.mapper.toAlbumEntity
 import com.m4ykey.album.domain.model.TrackClickItem
 import com.m4ykey.album.domain.model.detail.AlbumRoot
+import com.m4ykey.album.domain.model.detail.Video
 import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
@@ -76,7 +77,7 @@ fun AlbumDetailScreen(
     onCoverClick: (String) -> Unit,
     onArtistClick: (Int) -> Unit,
     artistViewModel : ArtistViewModel = koinViewModel(),
-    onVideoClick : (List<String>) -> Unit
+    onVideoClick : (List<Video>) -> Unit
 ) {
 
     val albumDetail by viewModel.uiState.collectAsStateWithLifecycle()
@@ -113,7 +114,7 @@ fun AlbumDetailScreen(
                 textRes = R.string.info,
                 iconRes = R.drawable.ic_info
             )
-            val videoUrls = (albumDetail as? DetailUiState.Success)?.item?.videos?.map { it.uri } ?: emptyList()
+            val videoUrls = (albumDetail as? DetailUiState.Success)?.item?.videos.orEmpty()
             if (videoUrls.isNotEmpty()) {
                 ActionIconButton(
                     onClick = {

@@ -2,6 +2,7 @@ package com.m4ykey.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import com.m4ykey.album.domain.model.detail.Video
 
 @Serializable
 sealed interface Route : NavKey {
@@ -39,6 +40,6 @@ sealed interface Route : NavKey {
     data class Artist(val artistId : Int) : Route
 
     @Serializable
-    data class Video(val videos : List<String>) : Route
+    data class Video(val videos : List<com.m4ykey.album.domain.model.detail.Video>) : Route
 
 }

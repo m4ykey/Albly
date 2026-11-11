@@ -15,7 +15,6 @@ import com.m4ykey.album.presentation.cover.CoverViewModel
 import com.m4ykey.album.presentation.detail.AlbumDetailViewModel
 import com.m4ykey.album.presentation.listen_later.ListenLaterViewModel
 import com.m4ykey.album.presentation.new_release.NewReleaseViewModel
-import com.m4ykey.album.presentation.video.AlbumVideoViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -39,5 +38,4 @@ val albumModule = module {
     viewModelOf(::ListenLaterViewModel)
     viewModelOf(::NewReleaseViewModel)
     viewModelOf(::CoverViewModel)
-    viewModelOf(::AlbumVideoViewModel)
 }
