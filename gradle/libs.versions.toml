@@ -41,7 +41,7 @@ jsoup = "1.24.1"
 browser = "1.10.0"
 annotation = "1.11.0"
 youtube-player = "13.1.0"
-splash = "1.0.0"
+splash = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }

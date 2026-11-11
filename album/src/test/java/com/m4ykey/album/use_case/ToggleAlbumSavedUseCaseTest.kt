@@ -1,8 +1,8 @@
 package com.m4ykey.album.use_case
 
-import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.album.domain.repository.AlbumRepository
 import com.m4ykey.album.domain.usecase.ToggleAlbumSavedUseCase
+import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.track.domain.use_case.DeleteTracksUseCase
 import com.m4ykey.track.domain.use_case.SaveTracksUseCase
 import io.mockk.coEvery

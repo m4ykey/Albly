@@ -2,12 +2,6 @@ package com.m4ykey.album.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import com.m4ykey.core.database.dao.AlbumDao
-import com.m4ykey.core.database.model.album.AlbumEntity
-import com.m4ykey.core.database.model.album.AlbumListItem
-import com.m4ykey.core.database.model.album.AlbumWithStates
-import com.m4ykey.core.database.model.album.IsAlbumSaved
-import com.m4ykey.core.database.model.album.IsListenLaterSaved
 import com.m4ykey.album.data.mapper.toAlbumRoot
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
@@ -15,6 +9,12 @@ import com.m4ykey.album.data.paging.NewReleasePagingSource
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.repository.AlbumRepository
+import com.m4ykey.core.database.dao.AlbumDao
+import com.m4ykey.core.database.model.album.AlbumEntity
+import com.m4ykey.core.database.model.album.AlbumListItem
+import com.m4ykey.core.database.model.album.AlbumWithStates
+import com.m4ykey.core.database.model.album.IsAlbumSaved
+import com.m4ykey.core.database.model.album.IsListenLaterSaved
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.Dispatchers

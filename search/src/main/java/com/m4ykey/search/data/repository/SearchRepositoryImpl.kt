@@ -12,7 +12,6 @@ import com.m4ykey.search.domain.model.artist.ResultsArtist
 import com.m4ykey.search.domain.model.lyrics.Hit
 import com.m4ykey.search.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class SearchRepositoryImpl(
     private val service : RemoteSearchService

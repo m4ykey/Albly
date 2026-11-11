@@ -1,11 +1,11 @@
 package com.m4ykey.collection.presentation
 
-import com.m4ykey.core.database.model.album.AlbumListItem
 import com.m4ykey.artist.data.local.ArtistListItem
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListTypeState
 import com.m4ykey.collection.presentation.type.ListViewType
 import com.m4ykey.core.Sort
+import com.m4ykey.core.database.model.album.AlbumListItem
 import com.m4ykey.core.database.model.lyrics.LyricsEntity
 
 data class CollectionUiState(

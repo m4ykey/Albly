@@ -1,9 +1,9 @@
 package com.m4ykey.collection.repository
 
-import com.m4ykey.core.Sort
 import com.m4ykey.collection.preferences.CollectionPreferences
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
+import com.m4ykey.core.Sort
 import kotlinx.coroutines.flow.Flow
 
 class CollectionRepositoryImpl(

@@ -9,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.m4ykey.core.Sort
 import com.m4ykey.collection.R
 import com.m4ykey.collection.model.IconSource
 import com.m4ykey.collection.presentation.type.ListType
 import com.m4ykey.collection.presentation.type.ListViewType
+import com.m4ykey.core.Sort
 
 @Composable
 fun ListOptions(

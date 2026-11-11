@@ -52,7 +52,6 @@ import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
-import com.m4ykey.core.ui.show
 import com.m4ykey.core.ui.showToast
 import com.m4ykey.lyrics.R
 import com.m4ykey.lyrics.domain.analyzer.RhymeDetector

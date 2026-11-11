@@ -3,7 +3,6 @@ package com.m4ykey.album.presentation.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.m4ykey.album.data.mapper.toAlbumEntity
-import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.album.data.mapper.toAlbumRoot
 import com.m4ykey.album.domain.usecase.AlbumUseCase
 import com.m4ykey.album.domain.usecase.GetAlbumStateUseCase

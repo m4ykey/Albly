@@ -1,13 +1,13 @@
 package com.m4ykey.album.domain.repository
 
 import androidx.paging.PagingData
+import com.m4ykey.album.domain.model.detail.AlbumRoot
+import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.core.database.model.album.AlbumListItem
 import com.m4ykey.core.database.model.album.AlbumWithStates
 import com.m4ykey.core.database.model.album.IsAlbumSaved
 import com.m4ykey.core.database.model.album.IsListenLaterSaved
-import com.m4ykey.album.domain.model.detail.AlbumRoot
-import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {

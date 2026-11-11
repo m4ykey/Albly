@@ -1,8 +1,8 @@
 package com.m4ykey.album.domain.usecase
 
+import com.m4ykey.album.domain.repository.AlbumRepository
 import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.core.database.model.album.IsAlbumSaved
-import com.m4ykey.album.domain.repository.AlbumRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

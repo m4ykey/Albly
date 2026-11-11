@@ -1,6 +1,5 @@
 package com.m4ykey.network
 
-import com.m4ykey.lyrics.data.service.LyricsService
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpMethod

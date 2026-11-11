@@ -3,9 +3,9 @@ package com.m4ykey.albly.app
 import android.app.Application
 import com.m4ykey.albly.app.di.appModule
 import com.m4ykey.album.di.albumModule
-import com.m4ykey.core.database.databaseModule
 import com.m4ykey.artist.di.artistModule
 import com.m4ykey.collection.di.collectionViewModel
+import com.m4ykey.core.database.databaseModule
 import com.m4ykey.lyrics.di.lyricsModule
 import com.m4ykey.network.networkModule
 import com.m4ykey.search.di.searchModule

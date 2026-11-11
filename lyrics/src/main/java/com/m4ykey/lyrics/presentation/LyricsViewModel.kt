@@ -2,7 +2,6 @@ package com.m4ykey.lyrics.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.m4ykey.core.database.model.lyrics.LyricsEntity
 import com.m4ykey.lyrics.data.mapper.toEntity
 import com.m4ykey.lyrics.data.mapper.toLyricsItem
 import com.m4ykey.lyrics.domain.model.LyricsRequest

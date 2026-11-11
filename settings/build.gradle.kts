@@ -1,8 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.util.Properties
-import kotlin.apply
-import kotlin.toString
 
 plugins {
     alias(libs.plugins.android.library)

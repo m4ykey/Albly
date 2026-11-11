@@ -8,9 +8,9 @@ import com.m4ykey.search.MainDispatcherRule
 import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
 import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
+import com.m4ykey.search.presentation.SearchEffect
 import com.m4ykey.search.presentation.SearchType
 import com.m4ykey.search.presentation.SearchTypeAction
-import com.m4ykey.search.presentation.SearchEffect
 import com.m4ykey.search.presentation.SearchViewModel
 import io.mockk.every
 import io.mockk.mockk

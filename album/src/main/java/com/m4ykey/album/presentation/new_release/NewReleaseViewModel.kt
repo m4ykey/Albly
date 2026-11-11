@@ -9,8 +9,6 @@ import com.m4ykey.album.domain.usecase.NewReleaseUseCase
 import com.m4ykey.core.paging.distinctById
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch

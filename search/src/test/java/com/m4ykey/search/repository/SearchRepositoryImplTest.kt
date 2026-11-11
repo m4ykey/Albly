@@ -1,15 +1,12 @@
 package com.m4ykey.search.repository
 
-import com.m4ykey.search.data.mapper.toGeniusRoot
 import com.m4ykey.search.data.network.service.RemoteSearchService
 import com.m4ykey.search.data.repository.SearchRepositoryImpl
 import com.m4ykey.search.domain.repository.SearchRepository
-import io.ktor.utils.io.CancellationException
-import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert

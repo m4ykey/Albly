@@ -14,9 +14,9 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.m4ykey.album.presentation.cover.AlbumCoverScreen
 import com.m4ykey.album.presentation.detail.AlbumDetailScreen
-import com.m4ykey.album.presentation.video.AlbumVideoScreen
 import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
+import com.m4ykey.album.presentation.video.AlbumVideoScreen
 import com.m4ykey.artist.presentation.ArtistScreen
 import com.m4ykey.collection.presentation.CollectionScreen
 import com.m4ykey.lyrics.presentation.LyricsScreen

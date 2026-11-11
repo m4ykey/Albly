@@ -71,7 +71,6 @@ import com.m4ykey.artist.domain.model.Image
 import com.m4ykey.artist.domain.model.ReleaseItem
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
-import com.m4ykey.core.ui.AlbumCard
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
