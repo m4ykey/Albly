@@ -12,9 +12,13 @@ import com.m4ykey.lyrics.domain.usecase.GetLyricsUseCase
 import com.m4ykey.lyrics.domain.usecase.ToggleLyricsSavedUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -28,11 +32,26 @@ class LyricsViewModel(
     private val _uiState = MutableStateFlow<LyricsUiState>(LyricsUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
+    private val _effects = Channel<LyricsEffect>(Channel.BUFFERED)
+    val effects : Flow<LyricsEffect> = _effects.receiveAsFlow()
+
     private var job : Job? = null
     private var lastRequest : LyricsRequest? = null
 
-    fun fetchLyrics(artist : String, track : String, album : String?, image : String? = null) {
-        val request = LyricsRequest(artist, track, album, image)
+    fun onAction(action: LyricsAction) {
+        when (action) {
+            is LyricsAction.OnLoadLyrics -> loadLyrics(action)
+            LyricsAction.OnToggleSave -> toggleSave()
+        }
+    }
+
+    fun loadLyrics(action: LyricsAction.OnLoadLyrics) {
+        val request = LyricsRequest(
+            artist = action.artist,
+            track = action.track,
+            album = action.album,
+            image = action.image
+        )
 
         val alreadyHandled = request == lastRequest &&
                 (_uiState.value is LyricsUiState.Success || job?.isActive == true)
@@ -43,10 +62,15 @@ class LyricsViewModel(
         job = viewModelScope.launch {
             _uiState.value = LyricsUiState.Loading
 
-            getLyricsUseCase.invoke(track = track, album = album, artist = artist, image = image)
+            getLyricsUseCase.invoke(
+                track = action.track,
+                album = action.album,
+                artist = action.artist,
+                image = action.image
+            )
                 .catch { e ->
                     val localLyrics = withContext(Dispatchers.IO) {
-                        getLocalLyricsUseCase(track = track, artist = artist)
+                        getLocalLyricsUseCase(track = action.track, artist = action.artist)
                     }
 
                     if (localLyrics != null) {
@@ -79,16 +103,28 @@ class LyricsViewModel(
     }
 
     fun toggleSave() {
-        val currentState = _uiState.value
-        if (currentState is LyricsUiState.Success) {
-            viewModelScope.launch {
-                val isCurrentlySaved = currentState.isSaved
-                toggleLyricsSavedUseCase(
-                    lyrics = currentState.item.toEntity(),
-                    isCurrentlySaved = isCurrentlySaved
-                )
+        val currentState = _uiState.value as? LyricsUiState.Success ?: return
+        val wasSaved = currentState.isSaved
 
-                _uiState.value = currentState.copy(isSaved = !isCurrentlySaved)
+        viewModelScope.launch {
+            _uiState.update { state ->
+                if (state is LyricsUiState.Success) state.copy(isSaved = !wasSaved) else state
+            }
+
+            runCatching {
+                toggleLyricsSavedUseCase(
+                    isCurrentlySaved = wasSaved,
+                    lyrics = currentState.item.toEntity()
+                )
+            }.onFailure { throwable ->
+                _uiState.update { state ->
+                    if (state is LyricsUiState.Success) state.copy(isSaved = wasSaved) else state
+                }
+                _effects.send(
+                    LyricsEffect.ShowError(
+                        throwable.localizedMessage ?: "Could not update saved lyrics"
+                    )
+                )
             }
         }
     }

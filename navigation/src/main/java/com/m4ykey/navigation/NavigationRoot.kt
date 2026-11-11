@@ -12,9 +12,9 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.m4ykey.album.presentation.detail.AlbumCoverScreen
+import com.m4ykey.album.presentation.cover.AlbumCoverScreen
 import com.m4ykey.album.presentation.detail.AlbumDetailScreen
-import com.m4ykey.album.presentation.detail.AlbumVideoScreen
+import com.m4ykey.album.presentation.video.AlbumVideoScreen
 import com.m4ykey.album.presentation.listen_later.ListenLaterScreen
 import com.m4ykey.album.presentation.new_release.AlbumNewReleaseScreen
 import com.m4ykey.artist.presentation.ArtistScreen

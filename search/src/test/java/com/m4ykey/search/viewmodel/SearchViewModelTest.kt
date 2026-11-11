@@ -10,7 +10,7 @@ import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
 import com.m4ykey.search.presentation.SearchType
 import com.m4ykey.search.presentation.SearchTypeAction
-import com.m4ykey.search.presentation.SearchUiEvent
+import com.m4ykey.search.presentation.SearchEffect
 import com.m4ykey.search.presentation.SearchViewModel
 import io.mockk.every
 import io.mockk.mockk
@@ -113,7 +113,7 @@ class SearchViewModelTest {
             advanceUntilIdle()
 
             assertEquals(type, viewModel.searchType.value)
-            assertEquals(SearchUiEvent.ChangeType(type), awaitItem())
+            assertEquals(SearchEffect.ChangeType(type), awaitItem())
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -127,7 +127,7 @@ class SearchViewModelTest {
             viewModel.onAction(SearchTypeAction.OnAlbumClick(albumId))
             advanceUntilIdle()
 
-            assertEquals(SearchUiEvent.OnAlbumClick(albumId), awaitItem())
+            assertEquals(SearchEffect.OnAlbumClick(albumId), awaitItem())
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -147,7 +147,7 @@ class SearchViewModelTest {
             advanceUntilIdle()
 
             assertEquals(
-                SearchUiEvent.OnTrackClick(
+                SearchEffect.OnTrackClick(
                     album = action.album,
                     title = action.title,
                     img = action.img,

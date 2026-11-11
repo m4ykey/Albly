@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -43,11 +44,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.ErrorCard
 import com.m4ykey.core.ui.LoadImage
+import com.m4ykey.core.ui.show
+import com.m4ykey.core.ui.showToast
 import com.m4ykey.lyrics.R
 import com.m4ykey.lyrics.domain.analyzer.RhymeDetector
 import com.m4ykey.lyrics.domain.analyzer.RhymeMatch
@@ -68,11 +74,31 @@ fun LyricsScreen(
 ) {
 
     val state = rememberLazyListState()
+    val context = LocalContext.current
 
     val lyricsUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val lifecycle = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel, lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is LyricsEffect.ShowError -> showToast(context, effect.message)
+                }
+            }
+        }
+    }
+
     LaunchedEffect(trackName, artistName, albumName, imageUrl) {
-        viewModel.fetchLyrics(track = trackName, artist = artistName, album = albumName, image = imageUrl)
+        viewModel.onAction(
+            LyricsAction.OnLoadLyrics(
+                artist = artistName,
+                track = trackName,
+                album = albumName,
+                image = imageUrl
+            )
+        )
     }
 
     val isSaved = (lyricsUiState as? LyricsUiState.Success)?.isSaved == true
@@ -103,7 +129,7 @@ fun LyricsScreen(
         actions = {
             if (lyricsUiState is LyricsUiState.Success) {
                 ActionIconButton(
-                    onClick = viewModel::toggleSave,
+                    onClick = { viewModel.onAction(LyricsAction.OnToggleSave) },
                     icon = icon,
                     textRes = R.string.save
                 )

@@ -58,6 +58,7 @@ import com.m4ykey.album.presentation.components.AlbumButtonRow
 import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.components.TrackListItem
 import com.m4ykey.artist.domain.model.Artist
+import com.m4ykey.artist.presentation.ArtistAction
 import com.m4ykey.artist.presentation.ArtistState
 import com.m4ykey.artist.presentation.ArtistViewModel
 import com.m4ykey.core.network.openLink
@@ -221,6 +222,8 @@ fun AlbumDetailContent(
     val context = LocalContext.current
     var showAlertDialog by rememberSaveable { mutableStateOf(false) }
 
+    val artistUiState by artistViewModel.uiState.collectAsStateWithLifecycle()
+
     if (showAlertDialog) {
         ShowArtistDialog(
             onArtistClick = { artist ->
@@ -228,7 +231,7 @@ fun AlbumDetailContent(
                 onArtistClick(artist)
             },
             onDismiss = { showAlertDialog = false },
-            state = artistViewModel.artistDialogState.collectAsState().value
+            state = artistUiState.artistState
         )
     }
 
@@ -300,7 +303,9 @@ fun AlbumDetailContent(
                         1 -> onArtistClick(item.artists[0].id)
                         else -> {
                             showAlertDialog = true
-                            artistViewModel.loadArtists(item.artists.map { it.id })
+                            artistViewModel.onAction(
+                                ArtistAction.OnLoadArtists(item.artists.map { it.id })
+                            )
                         }
                     }
                 }

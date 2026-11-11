@@ -1,4 +1,4 @@
-package com.m4ykey.album.presentation.detail
+package com.m4ykey.album.presentation.video
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

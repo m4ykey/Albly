@@ -93,15 +93,14 @@ fun ArtistScreen(
     onAlbumClick : (Int) -> Unit
 ) {
     LaunchedEffect(artistId) {
-        viewModel.loadArtists(listOf(artistId))
-        viewModel.setReleaseId(artistId)
+        viewModel.onAction(ArtistAction.OnLoadArtist(artistId))
     }
 
-    val state by viewModel.artistDialogState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var topIsLight by remember { mutableStateOf(false) }
 
-    val releases = viewModel.getArtistReleases().collectAsLazyPagingItems()
+    val releases = viewModel.artistRelease.collectAsLazyPagingItems()
 
     val view = LocalView.current
     DisposableEffect(topIsLight) {
@@ -115,7 +114,7 @@ fun ArtistScreen(
     AppScaffold(
         content = { padding ->
             ArtistContent(
-                state = state,
+                state = uiState.artistState,
                 modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
                 onTopLightnessDetected = { topIsLight = it },
                 onAlbumClick = onAlbumClick,

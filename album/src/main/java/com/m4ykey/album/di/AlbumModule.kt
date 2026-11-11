@@ -12,8 +12,8 @@ import com.m4ykey.album.domain.usecase.NewReleaseUseCase
 import com.m4ykey.album.domain.usecase.ToggleAlbumSavedUseCase
 import com.m4ykey.album.domain.usecase.ToggleListenLaterSavedUseCase
 import com.m4ykey.album.presentation.detail.AlbumDetailViewModel
-import com.m4ykey.album.presentation.detail.AlbumVideoViewModel
-import com.m4ykey.album.presentation.detail.CoverViewModel
+import com.m4ykey.album.presentation.video.AlbumVideoViewModel
+import com.m4ykey.album.presentation.cover.CoverViewModel
 import com.m4ykey.album.presentation.listen_later.ListenLaterViewModel
 import com.m4ykey.album.presentation.new_release.NewReleaseViewModel
 import org.koin.core.module.dsl.factoryOf

@@ -1,4 +1,4 @@
-package com.m4ykey.album.presentation.detail
+package com.m4ykey.album.presentation.cover
 
 import android.graphics.Bitmap
 import androidx.core.graphics.scale

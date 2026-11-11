@@ -72,7 +72,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -103,15 +106,13 @@ fun SearchScreen(
     onTrackClick : (String, String, String, String?) -> Unit,
     onArtistClick : (Int) -> Unit
 ) {
-    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val isDarkTheme = if (isSystemInDarkTheme()) Color.White else Color.Black
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val albumItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
     val artistItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
     val lyricsItems = viewModel.searchLyricsResults.collectAsLazyPagingItems()
-
-    val type by viewModel.searchType.collectAsStateWithLifecycle()
-    val activeSearchQuery by viewModel.activeSearchQuery.collectAsStateWithLifecycle()
 
     val onAction = viewModel::onAction
 
@@ -121,13 +122,19 @@ fun SearchScreen(
 
     val context = LocalContext.current
 
+    val type = uiState.type
+    val searchQuery = uiState.query
+
+    val lifecycle = LocalLifecycleOwner.current
+
     LaunchedEffect(viewModel) {
-        viewModel.searchUiEvent.collect { event ->
-            when (event) {
-                is SearchUiEvent.ChangeType -> viewModel.updateType(event.type)
-                is SearchUiEvent.OnAlbumClick -> onAlbumClick(event.id)
-                is SearchUiEvent.OnTrackClick -> onTrackClick(event.title, event.artist, event.img, event.album)
-                is SearchUiEvent.OnArtistClick -> onArtistClick(event.id)
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is SearchEffect.OnAlbumClick -> onAlbumClick(effect.id)
+                    is SearchEffect.OnTrackClick -> onTrackClick(effect.title, effect.artist, effect.img, effect.album)
+                    is SearchEffect.OnArtistClick -> onArtistClick(effect.id)
+                }
             }
         }
     }
@@ -182,7 +189,7 @@ fun SearchScreen(
         }
     }
 
-    val isActiveSearch = activeSearchQuery.isNotBlank()
+    val isActiveSearch = uiState.activeQuery.isNotBlank()
 
     Surface(
         modifier = modifier
