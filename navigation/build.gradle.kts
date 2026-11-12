@@ -53,9 +53,18 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.navigation3)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
 
     implementation(libs.ktx.serialization.json)
 
+    androidTestImplementation(libs.turbine)
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.junit)
+
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
