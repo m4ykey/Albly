@@ -82,7 +82,9 @@ fun AlbumEntity.toAlbumRoot() : AlbumRoot {
         tracklist = trackList.map { it.toTrackList() },
         artists = artistList.map { it.toArtists() },
         images = image.toImageList(),
-        videos = emptyList()
+        videos = emptyList(),
+        styles = emptyList(),
+        genres = emptyList()
     )
 }
 
@@ -122,7 +124,9 @@ fun AlbumRootDto.toAlbumRoot() : AlbumRoot {
         tracklist = tracklist?.map { it.toTrackList() } ?: emptyList(),
         artists = artists?.map { it.toArtists() } ?: emptyList(),
         images = images?.map { it.toImage() } ?: emptyList(),
-        videos = videos?.map { it.toVideo() } ?: emptyList()
+        videos = videos?.map { it.toVideo() } ?: emptyList(),
+        genres = genres.orEmpty(),
+        styles = styles.orEmpty()
     )
 }
 

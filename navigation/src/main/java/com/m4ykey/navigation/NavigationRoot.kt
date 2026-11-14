@@ -111,6 +111,9 @@ internal fun appEntryProvider(
             },
             onArtistClick = { artistId ->
                 navigator.navigateTo(Route.Artist(artistId))
+            },
+            onCoverClick = { img ->
+                navigator.navigateTo(Route.Cover(img))
             }
         )
     }

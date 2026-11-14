@@ -47,6 +47,7 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":album"))
 
     implementation(libs.bundles.koin)
 

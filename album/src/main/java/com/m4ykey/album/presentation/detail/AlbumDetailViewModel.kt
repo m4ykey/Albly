@@ -11,6 +11,7 @@ import com.m4ykey.album.domain.usecase.ToggleAlbumSavedUseCase
 import com.m4ykey.album.domain.usecase.ToggleListenLaterSavedUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,10 +45,15 @@ class AlbumDetailViewModel(
         }
     }
 
-    private fun loadAlbum(id : Int) {
-        if (_uiState.value is DetailUiState.Success) return
+    private var loadedId : Int? = null
+    private var loadJob : Job? = null
 
-        viewModelScope.launch {
+    private fun loadAlbum(id : Int) {
+        if (loadedId == id && _uiState.value is DetailUiState.Success) return
+
+        loadedId = id
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _uiState.value = DetailUiState.Loading
 
             val localState = withContext(Dispatchers.IO) {
