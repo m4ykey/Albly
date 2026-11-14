@@ -17,5 +17,7 @@ data class AlbumRootDto(
     val tracklist : List<TrackListDto>? = emptyList(),
     val artists : List<ArtistsDto>? = emptyList(),
     val uri : String? = null,
-    val videos : List<VideoDto>? = emptyList()
+    val videos : List<VideoDto>? = emptyList(),
+    val genres : List<String>? = emptyList(),
+    val styles : List<String>? = emptyList()
 )

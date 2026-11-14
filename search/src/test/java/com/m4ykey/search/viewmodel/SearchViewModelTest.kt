@@ -10,7 +10,7 @@ import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
 import com.m4ykey.search.presentation.SearchEffect
 import com.m4ykey.search.presentation.SearchType
-import com.m4ykey.search.presentation.SearchTypeAction
+import com.m4ykey.search.presentation.SearchAction
 import com.m4ykey.search.presentation.SearchViewModel
 import io.mockk.every
 import io.mockk.mockk
@@ -79,7 +79,7 @@ class SearchViewModelTest {
     fun `onQueryChange should update search query`() = runTest {
         val query = "Test query"
 
-        viewModel.onAction(SearchTypeAction.OnQueryChange(query))
+        viewModel.onAction(SearchAction.OnQueryChange(query))
         advanceUntilIdle()
 
         assertEquals(query, viewModel.searchQuery.value)
@@ -89,10 +89,10 @@ class SearchViewModelTest {
     fun `onSearchClick should update active search query`() = runTest {
         val query = "Test query"
 
-        viewModel.onAction(SearchTypeAction.OnQueryChange(query))
+        viewModel.onAction(SearchAction.OnQueryChange(query))
         advanceUntilIdle()
 
-        viewModel.onAction(SearchTypeAction.OnSearchClick)
+        viewModel.onAction(SearchAction.OnSearchClick)
         advanceUntilIdle()
 
         assertEquals(query, viewModel.activeSearchQuery.value)
@@ -109,7 +109,7 @@ class SearchViewModelTest {
         viewModel.searchUiEvent.test {
             val type = SearchType.ARTIST
 
-            viewModel.onAction(SearchTypeAction.OnTypeClick(type))
+            viewModel.onAction(SearchAction.OnTypeClick(type))
             advanceUntilIdle()
 
             assertEquals(type, viewModel.searchType.value)
@@ -124,7 +124,7 @@ class SearchViewModelTest {
         viewModel.searchUiEvent.test {
             val albumId = 123
 
-            viewModel.onAction(SearchTypeAction.OnAlbumClick(albumId))
+            viewModel.onAction(SearchAction.OnAlbumClick(albumId))
             advanceUntilIdle()
 
             assertEquals(SearchEffect.OnAlbumClick(albumId), awaitItem())
@@ -136,7 +136,7 @@ class SearchViewModelTest {
     @Test
     fun `onTrackClick should emit track click event`() = runTest {
         viewModel.searchUiEvent.test {
-            val action = SearchTypeAction.OnTrackClick(
+            val action = SearchAction.OnTrackClick(
                 title = "Test title",
                 artist = "Test artist",
                 img = "image.jpg",
@@ -183,10 +183,10 @@ class SearchViewModelTest {
             viewModel.updateType(SearchType.LYRICS)
             runCurrent()
 
-            viewModel.onAction(SearchTypeAction.OnQueryChange(query))
+            viewModel.onAction(SearchAction.OnQueryChange(query))
             runCurrent()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             runCurrent()
 
             assertEquals(LyricsSearchState.Loading, awaitItem())
@@ -216,10 +216,10 @@ class SearchViewModelTest {
             viewModel.updateType(SearchType.LYRICS)
             runCurrent()
 
-            viewModel.onAction(SearchTypeAction.OnQueryChange(query))
+            viewModel.onAction(SearchAction.OnQueryChange(query))
             runCurrent()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             runCurrent()
 
             assertEquals(LyricsSearchState.Loading, awaitItem())
@@ -252,10 +252,10 @@ class SearchViewModelTest {
         } returns flowOf(PagingData.empty())
 
         viewModel.searchAlbumResults.test {
-            viewModel.onAction(SearchTypeAction.OnQueryChange(query))
+            viewModel.onAction(SearchAction.OnQueryChange(query))
             advanceUntilIdle()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             advanceUntilIdle()
 
             verify(exactly = 1) {
@@ -277,10 +277,10 @@ class SearchViewModelTest {
         viewModel.searchArtistResults.test {
             viewModel.updateType(SearchType.ARTIST)
 
-            viewModel.onAction(SearchTypeAction.OnQueryChange(query))
+            viewModel.onAction(SearchAction.OnQueryChange(query))
             advanceUntilIdle()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             advanceUntilIdle()
 
             verify(exactly = 1) {
@@ -304,10 +304,10 @@ class SearchViewModelTest {
 
     @Test
     fun `onQueryChange should replace previous query`() = runTest {
-        viewModel.onAction(SearchTypeAction.OnQueryChange("First Query"))
+        viewModel.onAction(SearchAction.OnQueryChange("First Query"))
         advanceUntilIdle()
 
-        viewModel.onAction(SearchTypeAction.OnQueryChange("Second query"))
+        viewModel.onAction(SearchAction.OnQueryChange("Second query"))
         advanceUntilIdle()
 
         assertEquals("Second query", viewModel.searchQuery.value)
@@ -320,10 +320,10 @@ class SearchViewModelTest {
         viewModel.searchLyricsResults.test {
             assertEquals(LyricsSearchState.Idle, awaitItem())
 
-            viewModel.onAction(SearchTypeAction.OnQueryChange(query))
+            viewModel.onAction(SearchAction.OnQueryChange(query))
             advanceUntilIdle()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             advanceUntilIdle()
 
             verify(exactly = 0) {
@@ -347,10 +347,10 @@ class SearchViewModelTest {
             assertEquals(LyricsSearchState.Idle, awaitItem())
 
             viewModel.updateType(SearchType.LYRICS)
-            viewModel.onAction(SearchTypeAction.OnQueryChange(query))
+            viewModel.onAction(SearchAction.OnQueryChange(query))
             advanceUntilIdle()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             advanceUntilIdle()
 
             assertEquals(LyricsSearchState.Loading, awaitItem())
@@ -370,10 +370,10 @@ class SearchViewModelTest {
         viewModel.searchAlbumResults.test {
             viewModel.updateType(SearchType.ARTIST)
 
-            viewModel.onAction(SearchTypeAction.OnQueryChange("Test query"))
+            viewModel.onAction(SearchAction.OnQueryChange("Test query"))
             advanceUntilIdle()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             advanceUntilIdle()
 
             verify(exactly = 0) {
@@ -390,10 +390,10 @@ class SearchViewModelTest {
     @Test
     fun `searchArtistResults should not invoke use case when type is album`() = runTest {
         viewModel.searchArtistResults.test {
-            viewModel.onAction(SearchTypeAction.OnQueryChange("Test query"))
+            viewModel.onAction(SearchAction.OnQueryChange("Test query"))
             advanceUntilIdle()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             advanceUntilIdle()
 
             verify(exactly = 0) {
@@ -435,20 +435,20 @@ class SearchViewModelTest {
             viewModel.updateType(SearchType.LYRICS)
             runCurrent()
 
-            viewModel.onAction(SearchTypeAction.OnQueryChange(firstQuery))
+            viewModel.onAction(SearchAction.OnQueryChange(firstQuery))
             runCurrent()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             runCurrent()
 
             firstStarted.await()
 
             assertEquals(LyricsSearchState.Loading, awaitItem())
 
-            viewModel.onAction(SearchTypeAction.OnQueryChange(secondQuery))
+            viewModel.onAction(SearchAction.OnQueryChange(secondQuery))
             runCurrent()
 
-            viewModel.onAction(SearchTypeAction.OnSearchClick)
+            viewModel.onAction(SearchAction.OnSearchClick)
             runCurrent()
 
             firstCancelled.await()

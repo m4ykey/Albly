@@ -204,9 +204,6 @@ fun AlbumDetailContent(
     onArtistClick : (Int) -> Unit,
     artistViewModel : ArtistViewModel
 ) {
-    val albumEntity = remember(item) {
-        item.toAlbumEntity()
-    }
 
     val imageUrl = item.images.find { it.type == "primary" }?.uri ?: item.images.firstOrNull()?.uri
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
