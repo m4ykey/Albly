@@ -2,6 +2,7 @@ package com.m4ykey.core.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import io.ktor.utils.io.CancellationException
 
 abstract class BasePagingSource<Value : Any> : PagingSource<Int, Value>() {
 
@@ -35,6 +36,8 @@ abstract class BasePagingSource<Value : Any> : PagingSource<Int, Value>() {
                     LoadResult.Error(exception)
                 }
             )
+        } catch (e : CancellationException) {
+            throw e
         } catch (e : Exception) {
             LoadResult.Error(e)
         }

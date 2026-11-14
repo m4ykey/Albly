@@ -64,7 +64,9 @@ dependencies {
     implementation(libs.landscapist.animation)
 
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.paging.testing)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(kotlin("test"))
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

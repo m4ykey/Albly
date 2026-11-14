@@ -23,8 +23,8 @@ landscapist = "2.13.2"
 kotlinx-datetime = "0.8.0"
 koin = "4.2.2"
 ktor = "3.6.1"
-serialization-json = "1.12.0"
-mockk = "1.14.11"
+serialization-json = "1.13.0"
+mockk = "1.14.12"
 coroutines-test = "1.11.0"
 about-libraries = "15.3.0"
 constraintlayout = "1.1.2"
@@ -72,6 +72,7 @@ androidx-icons-extended = { group = "androidx.compose.material", name = "materia
 androidx-palette = { group = "androidx.palette", name = "palette", version.ref = "palette" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
+androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
 
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref= "lottie" }
 
