@@ -10,6 +10,7 @@ import com.m4ykey.core.paging.distinctById
 import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
 import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
+import com.m4ykey.search.presentation.SearchEffect.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -51,22 +52,24 @@ class SearchViewModel(
         source = { albumUseCase(query = it, type = "album") }
     ) { it.id ?: 0 }
 
-    fun onAction(action: SearchTypeAction) {
+    fun onAction(action: SearchAction) {
         viewModelScope.launch {
             when (action) {
-                is SearchTypeAction.OnQueryChange -> reduce { copy(query = action.query) }
-                is SearchTypeAction.OnAlbumClick -> sendEffects(SearchEffect.OnAlbumClick(action.id))
-                is SearchTypeAction.OnArtistClick -> sendEffects(SearchEffect.OnArtistClick(action.id))
-                SearchTypeAction.OnSearchClick -> reduce { copy(activeQuery = query) }
-                is SearchTypeAction.OnTrackClick -> sendEffects(
-                    SearchEffect.OnTrackClick(
+                is SearchAction.OnHideAlbumDialog -> reduce { copy(selectedAlbumId = null) }
+                is SearchAction.OnQueryChange -> reduce { copy(query = action.query) }
+                is SearchAction.OnAlbumClick -> sendEffects(OnAlbumClick(action.id))
+                is SearchAction.OnArtistClick -> sendEffects(OnArtistClick(action.id))
+                SearchAction.OnSearchClick -> reduce { copy(activeQuery = query) }
+                is SearchAction.OnTrackClick -> sendEffects(
+                    OnTrackClick(
                         title = action.title,
                         img = action.img,
                         artist = action.artist,
                         album = action.album
                     )
                 )
-                is SearchTypeAction.OnTypeClick -> reduce { copy(type = action.type) }
+                is SearchAction.OnTypeClick -> reduce { copy(type = action.type) }
+                is SearchAction.OnLongAlbumClick -> reduce { copy(selectedAlbumId = action.id) }
             }
         }
     }

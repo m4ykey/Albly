@@ -1,6 +1,6 @@
 package com.m4ykey.core.ui
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -16,12 +16,17 @@ fun AlbumCard(
     albumName : String,
     artistName : String,
     image : String,
-    onAlbumClick : () -> Unit
+    onAlbumClick : () -> Unit,
+    onLongAlbumClick : () -> Unit = {}
 ) {
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     Column(
-        modifier = Modifier.clickable { onAlbumClick() }
+        modifier = Modifier
+            .combinedClickable(
+                onClick = { onAlbumClick() },
+                onLongClick = { onLongAlbumClick() }
+            )
     ) {
         LoadImage(imageUrl = image)
         Text(

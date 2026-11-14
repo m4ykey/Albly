@@ -14,9 +14,9 @@ room = "2.8.5"
 coroutines = "1.11.0"
 ksp = "2.3.12"
 datastore = "1.3.0"
-gms = "4.5.0"
+gms = "4.6.0"
 firebase-analytics = "24.0.0"
-firebase-crashlytics = "21.0.1"
+firebase-crashlytics = "21.1.0"
 crashlytics = "3.0.8"
 material3 = "1.5.0-rc01"
 landscapist = "2.13.2"
@@ -35,7 +35,6 @@ navigation3 = "1.2.1"
 lottie = "6.7.1"
 lifecycle-viewmodel-navigation3 = "2.11.0"
 leakcanary = "3.0-alpha-9"
-compose-nav-graph = "0.3.0"
 palette = "1.1.0"
 jsoup = "1.24.1"
 browser = "1.10.0"
@@ -133,7 +132,6 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 android-library = { id = "com.android.library", version.ref = "agp" }
 about-libraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "about-libraries" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "stability-analyzer" }
-compose-nav-graph = { id = "com.github.skydoves.navgraph", version.ref = "compose-nav-graph" }
 
 [bundles]
 paging = ["androidx-paging-common", "androidx-paging-runtime", "androidx-paging-compose"]

@@ -9,5 +9,4 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.stability.analyzer) apply false
-    alias(libs.plugins.compose.nav.graph) apply false
 }

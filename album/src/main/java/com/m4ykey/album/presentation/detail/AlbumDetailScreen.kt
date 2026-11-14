@@ -204,9 +204,6 @@ fun AlbumDetailContent(
     onArtistClick : (Int) -> Unit,
     artistViewModel : ArtistViewModel
 ) {
-    val albumEntity = remember(item) {
-        item.toAlbumEntity()
-    }
 
     val imageUrl = item.images.find { it.type == "primary" }?.uri ?: item.images.firstOrNull()?.uri
     val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -334,7 +331,8 @@ fun AlbumDetailContent(
             Text(
                 text = stringResource(R.string.data_is_provided_by_discogs),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 15.sp
             )
         }
     }
