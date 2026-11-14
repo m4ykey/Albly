@@ -9,5 +9,12 @@
     <string name="lyrics">Tekst</string>
     <string name="no_results">Brak wyników</string>
     <string name="genres">Gatunki</string>
-    <string name="styles">Style</string>/>
+    <string name="styles">Style</string>
+    <string name="view_album">Zobacz album</string>
+    <string name="close">Zamknij</string>
+    <string name="save">Zapisz</string>
+    <string name="listen_later">Odsłuchaj później</string>
+    <string name="remove_from_collection">Usuń z kolekcji</string>
+    <string name="remove_listen_later">Usuń z odsłuchaj później</string>
+    <string name="year">Rok</string>/>
 </resources>

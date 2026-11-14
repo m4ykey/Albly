@@ -331,7 +331,8 @@ fun AlbumDetailContent(
             Text(
                 text = stringResource(R.string.data_is_provided_by_discogs),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 15.sp
             )
         }
     }
