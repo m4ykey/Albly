@@ -3,8 +3,8 @@ package com.m4ykey.core
 import com.m4ykey.core.database.converter.AlbumConverters
 import com.m4ykey.core.database.model.album.ArtistEntity
 import com.m4ykey.core.database.model.album.TrackEntity
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class AlbumConverterTest {
 
