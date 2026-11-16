@@ -6,11 +6,17 @@ plugins {
 }
 
 val localProps = Properties().apply {
-    load(rootProject.file("local.properties").inputStream())
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
 }
 
+fun buildSecret(name : String) : String =
+    localProps.getProperty(name) ?: System.getenv(name) ?: ""
+
 val token : String = localProps.getProperty("token")
-val contact_mail : String = localProps.getProperty("contact_mail")
+val contactMail : String = localProps.getProperty("contact_mail")
 
 android {
     namespace = "com.m4ykey.network"
@@ -25,7 +31,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         buildConfigField("String", "token", "\"${token}\"")
-        buildConfigField("String", "contact_mail", "\"${contact_mail}\"")
+        buildConfigField("String", "contact_mail", "\"${contactMail}\"")
     }
 
     buildTypes {
