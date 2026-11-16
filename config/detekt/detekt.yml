@@ -12,6 +12,13 @@ complexity:
     TooManyFunctions:
         allowedFunctionsPerFile: 20
         allowedFunctionsPerClass: 20
+        allowedFunctionsPerInterface: 20
+
+exceptions:
+    TooGenericExceptionCaught:
+        excludes: ['**/SafeApi.kt', '**/SafeDataStoreOperations.kt', '**/BasePagingSource.kt']
+    SwallowedException:
+        excludes: ['**/SafeDataStoreOperations.kt']
 
 style:
     MaxLineLength:
