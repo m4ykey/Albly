@@ -1,0 +1,23 @@
+naming:
+    FunctionNaming:
+        functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+
+complexity:
+    LongMethod:
+        allowedLines: 100
+    LongParameterList:
+        allowedFunctionParameters: 10
+        allowedConstructorParameters: 10
+        ignoreDefaultParameters: true
+    TooManyFunctions:
+        allowedFunctionsPerFile: 20
+        allowedFunctionsPerClass: 20
+
+style:
+    MaxLineLength:
+        maxLineLength: 140
+    ReturnCount:
+        max: 4
+        excludeGuardClauses: true
+    MagicNumber:
+        active: false
