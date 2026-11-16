@@ -2,7 +2,7 @@ package com.m4ykey.core.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import io.ktor.utils.io.CancellationException
+import kotlinx.coroutines.CancellationException
 
 abstract class BasePagingSource<Value : Any> : PagingSource<Int, Value>() {
 
