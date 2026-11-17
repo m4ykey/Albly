@@ -118,3 +118,16 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
         connection.execSQL("ALTER TABLE lyrics_table_new RENAME TO lyrics_table")
     }
 }
+
+val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS search_item_table (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                text TEXT NOT NULL
+            )
+        """.trimIndent())
+
+        connection.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_search_item_table_text ON search_item_table (text)")
+    }
+}

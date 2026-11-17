@@ -2,6 +2,9 @@ package com.m4ykey.search.di
 
 import com.m4ykey.search.data.repository.SearchRepositoryImpl
 import com.m4ykey.search.domain.repository.SearchRepository
+import com.m4ykey.search.domain.usecase.DeleteSearchItemUseCase
+import com.m4ykey.search.domain.usecase.GetRecentSearchesUseCase
+import com.m4ykey.search.domain.usecase.SaveSearchItemUseCase
 import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
 import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
@@ -18,6 +21,9 @@ val searchModule = module {
     factoryOf(::SearchAlbumUseCase)
     factoryOf(::SearchArtistUseCase)
     factoryOf(::SearchLyricsUseCase)
+    factoryOf(::GetRecentSearchesUseCase)
+    factoryOf(::DeleteSearchItemUseCase)
+    factoryOf(::SaveSearchItemUseCase)
 
     viewModelOf(::SearchViewModel)
 }

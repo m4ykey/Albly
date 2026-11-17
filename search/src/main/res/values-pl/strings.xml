@@ -16,5 +16,6 @@
     <string name="listen_later">Odsłuchaj później</string>
     <string name="remove_from_collection">Usuń z kolekcji</string>
     <string name="remove_listen_later">Usuń z odsłuchaj później</string>
-    <string name="year">Rok</string>/>
+    <string name="year">Rok</string>
+    <string name="recent_search">Ostatnie wyszukiwania</string>/>
 </resources>

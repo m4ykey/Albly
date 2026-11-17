@@ -19,6 +19,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -76,6 +77,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -93,6 +95,7 @@ import com.m4ykey.album.presentation.components.SaveButtonRow
 import com.m4ykey.album.presentation.detail.AlbumDetailAction
 import com.m4ykey.album.presentation.detail.AlbumDetailViewModel
 import com.m4ykey.album.presentation.detail.DetailUiState
+import com.m4ykey.core.database.model.search.SearchItem
 import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.paging.ErrorItem
 import com.m4ykey.core.ui.ActionIconButton
@@ -125,6 +128,7 @@ fun SearchScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val albumUiState by albumViewModel.uiState.collectAsStateWithLifecycle()
+    val recentSearch by viewModel.recentSearches.collectAsStateWithLifecycle()
 
     val albumItems = viewModel.searchAlbumResults.collectAsLazyPagingItems()
     val artistItems = viewModel.searchArtistResults.collectAsLazyPagingItems()
@@ -236,7 +240,8 @@ fun SearchScreen(
                 lyricsItems = lyricsItems,
                 artistListState = artistListState,
                 albumGridState = albumGridState,
-                lyricsListState = lyricsListState
+                lyricsListState = lyricsListState,
+                recentSearch = recentSearch
             )
         }
     }
@@ -420,7 +425,8 @@ fun SearchContent(
     lyricsItems : LazyPagingItems<Hit>,
     artistListState : LazyListState,
     albumGridState : LazyGridState,
-    lyricsListState : LazyListState
+    lyricsListState : LazyListState,
+    recentSearch : List<SearchItem>
 ) {
     Column(
         modifier = modifier
@@ -436,27 +442,46 @@ fun SearchContent(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        when (type) {
-            SearchType.ALBUM -> AlbumSearchList(
-                items = albumItems,
-                isActiveSearch = isActiveSearch,
-                state = albumGridState,
-                onAction = onAction
+        if (!isActiveSearch) {
+            Text(
+                text = stringResource(R.string.recent_search),
+                modifier = Modifier.padding(horizontal = 10.dp)
             )
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                items(
+                    items = recentSearch,
+                    key = { item -> item.id }
+                ) { item ->
+                    SearchItemList(
+                        text = item.text,
+                        onClick = { onAction(SearchAction.OnQueryChange(item.text)) },
+                        onLongClick = {  }
+                    )
+                }
+            }
+        } else {
+            when (type) {
+                SearchType.ALBUM -> AlbumSearchList(
+                    items = albumItems,
+                    isActiveSearch = isActiveSearch,
+                    state = albumGridState,
+                    onAction = onAction
+                )
 
-            SearchType.ARTIST -> ArtistSearchList(
-                isActiveSearch = isActiveSearch,
-                items = artistItems,
-                state = artistListState,
-                onAction = onAction
-            )
+                SearchType.ARTIST -> ArtistSearchList(
+                    isActiveSearch = isActiveSearch,
+                    items = artistItems,
+                    state = artistListState,
+                    onAction = onAction
+                )
 
-            SearchType.LYRICS -> LyricsSearchList(
-                isActiveSearch = isActiveSearch,
-                onAction = onAction,
-                items = lyricsItems,
-                state = lyricsListState
-            )
+                SearchType.LYRICS -> LyricsSearchList(
+                    isActiveSearch = isActiveSearch,
+                    onAction = onAction,
+                    items = lyricsItems,
+                    state = lyricsListState
+                )
+            }
         }
     }
 }
@@ -498,7 +523,10 @@ fun SearchBar(
             modifier = Modifier
                 .weight(animatedWeight)
                 .padding(start = 8.dp),
-            onSearch = { onAction(SearchAction.OnSearchClick) }
+            onSearch = {
+                onAction(SearchAction.OnSearchClick)
+                onAction(SearchAction.OnSearchItemClick(searchQuery))
+            }
         )
         ActionIconButton(
             tint = isDarkTheme,
@@ -794,5 +822,52 @@ fun SearchInputTextField(
             onSearch = { onSearch() }
         ),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
+    )
+}
+
+@Composable
+fun SearchItemList(
+    modifier: Modifier = Modifier,
+    text : String,
+    onClick : () -> Unit,
+    onLongClick : () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            contentDescription = null,
+            painter = painterResource(R.drawable.ic_recent),
+            modifier = Modifier.size(18.dp)
+        )
+        Text(
+            text = text,
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
+                .weight(1f),
+            fontSize = 16.sp
+        )
+        Icon(
+            contentDescription = null,
+            painter = painterResource(R.drawable.ic_arrow_recent),
+            modifier = Modifier.size(18.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SearchItemListPrev() {
+    SearchItemList(
+        text = "Search",
+        onClick = {},
+        onLongClick = {}
     )
 }
