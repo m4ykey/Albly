@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.serialization)
     alias(libs.plugins.stability.analyzer)
     alias(libs.plugins.about.libraries)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 val versionProperties = Properties().apply {
@@ -105,6 +106,10 @@ dependencies {
     implementation(project(":settings"))
     implementation(project(":network"))
     implementation(project(":artist"))
+
+    implementation(libs.androidx.profileinstaller)
+
+    baselineProfile(project(":baselineprofile"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

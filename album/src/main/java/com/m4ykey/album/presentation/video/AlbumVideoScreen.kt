@@ -197,7 +197,7 @@ private fun VideoPlayer(
     modifier: Modifier = Modifier
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    var youTubePlayer by remember { mutableStateOf<YouTubePlayer?>(null) }
+    var readyPlayer by remember { mutableStateOf<YouTubePlayer?>(null) }
 
     AndroidView(
         modifier = modifier,
@@ -206,21 +206,21 @@ private fun VideoPlayer(
                 lifecycleOwner.lifecycle.addObserver(this)
 
                 addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                    override fun onReady(player: YouTubePlayer) {
-                        youTubePlayer = player
+                    override fun onReady(youtubePlayer: YouTubePlayer) {
+                        readyPlayer = youtubePlayer
                     }
                 })
             }
         },
         onRelease = { view ->
-            youTubePlayer = null
+            readyPlayer = null
             lifecycleOwner.lifecycle.removeObserver(view)
             view.release()
         }
     )
 
-    LaunchedEffect(youTubePlayer, videoId, playToken) {
-        val player = youTubePlayer ?: return@LaunchedEffect
+    LaunchedEffect(readyPlayer, videoId, playToken) {
+        val player = readyPlayer ?: return@LaunchedEffect
 
         if (playToken < 0) {
             player.cueVideo(videoId, 0f)

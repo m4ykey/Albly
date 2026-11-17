@@ -19,3 +19,4 @@ local.properties
 /app/release/
 /app/google-services.json
 .kotlin/errors
+/baselineprofile/build/

@@ -41,6 +41,10 @@ browser = "1.10.0"
 annotation = "1.11.0"
 youtube-player = "13.1.0"
 splash = "1.2.0"
+benchmark = "1.5.0-alpha01"
+uiautomator = "2.3.0"
+profileinstaller = "1.4.1"
+test-runner = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -71,6 +75,10 @@ androidx-palette = { group = "androidx.palette", name = "palette", version.ref =
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
 androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
+androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "test-runner" }
 
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref= "lottie" }
 
@@ -130,6 +138,8 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 android-library = { id = "com.android.library", version.ref = "agp" }
 about-libraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "about-libraries" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "stability-analyzer" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 
 [bundles]
 paging = ["androidx-paging-common", "androidx-paging-runtime", "androidx-paging-compose"]

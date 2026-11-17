@@ -9,4 +9,6 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.about.libraries) apply false
     alias(libs.plugins.stability.analyzer) apply false
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.androidx.baselineprofile) apply false
 }
