@@ -199,9 +199,11 @@ fun LyricsContent(
     val rhymeGroups by produceState(
         key1 = item.id,
         key2 = item.plainLyrics,
+        key3 = showRhymes,
         initialValue = emptyList()
     ) {
-        value = emptyList()
+        if (!showRhymes) return@produceState
+
         value = withContext(Dispatchers.Default) {
             RhymeDetector.analyze(item.plainLyrics)
         }
@@ -220,8 +222,8 @@ fun LyricsContent(
         AnnotatedString(lines.joinToString("\n"))
     }
 
-    val rhymedText = remember(lines, matchesByLine, rhymeColors) {
-        buildRhymedText(lines, matchesByLine, rhymeColors)
+    val rhymedText = remember(showRhymes, lines, matchesByLine, rhymeColors) {
+        if (showRhymes) buildRhymedText(lines, matchesByLine, rhymeColors) else plainText
     }
 
     val highlightedLyrics = if (showRhymes) rhymedText else plainText
