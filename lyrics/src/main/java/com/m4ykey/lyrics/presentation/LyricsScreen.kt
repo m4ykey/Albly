@@ -50,7 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
-import com.m4ykey.core.ui.ErrorCard
+import com.m4ykey.core.ui.AnimationCard
 import com.m4ykey.core.ui.LoadImage
 import com.m4ykey.core.ui.showToast
 import com.m4ykey.lyrics.R
@@ -157,7 +157,7 @@ fun LyricsDisplay(
             }
         }
         is LyricsUiState.Error -> {
-            ErrorCard(text = lyricsUiState.message)
+            AnimationCard(text = lyricsUiState.message)
         }
         is LyricsUiState.Success -> {
             Box(

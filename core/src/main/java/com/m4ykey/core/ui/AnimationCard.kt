@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -22,8 +23,13 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.m4ykey.core.R
 
 @Composable
-fun ErrorCard(text : String) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.bad_cat))
+fun AnimationCard(
+    text : String = "",
+    animation : Int = R.raw.bad_cat,
+    showText : Boolean = true,
+    size : Dp = 200.dp
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(animation))
 
     Box(
         modifier = Modifier
@@ -39,14 +45,18 @@ fun ErrorCard(text : String) {
             LottieAnimation(
                 iterations = LottieConstants.IterateForever,
                 composition = composition,
-                modifier = Modifier.size(200.dp),
+                modifier = Modifier.size(size),
             )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
+            if (showText) {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

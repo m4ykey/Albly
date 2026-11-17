@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.m4ykey.collection.R
 import com.m4ykey.core.ui.ActionIconButton
-import com.m4ykey.search.presentation.SearchBarTextField
+import com.m4ykey.search.presentation.components.SearchBarTextField
 
 @Composable
 fun SearchField(

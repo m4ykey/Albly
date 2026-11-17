@@ -12,6 +12,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
@@ -43,7 +46,8 @@ fun SaveButtonRow(
     isSaved : Boolean,
     isListenLaterSaved : Boolean,
     onSaveClick : () -> Unit,
-    onListenLaterClick : () -> Unit
+    onListenLaterClick : () -> Unit,
+    divider : Boolean = false
 ) {
     Row(
         modifier = modifier.wrapContentWidth(),
@@ -58,6 +62,9 @@ fun SaveButtonRow(
             contentDescription = stringResource(R.string.save),
             checkedColor = Color(0xFFE53935)
         )
+        if (divider) {
+            Spacer(modifier = Modifier.width(10.dp))
+        }
         AnimatedToggleIcon(
             checked = isListenLaterSaved,
             checkedIcon = Icons.Default.AccessTimeFilled,
@@ -121,7 +128,10 @@ fun AnimatedToggleIcon(
         label = "iconTint"
     )
 
-    IconButton(onClick = onClick) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.then(Modifier.size(24.dp))
+    ) {
         AnimatedContent(
             label = "iconSwap",
             targetState = checked,

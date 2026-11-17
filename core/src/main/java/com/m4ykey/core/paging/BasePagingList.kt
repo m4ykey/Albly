@@ -21,11 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import com.m4ykey.core.R
+import com.m4ykey.core.ui.AnimationCard
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 private val defaultLoading : @Composable () -> Unit = { DefaultLoading() }
 private val defaultError : @Composable (Throwable?, onRetry : () -> Unit) -> Unit = { error, retry ->
@@ -55,9 +58,9 @@ fun ErrorItem(message : String, onRetry: () -> Unit) {
 private fun DefaultEmpty() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            //AnimationImage("") // Add empty animation
+            AnimationCard(animation = R.raw.cat_empty_list, showText = false)
             Text(
-                text = "No results found",
+                text = stringResource(R.string.no_results_found),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge
             )
@@ -79,20 +82,14 @@ private fun DefaultLoading() {
 private fun DefaultError(error : Throwable?, onRetry: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            //AnimationImage(jsonPath = "files/black_cat_animation.json")
-            Text(
-                text = error?.message ?: "Unexpected error occurred",
-                modifier = Modifier.padding(16.dp),
-                textAlign = TextAlign.Center
-            )
+            AnimationCard(error?.message ?: "Unexpected error occurred")
             Button(onClick = onRetry) {
-                Text("Try Again")
+                Text(stringResource(R.string.try_again))
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T: Any> BasePagingList(
     items : LazyPagingItems<T>,
@@ -114,7 +111,7 @@ fun <T: Any> BasePagingList(
     LaunchedEffect(isRefreshing) {
         if (isRefreshing) {
             showLoading = false
-            delay(300L)
+            delay(300L.milliseconds)
             showLoading = true
         } else {
             showLoading = false
