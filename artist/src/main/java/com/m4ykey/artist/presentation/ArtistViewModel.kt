@@ -12,6 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,9 +61,11 @@ class ArtistViewModel(
             _uiState.update { it.copy(artistState = ArtistState.Loading) }
 
             val state = try {
-                val result = ids
-                    .map { id -> async { repository.getArtistById(id).first() } }
-                    .awaitAll()
+                val result = coroutineScope {
+                    ids
+                        .map { id -> async { repository.getArtistById(id).first() } }
+                        .awaitAll()
+                }
 
                 ArtistState.Success(result)
             } catch (e : Exception) {

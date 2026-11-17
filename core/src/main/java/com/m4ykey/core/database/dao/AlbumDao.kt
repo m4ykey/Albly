@@ -24,9 +24,6 @@ interface AlbumDao {
     @Insert(onConflict = REPLACE)
     suspend fun insertListenLaterSaved(isListenLaterSaved: IsListenLaterSaved)
 
-    @Query("SELECT * FROM album_table WHERE id = :id")
-    fun getAlbumById(id : Int) : AlbumEntity?
-
     @Query("SELECT * FROM is_album_saved_table WHERE id = :id")
     fun getSavedAlbumState(id : Int) : IsAlbumSaved?
 
@@ -118,5 +115,27 @@ interface AlbumDao {
         WHERE is_listen_later_saved_table.isListenLater = 1 ORDER BY RANDOM() LIMIT 1
     """)
     fun getRandomAlbum() : Flow<AlbumEntity>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM album_table WHERE id = :id)")
+    suspend fun isAlbumStored(id : Int) : Boolean
+
+    @Query("""
+        SELECT COUNT(*) FROM album_table
+        WHERE id NOT IN (SELECT id FROM is_album_saved_table)
+        AND id NOT IN (SELECT id FROM is_listen_later_saved_table)
+    """)
+    suspend fun countCachedAlbums() : Int
+
+    @Query("""
+        DELETE FROM album_table
+        WHERE id IN (
+            SELECT id FROM album_table
+            WHERE id NOT IN (SELECT id FROM is_album_saved_table)
+            AND id NOT IN (SELECT id FROM is_listen_later_saved_table)
+            ORDER BY save_time ASC
+            LIMIT :limit
+        )
+    """)
+    suspend fun deleteOldestCachedAlbums(limit : Int)
 
 }

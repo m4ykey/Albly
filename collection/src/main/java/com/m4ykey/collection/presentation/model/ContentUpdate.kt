@@ -1,4 +1,4 @@
-package com.m4ykey.collection.presentation
+package com.m4ykey.collection.presentation.model
 
 import com.m4ykey.artist.data.local.ArtistListItem
 import com.m4ykey.core.database.model.album.AlbumListItem
