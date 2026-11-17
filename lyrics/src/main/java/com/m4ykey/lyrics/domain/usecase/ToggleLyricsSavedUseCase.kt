@@ -23,7 +23,13 @@ class ToggleLyricsSavedUseCase(private val repository: LyricsRepository) {
                 lyrics.isrc
             )
         } else {
-            repository.insertLyrics(lyrics)
+            val existing = repository.getLyricsById(track = lyrics.title, artist = lyrics.artist)
+            repository.insertLyrics(
+                lyrics.copy(
+                    id = existing?.id ?: 0,
+                    saveTime = System.currentTimeMillis()
+                )
+            )
             repository.insertSavedLyrics(
                 IsLyricsSaved(
                     isLyricsSaved = true,

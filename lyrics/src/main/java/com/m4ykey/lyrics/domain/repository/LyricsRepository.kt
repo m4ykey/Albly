@@ -16,14 +16,14 @@ interface LyricsRepository {
 
     suspend fun insertLyrics(lyrics : LyricsEntity)
     suspend fun insertSavedLyrics(isLyricsSaved: IsLyricsSaved)
-    fun getLyricsById(
+    suspend fun getLyricsById(
         source : String? = null,
         remoteId : Int? = null,
         isrc : String? = null,
         track : String? = null,
         artist : String? = null
     ) : LyricsEntity?
-    fun getSavedLyricsState(source : String, remoteId : Int, isrc : String?) : IsLyricsSaved?
+    suspend fun getSavedLyricsState(source : String, remoteId : Int, isrc : String?) : IsLyricsSaved?
     suspend fun getLyricsWithState(
         source : String? = null,
         remoteId : Int? = null,
@@ -36,5 +36,6 @@ interface LyricsRepository {
     fun getSavedLyricsLatest(query : String) : Flow<List<LyricsEntity>>
     fun getSavedLyricsOldest(query: String) : Flow<List<LyricsEntity>>
     fun getSavedLyricsAlphabetical(query: String) : Flow<List<LyricsEntity>>
+    suspend fun cacheLyrics(lyrics : LyricsEntity)
 
 }

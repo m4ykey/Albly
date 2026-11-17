@@ -2,7 +2,8 @@ package com.m4ykey.lyrics.di
 
 import com.m4ykey.lyrics.data.repository.LyricsRepositoryImpl
 import com.m4ykey.lyrics.domain.repository.LyricsRepository
-import com.m4ykey.lyrics.domain.usecase.GetLocalLyricsUseCase
+import com.m4ykey.lyrics.domain.usecase.CacheLyricsUseCase
+import com.m4ykey.lyrics.domain.usecase.GetLyricsSavedStateUseCase
 import com.m4ykey.lyrics.domain.usecase.GetLyricsSavedUseCase
 import com.m4ykey.lyrics.domain.usecase.GetLyricsStateUseCase
 import com.m4ykey.lyrics.domain.usecase.GetLyricsUseCase
@@ -18,10 +19,11 @@ val lyricsModule = module {
     singleOf(::LyricsRepositoryImpl) bind LyricsRepository::class
 
     factoryOf(::GetLyricsUseCase)
-    factoryOf(::GetLocalLyricsUseCase)
+    factoryOf(::GetLyricsSavedStateUseCase)
     factoryOf(::GetLyricsStateUseCase)
     factoryOf(::ToggleLyricsSavedUseCase)
     factoryOf(::GetLyricsSavedUseCase)
+    factoryOf(::CacheLyricsUseCase)
 
     viewModelOf(::LyricsViewModel)
 }
