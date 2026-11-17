@@ -99,7 +99,7 @@ fun NewReleaseContent(
                     items[index]?.let { item ->
                         AlbumCard(
                             albumName = item.title,
-                            image = item.coverImage,
+                            image = item.thumb.ifBlank { item.coverImage },
                             artistName = item.artist,
                             onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.masterId)) }
                         )

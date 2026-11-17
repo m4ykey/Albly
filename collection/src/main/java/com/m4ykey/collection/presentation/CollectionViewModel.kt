@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
+@file:OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 
 package com.m4ykey.collection.presentation
 
@@ -14,6 +14,7 @@ import com.m4ykey.core.Sort
 import com.m4ykey.lyrics.domain.usecase.GetLyricsSavedUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -100,6 +102,7 @@ class CollectionViewModel(
                     )
                 }
                 .distinctUntilChanged()
+                .debounce { key -> if (key.query.isBlank()) 0L else 250L  }
                 .flatMapLatest { key -> contentUpdates(key) }
                 .collect { update -> applyContentUpdate(update) }
         }

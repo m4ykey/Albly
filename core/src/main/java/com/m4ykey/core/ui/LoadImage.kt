@@ -45,7 +45,7 @@ fun LoadImage(
                 contentScale = ContentScale.Crop
             ),
             component = rememberImageComponent {
-                CrossfadePlugin(duration = 500)
+                CrossfadePlugin(duration = 200)
             },
             onImageStateChanged = {
                 imageState = it
