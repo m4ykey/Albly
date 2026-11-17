@@ -3,9 +3,9 @@ package com.m4ykey.album.di
 import com.m4ykey.album.data.repository.AlbumRepositoryImpl
 import com.m4ykey.album.domain.repository.AlbumRepository
 import com.m4ykey.album.domain.usecase.AlbumUseCase
+import com.m4ykey.album.domain.usecase.CacheAlbumUseCase
 import com.m4ykey.album.domain.usecase.GetAlbumStateUseCase
 import com.m4ykey.album.domain.usecase.GetListenLaterAlbumsUseCase
-import com.m4ykey.album.domain.usecase.GetLocalAlbumUseCase
 import com.m4ykey.album.domain.usecase.GetRandomAlbumUseCase
 import com.m4ykey.album.domain.usecase.GetSavedAlbumsUseCase
 import com.m4ykey.album.domain.usecase.NewReleaseUseCase
@@ -31,8 +31,8 @@ val albumModule = module {
     factoryOf(::GetSavedAlbumsUseCase)
     factoryOf(::ToggleAlbumSavedUseCase)
     factoryOf(::ToggleListenLaterSavedUseCase)
-    factoryOf(::GetLocalAlbumUseCase)
     factoryOf(::NewReleaseUseCase)
+    factoryOf(::CacheAlbumUseCase)
 
     viewModelOf(::AlbumDetailViewModel)
     viewModelOf(::ListenLaterViewModel)

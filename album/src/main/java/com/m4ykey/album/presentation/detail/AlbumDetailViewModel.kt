@@ -4,31 +4,31 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.m4ykey.album.data.mapper.toAlbumEntity
 import com.m4ykey.album.data.mapper.toAlbumRoot
+import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.usecase.AlbumUseCase
+import com.m4ykey.album.domain.usecase.CacheAlbumUseCase
 import com.m4ykey.album.domain.usecase.GetAlbumStateUseCase
-import com.m4ykey.album.domain.usecase.GetLocalAlbumUseCase
 import com.m4ykey.album.domain.usecase.ToggleAlbumSavedUseCase
 import com.m4ykey.album.domain.usecase.ToggleListenLaterSavedUseCase
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AlbumDetailViewModel(
     private val useCase: AlbumUseCase,
     private val toggleAlbumSavedUseCase: ToggleAlbumSavedUseCase,
     private val toggleListenLaterSavedUseCase: ToggleListenLaterSavedUseCase,
     private val getAlbumStateUseCase: GetAlbumStateUseCase,
-    private val getLocalAlbumUseCase : GetLocalAlbumUseCase
+    private val cacheAlbumUseCase: CacheAlbumUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
@@ -54,39 +54,65 @@ class AlbumDetailViewModel(
         loadedId = id
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            _uiState.value = DetailUiState.Loading
+            val remoteAlbum = async { fetchRemoteAlbum(id) }
 
-            val localState = withContext(Dispatchers.IO) {
-                getAlbumStateUseCase.invoke(id)
+            val local = try {
+                getAlbumStateUseCase(id)
+            } catch (exception : CancellationException) {
+                throw exception
+            } catch (_ : Exception) {
+                null
             }
 
-            useCase.invoke(id)
-                .catch { e ->
-                    if (e is CancellationException) throw e
+            if (local == null) {
+                _uiState.value = DetailUiState.Loading
+            } else {
+                _uiState.value = DetailUiState.Success(
+                    isSaved = local.isAlbumSaved != null,
+                    isListenLaterSaved = local.isListenLaterSaved != null,
+                    item = local.albumEntity.toAlbumRoot()
+                )
+            }
 
-                    val localAlbum = withContext(Dispatchers.IO) {
-                        getLocalAlbumUseCase(id)
-                    }
-                    val domainAlbum = localAlbum?.toAlbumRoot()
-
-                    if (domainAlbum != null) {
-                        _uiState.value = DetailUiState.Success(
-                            item = domainAlbum,
-                            isSaved = localState?.isAlbumSaved != null,
-                            isListenLaterSaved = localState?.isListenLaterSaved != null
-                        )
-                    } else {
-                        _uiState.value = DetailUiState.Error(
-                            message = e.localizedMessage ?: "Unknown Error")
-                    }
-                }
-                .collect { result ->
+            remoteAlbum.await().fold(
+                onSuccess = { album ->
                     _uiState.value = DetailUiState.Success(
-                        item = result,
-                        isSaved = localState?.isAlbumSaved != null,
-                        isListenLaterSaved = localState?.isListenLaterSaved != null
+                        item = album,
+                        isSaved = local?.isAlbumSaved != null,
+                        isListenLaterSaved = local?.isListenLaterSaved != null
                     )
+                    cacheAlbum(album)
+                },
+                onFailure = { error ->
+                    if (local == null) {
+                        _uiState.value = DetailUiState.Error(
+                            message = error.localizedMessage ?: "Unknown error"
+                        )
+                    }
                 }
+            )
+        }
+    }
+
+    private fun cacheAlbum(album : AlbumRoot) {
+        viewModelScope.launch {
+            try {
+                cacheAlbumUseCase(album.toAlbumEntity())
+            } catch (exception : CancellationException) {
+                throw exception
+            } catch (_ : Exception) {
+
+            }
+        }
+    }
+
+    private suspend fun fetchRemoteAlbum(id : Int) : Result<AlbumRoot> {
+        return try {
+            Result.success(useCase.invoke(id).first())
+        } catch (exception : CancellationException) {
+            throw exception
+        } catch (exception : Exception) {
+            Result.failure(exception)
         }
     }
 

@@ -556,7 +556,7 @@ fun ArtistSearchList(
                                 )
                             },
                             title = artist.title,
-                            cover = artist.cover_image,
+                            cover = artist.thumb.ifBlank { artist.cover_image },
                             id = artist.id
                         )
                     }
@@ -647,7 +647,8 @@ fun AlbumSearchList(
                 ) { index ->
                     items[index]?.let { album ->
                         AlbumCard(
-                            image = album.cover_image.orEmpty(),
+                            image = album.thumb?.takeIf { it.isNotBlank() }
+                                ?: album.cover_image.orEmpty(),
                             albumName = album.album.orEmpty(),
                             artistName = album.artist.orEmpty(),
                             onAlbumClick = {

@@ -14,11 +14,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 class LyricsRepositoryImpl(
     private val service : RemoteLyricsService,
     private val dao : LyricsDao
 ) : LyricsRepository {
+
+    private val MAX_CACHED_LYRICS = 200
 
     override suspend fun getLyrics(id: Int): Flow<LyricsItem> = flow {
         val result = safeApi {
@@ -92,7 +95,7 @@ class LyricsRepositoryImpl(
         dao.insertSavedLyrics(isLyricsSaved)
     }
 
-    override fun getLyricsById(
+    override suspend fun getLyricsById(
         source : String?,
         remoteId : Int?,
         isrc : String?,
@@ -102,7 +105,7 @@ class LyricsRepositoryImpl(
         return dao.getLyricsById(source = source, remoteId = remoteId, isrc = isrc, artist = artist, track = track)
     }
 
-    override fun getSavedLyricsState(source : String, remoteId : Int, isrc : String?): IsLyricsSaved? {
+    override suspend fun getSavedLyricsState(source : String, remoteId : Int, isrc : String?): IsLyricsSaved? {
         return dao.getSavedLyricsState(source = source, remoteId = remoteId, isrc = isrc)
     }
 
@@ -113,7 +116,13 @@ class LyricsRepositoryImpl(
         track : String?,
         artist : String?
     ): LyricsWithState? {
-        return dao.getLyricsWithState(source = source, remoteId = remoteId, isrc = isrc)
+        return dao.getLyricsWithState(
+            source = source,
+            remoteId = remoteId,
+            isrc = isrc,
+            track = track,
+            artist = artist
+        )
     }
 
     override suspend fun deleteLyrics(source : String, remoteId : Int, isrc : String?) {
@@ -134,5 +143,18 @@ class LyricsRepositoryImpl(
 
     override fun getSavedLyricsAlphabetical(query: String): Flow<List<LyricsEntity>> {
         return dao.getSavedLyricsAlphabetical(query)
+    }
+
+    override suspend fun cacheLyrics(lyrics: LyricsEntity) {
+        withContext(Dispatchers.IO) {
+            if (dao.getLyricsById(track = lyrics.title, artist = lyrics.artist) != null) return@withContext
+
+            dao.insertLyrics(lyrics.copy(saveTime = null))
+
+            val cached = dao.countCachedLyrics()
+            if (cached > MAX_CACHED_LYRICS) {
+                dao.deleteOldestCachedLyrics(cached - MAX_CACHED_LYRICS)
+            }
+        }
     }
 }

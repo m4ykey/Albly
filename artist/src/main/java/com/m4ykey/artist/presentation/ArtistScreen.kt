@@ -273,6 +273,8 @@ fun ArtistGallery(
     modifier: Modifier = Modifier,
     images : List<Image>
 ) {
+    val uniqueImages = remember(images) { images.distinctBy { it.uri } }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -284,12 +286,16 @@ fun ArtistGallery(
             icon = R.drawable.ic_gallery
         )
         LazyRow(
-            modifier = modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(images) { image ->
+            items(
+                items = uniqueImages,
+                key = { image -> image.uri }
+            ) { image ->
                 LoadImage(
-                    imageUrl = image.uri
+                    imageUrl = image.uri,
+                    modifier = Modifier.size(120.dp)
                 )
             }
         }

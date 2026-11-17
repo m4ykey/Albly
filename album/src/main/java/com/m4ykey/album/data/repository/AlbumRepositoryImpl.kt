@@ -31,7 +31,9 @@ class AlbumRepositoryImpl(
     private val newReleaseService : RemoteNewReleaseAlbumService
 ) : AlbumRepository {
 
-    override suspend fun getAlbum(id: Int): Flow<AlbumRoot> = flow<AlbumRoot> {
+    private val MAX_CACHED_ALBUMS = 200
+
+    override suspend fun getAlbum(id: Int): Flow<AlbumRoot> = flow {
         val response = safeApi { service.getAlbum(id) }
 
 
@@ -73,10 +75,6 @@ class AlbumRepositoryImpl(
 
     override suspend fun insertListenLaterSaved(isListenLaterSaved: IsListenLaterSaved) {
         dao.insertListenLaterSaved(isListenLaterSaved)
-    }
-
-    override fun getLocalAlbumById(id: Int): AlbumEntity? {
-        return dao.getAlbumById(id)
     }
 
     override fun getSavedAlbumState(id: Int): IsAlbumSaved? {
@@ -121,5 +119,16 @@ class AlbumRepositoryImpl(
 
     override suspend fun getRandomAlbum(): Flow<AlbumEntity> {
         return dao.getRandomAlbum()
+    }
+
+    override suspend fun cacheAlbum(album: AlbumEntity) {
+        if (dao.isAlbumStored(album.id)) return
+
+        dao.insertAlbum(album)
+
+        val cached = dao.countCachedAlbums()
+        if (cached > MAX_CACHED_ALBUMS) {
+            dao.deleteOldestCachedAlbums(cached - MAX_CACHED_ALBUMS)
+        }
     }
 }

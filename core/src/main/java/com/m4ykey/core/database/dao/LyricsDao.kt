@@ -29,7 +29,7 @@ interface LyricsDao {
         and (:source is null or :source = '' or source = :source)
         limit 1
     """)
-    fun getLyricsById(
+    suspend fun getLyricsById(
         source : String? = null,
         remoteId : Int? = null,
         isrc : String? = null,
@@ -46,7 +46,7 @@ interface LyricsDao {
         )
         limit 1
     """)
-    fun getSavedLyricsState(source : String, remoteId : Int, isrc : String?) : IsLyricsSaved?
+    suspend fun getSavedLyricsState(source : String, remoteId : Int, isrc : String?) : IsLyricsSaved?
 
     @Transaction
     @Query("""
@@ -137,5 +137,36 @@ interface LyricsDao {
         order by lyrics_table.title asc
     """)
     fun getSavedLyricsAlphabetical(query : String) : Flow<List<LyricsEntity>>
+
+    @Query("""
+        SELECT COUNT (*) FROM lyrics_table l
+        WHERE NOT EXISTS(
+            SELECT 1 FROM is_lyrics_saved_table s
+            WHERE s.isLyricsSaved = 1
+            AND (
+                (l.remote_id > 0 AND s.remote_id = l.remote_id)
+                OR (l.remote_id <= 0 AND l.isrc != '' AND s.isrc = l.isrc)
+            )
+        )
+    """)
+    suspend fun countCachedLyrics() : Int
+
+    @Query("""
+        DELETE FROM lyrics_table
+        WHERE id IN (
+            SELECT l.id FROM lyrics_table l
+            WHERE NOT EXISTS (
+                SELECT 1 FROM is_lyrics_saved_table s
+                WHERE s.isLyricsSaved = 1
+                AND (
+                    (l.remote_id > 0 AND s.remote_id = l.remote_id)
+                    OR (l.remote_id <= 0 AND l.isrc != '' AND s.isrc = l.isrc)
+                )
+            )
+            ORDER BY l.id ASC
+            LIMIT :limit
+        )
+    """)
+    suspend fun deleteOldestCachedLyrics(limit : Int)
 
 }

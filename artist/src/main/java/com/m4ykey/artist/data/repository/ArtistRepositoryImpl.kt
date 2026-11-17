@@ -10,8 +10,10 @@ import com.m4ykey.artist.domain.model.ReleaseItem
 import com.m4ykey.artist.domain.repository.ArtistRepository
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class ArtistRepositoryImpl(
     private val service : RemoteArtistService
@@ -30,7 +32,7 @@ class ArtistRepositoryImpl(
                 throw error
             }
         )
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun getArtistReleases(id: Int): Flow<PagingData<ReleaseItem>> {
         return Pager(

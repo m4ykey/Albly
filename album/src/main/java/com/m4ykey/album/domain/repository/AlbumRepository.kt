@@ -18,7 +18,6 @@ interface AlbumRepository {
     suspend fun insertAlbum(album : AlbumEntity)
     suspend fun insertSavedAlbum(isAlbumSaved: IsAlbumSaved)
     suspend fun insertListenLaterSaved(isListenLaterSaved: IsListenLaterSaved)
-    fun getLocalAlbumById(id : Int) : AlbumEntity?
     fun getSavedAlbumState(id : Int) : IsAlbumSaved?
     fun getSavedListenLaterState(id : Int) : IsListenLaterSaved?
     suspend fun getAlbumWithStates(id : Int) : AlbumWithStates?
@@ -30,4 +29,5 @@ interface AlbumRepository {
     fun getSavedAlbumsAlphabetical(query : String) : Flow<List<AlbumListItem>>
     suspend fun getListenLaterAlbums() : List<AlbumListItem>
     suspend fun getRandomAlbum() : Flow<AlbumEntity>
+    suspend fun cacheAlbum(album : AlbumEntity)
 }

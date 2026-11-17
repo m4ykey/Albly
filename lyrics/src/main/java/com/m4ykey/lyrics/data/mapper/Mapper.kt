@@ -5,6 +5,7 @@ import com.m4ykey.lyrics.data.dto.LyricsDtoItem
 import com.m4ykey.lyrics.data.dto.LyricsRedItemDto
 import com.m4ykey.lyrics.domain.model.LyricsItem
 import com.m4ykey.lyrics.domain.model.LyricsRedItem
+import com.m4ykey.lyrics.domain.model.LyricsSource
 
 fun LyricsDtoItem.toDomain() : LyricsItem {
     return LyricsItem(
@@ -40,7 +41,9 @@ fun LyricsEntity.toLyricsItem() : LyricsItem {
         plainLyrics = lyrics,
         syncedLyrics = "",
         trackName = title,
-        isrc = isrc.orEmpty()
+        isrc = isrc,
+        image = image,
+        source = LyricsSource.entries.firstOrNull { it.name.equals(source, ignoreCase = true) }
     )
 }
 
