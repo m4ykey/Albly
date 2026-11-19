@@ -45,7 +45,8 @@ fun DisplayDeleteSearchItem(
     modifier: Modifier = Modifier,
     onDismissDialog : () -> Unit,
     removeOneElement : Boolean,
-    item : String? = null
+    item : String? = null,
+    onDelete : () -> Unit
 ) {
     BasicAlertDialog(
         onDismissRequest = onDismissDialog,
@@ -65,6 +66,20 @@ fun DisplayDeleteSearchItem(
                     text = if (removeOneElement) "${stringResource(R.string.delete)}: $item"
                     else stringResource(R.string.delete_all_items_from_list)
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    TextButton(
+                        onClick = { onDismissDialog() }
+                    ) {
+                        Text(text = stringResource(R.string.cancel))
+                    }
+                    TextButton(
+                        onClick = { onDelete() }
+                    ) {
+                        Text(text = stringResource(R.string.delete))
+                    }
+                }
             }
         }
     }

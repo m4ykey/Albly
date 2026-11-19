@@ -226,8 +226,9 @@ fun SearchScreen(
     )
 
 //    DisplayDeleteSearchItem(
-//        onDismissDialog = {},
-//        removeOneElement = false
+//        onDismissDialog = { onAction(SearchAction.OnHideDeleteDialog) },
+//        removeOneElement = uiState.removeOneElement,
+//        onDelete = {  }
 //    )
 }
 
@@ -272,7 +273,7 @@ fun SearchContent(
                 )
                 if (recentSearch.isNotEmpty()) {
                     IconButton(
-                        onClick = {},
+                        onClick = {  },
                         modifier = Modifier.then(Modifier.size(22.dp))
                     ) {
                         Icon(
@@ -303,7 +304,7 @@ fun SearchContent(
                                 onAction(SearchAction.OnQueryChange(item.text))
                                 onAction(SearchAction.OnSearchClick)
                             },
-                            onLongClick = {  },
+                            onLongClick = { onAction(SearchAction.OnDeleteSearchItem(item)) },
                             onSetText = { onAction(SearchAction.OnQueryChange(item.text)) }
                         )
                     }

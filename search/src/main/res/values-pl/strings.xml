@@ -21,7 +21,8 @@
     <string name="delete_everything">Usunąć wszystko?</string>
     <string name="delete_this_item">Czy chcesz usunąć ten element?</string>
     <string name="delete_all_items">Czy chcesz usunąć wszystkie elementy?</string>
-    <string name="delete">Usunąć</string>
+    <string name="delete">Usuń</string>
     <string name="delete_all_items_from_list">Usuniesz wszystkie elementy z listy</string>
-    <string name="why_nothing_here">Dlaczego tu nic nie ma?</string>/>
+    <string name="why_nothing_here">Dlaczego tu nic nie ma?</string>
+    <string name="cancel">Anuluj</string>/>
 </resources>

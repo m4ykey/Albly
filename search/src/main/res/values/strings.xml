@@ -25,4 +25,5 @@
     <string name="delete">Delete</string>
     <string name="delete_all_items_from_list">You will remove all items from the list</string>
     <string name="why_nothing_here">Why is there nothing here?</string>
+    <string name="cancel">Cancel</string>
 </resources>
