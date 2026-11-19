@@ -43,24 +43,50 @@ class LyricsService(
     }
 
     override suspend fun getRedLyrics(isrc: String): String {
-        val response = redLyricsClient.get("s/$isrc.ttml")
-
-        response.bodyAsText().let { ttml ->
-            return extractLyricsText(ttml)
-        }
+        return extractLyricsText(redLyricsClient.get("s/$isrc.ttml").bodyAsText())
     }
 
     private fun extractLyricsText(ttml : String) : String {
-        val factory = DocumentBuilderFactory.newInstance()
-        val builder = factory.newDocumentBuilder()
-        val document = builder.parse(
-            InputSource(StringReader(ttml))
-        )
+        return PARAGRAPH.findAll(ttml)
+            .map { match ->
+                decodeEntities(
+                    TAG.replace(BREAK.replace(match.groupValues[1], "\n"), "")
+                ).trim()
+            }
+            .filter { it.isNotEmpty() }
+            .joinToString("\n")
+    }
 
-        val paragraphs = document.getElementsByTagName("p")
+    private fun decodeEntities(value : String) : String {
+        return ENTITY.replace(value) { match ->
+            when (val entity = match.groupValues[1]) {
+                "amp" -> "&"
+                "lt" -> "<"
+                "gt" -> ">"
+                "quot" -> "\""
+                "apos" -> "'"
+                "nbsp" -> " "
+                else -> when {
+                    entity.startsWith("#x", ignoreCase = true) -> {
+                        entity.drop(2).toIntOrNull(16)?.let(::Char)?.toString() ?: match.value
+                    }
+                    entity.startsWith("#") -> {
+                        entity.drop(1).toIntOrNull()?.let(::Char)?.toString() ?: match.value
+                    }
 
-        return (0 until paragraphs.length).joinToString("\n") { index ->
-            paragraphs.item(index).textContent.trim()
+                    else -> match.value
+                }
+            }
         }
+    }
+
+    private companion object {
+        val PARAGRAPH = Regex(
+            "<p\\b[^>]*>(.*?)</p>",
+            setOf(RegexOption.DOT_MATCHES_ALL, RegexOption.IGNORE_CASE)
+        )
+        val BREAK = Regex("<br\\s*/?>", RegexOption.IGNORE_CASE)
+        val TAG = Regex("<[^>]+>")
+        val ENTITY = Regex("&(#x?[0-9a-fA-F]+|[a-zA-Z]+);")
     }
 }

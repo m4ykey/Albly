@@ -59,7 +59,7 @@ class LyricsRepositoryImpl(
                 throw error
             }
         )
-    }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun getRedLyrics(isrc: String): Flow<String> = flow {
         val result = safeApi {
@@ -85,7 +85,7 @@ class LyricsRepositoryImpl(
                 throw error
             }
         )
-    }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun insertLyrics(lyrics: LyricsEntity) {
         dao.insertLyrics(lyrics)
