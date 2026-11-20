@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +37,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -235,31 +238,39 @@ fun NewReleaseContent(
     BasePagingList(
         items = newRelease,
         listContent = { items ->
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = modifier
-                    .padding(paddingValues)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                state = state
+            val isRefreshing = items.loadState.refresh is LoadState.Loading && items.itemCount > 0
+
+            PullToRefreshBox(
+                modifier = modifier.fillMaxSize(),
+                isRefreshing = isRefreshing,
+                onRefresh = { items.refresh() }
             ) {
-                items(
-                    count = items.itemCount,
-                    contentType = { "album_item" },
-                    key = items.itemKey { item -> item.masterId }
-                ) { index ->
-                    items[index]?.let { item ->
-                        AlbumCard(
-                            albumName = item.title,
-                            image = item.thumb.ifBlank { item.coverImage },
-                            artistName = item.artist,
-                            onLongAlbumClick = {
-                                onAction(NewReleaseAction.OnLongAlbumClick(item.masterId))
-                            },
-                            onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.masterId)) }
-                        )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    state = state
+                ) {
+                    items(
+                        count = items.itemCount,
+                        contentType = { "album_item" },
+                        key = items.itemKey { item -> item.masterId }
+                    ) { index ->
+                        items[index]?.let { item ->
+                            AlbumCard(
+                                albumName = item.title,
+                                image = item.thumb.ifBlank { item.coverImage },
+                                artistName = item.artist,
+                                onLongAlbumClick = {
+                                    onAction(NewReleaseAction.OnLongAlbumClick(item.masterId))
+                                },
+                                onAlbumClick = { onAction(NewReleaseAction.OnAlbumClick(item.masterId)) }
+                            )
+                        }
                     }
                 }
             }
