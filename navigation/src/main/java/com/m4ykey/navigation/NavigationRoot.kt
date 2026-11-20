@@ -159,6 +159,9 @@ internal fun appEntryProvider(
             onBack = navigator::navigateBack,
             onAlbumClick = {
                 navigator.navigateTo(Route.AlbumDetail(it))
+            },
+            onCoverClick = { img ->
+                navigator.navigateTo(Route.Cover(img))
             }
         )
     }
