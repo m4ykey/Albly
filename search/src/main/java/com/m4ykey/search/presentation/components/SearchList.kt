@@ -9,9 +9,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.m4ykey.core.paging.BasePagingList
 import com.m4ykey.core.ui.AlbumCard
@@ -35,33 +37,41 @@ fun ArtistSearchList(
         isActiveSearch = isActiveSearch,
         items = items,
         listContent = { items ->
-            LazyColumn(
-                modifier = modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                state = state
-            ) {
-                items(
-                    count = items.itemCount,
-                    contentType = { "artist_item" },
-                    key = { index -> items.peek(index)?.id?.let { "artist_$it" } ?: "placeholder_album_$index" }
-                ) { index ->
-                    items[index]?.let { artist ->
-                        ArtistCard(
-                            onArtistClick = {
-                                onAction(
-                                    SearchAction.OnArtistClick(artist.id)
-                                )
-                            },
-                            title = artist.title,
-                            cover = artist.thumb.ifBlank { artist.cover_image },
-                            id = artist.id
-                        )
-                    }
-                }
+            val isRefreshing = items.loadState.refresh is LoadState.Loading && items.itemCount > 0
 
-                item  {
-                    PagingAppendState(items)
+            PullToRefreshBox(
+                modifier = modifier.fillMaxSize(),
+                onRefresh = { items.refresh() },
+                isRefreshing = isRefreshing
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    state = state
+                ) {
+                    items(
+                        count = items.itemCount,
+                        contentType = { "artist_item" },
+                        key = { index -> items.peek(index)?.id?.let { "artist_$it" } ?: "placeholder_album_$index" }
+                    ) { index ->
+                        items[index]?.let { artist ->
+                            ArtistCard(
+                                onArtistClick = {
+                                    onAction(
+                                        SearchAction.OnArtistClick(artist.id)
+                                    )
+                                },
+                                title = artist.title,
+                                cover = artist.thumb.ifBlank { artist.cover_image },
+                                id = artist.id
+                            )
+                        }
+                    }
+
+                    item  {
+                        PagingAppendState(items)
+                    }
                 }
             }
         }
@@ -80,38 +90,46 @@ fun LyricsSearchList(
         isActiveSearch = isActiveSearch,
         items = items,
         listContent = { items ->
-            LazyColumn(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                state = state
-            ) {
-                items(
-                    contentType = { "lyrics_item" },
-                    key = { index -> items.peek(index)?.isrc?.let { "lyrics_$it" } ?: "placeholder_lyrics_$index" },
-                    count = items.itemCount
-                ) { index ->
-                    items[index]?.let { lyrics ->
-                        LyricsCard(
-                            artist = lyrics.artist,
-                            title = lyrics.title,
-                            imageUrl = lyrics.cover,
-                            onClick = {
-                                onAction(
-                                    SearchAction.OnTrackClick(
-                                        title = lyrics.title,
-                                        img = lyrics.cover,
-                                        artist = lyrics.artist,
-                                        album = null
-                                    )
-                                )
-                            }
-                        )
-                    }
-                }
+            val isRefreshing = items.loadState.refresh is LoadState.Loading && items.itemCount > 0
 
-                item {
-                    PagingAppendState(items)
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                modifier = modifier.fillMaxSize(),
+                onRefresh = { items.refresh() }
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                    state = state
+                ) {
+                    items(
+                        contentType = { "lyrics_item" },
+                        key = { index -> items.peek(index)?.isrc?.let { "lyrics_$it" } ?: "placeholder_lyrics_$index" },
+                        count = items.itemCount
+                    ) { index ->
+                        items[index]?.let { lyrics ->
+                            LyricsCard(
+                                artist = lyrics.artist,
+                                title = lyrics.title,
+                                imageUrl = lyrics.cover,
+                                onClick = {
+                                    onAction(
+                                        SearchAction.OnTrackClick(
+                                            title = lyrics.title,
+                                            img = lyrics.cover,
+                                            artist = lyrics.artist,
+                                            album = null
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
+
+                    item {
+                        PagingAppendState(items)
+                    }
                 }
             }
         }
@@ -130,36 +148,44 @@ fun AlbumSearchList(
         isActiveSearch = isActiveSearch,
         items = items,
         listContent = { items ->
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                state = state
-            ) {
-                items(
-                    count = items.itemCount,
-                    contentType = { "album_item" },
-                    key = { index -> items.peek(index)?.id?.let { "album_$it" } ?: "placeholder_album_$index" }
-                ) { index ->
-                    items[index]?.let { album ->
-                        AlbumCard(
-                            image = album.thumb?.takeIf { it.isNotBlank() }
-                                ?: album.cover_image.orEmpty(),
-                            albumName = album.album.orEmpty(),
-                            artistName = album.artist.orEmpty(),
-                            onAlbumClick = {
-                                onAction(SearchAction.OnAlbumClick(album.id ?: 0)) },
-                            onLongAlbumClick = {
-                                onAction(SearchAction.OnLongAlbumClick(album.id ?: 0))
-                            }
-                        )
-                    }
-                }
+            val isRefreshing = items.loadState.refresh is LoadState.Loading && items.itemCount > 0
 
-                item (span = { GridItemSpan(maxLineSpan) }) {
-                    PagingAppendState(items)
+            PullToRefreshBox(
+                modifier = modifier.fillMaxSize(),
+                onRefresh = { items.refresh() },
+                isRefreshing = isRefreshing
+            ) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    state = state
+                ) {
+                    items(
+                        count = items.itemCount,
+                        contentType = { "album_item" },
+                        key = { index -> items.peek(index)?.id?.let { "album_$it" } ?: "placeholder_album_$index" }
+                    ) { index ->
+                        items[index]?.let { album ->
+                            AlbumCard(
+                                image = album.thumb?.takeIf { it.isNotBlank() }
+                                    ?: album.cover_image.orEmpty(),
+                                albumName = album.album.orEmpty(),
+                                artistName = album.artist.orEmpty(),
+                                onAlbumClick = {
+                                    onAction(SearchAction.OnAlbumClick(album.id ?: 0)) },
+                                onLongAlbumClick = {
+                                    onAction(SearchAction.OnLongAlbumClick(album.id ?: 0))
+                                }
+                            )
+                        }
+                    }
+
+                    item (span = { GridItemSpan(maxLineSpan) }) {
+                        PagingAppendState(items)
+                    }
                 }
             }
         }

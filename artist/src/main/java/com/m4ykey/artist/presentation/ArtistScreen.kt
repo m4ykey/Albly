@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -33,6 +35,7 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +64,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.get
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.asDrawable
@@ -110,6 +114,8 @@ fun ArtistScreen(
         onDispose { controller.isAppearanceLightStatusBars = previous }
     }
 
+    val isRefreshing = uiState.isRefreshing || (releases.loadState.refresh is LoadState.Loading && releases.itemCount > 0)
+
     AppScaffold(
         content = { padding ->
             ArtistContent(
@@ -117,7 +123,12 @@ fun ArtistScreen(
                 modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
                 onTopLightnessDetected = { topIsLight = it },
                 onAlbumClick = onAlbumClick,
-                releases = releases
+                releases = releases,
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    viewModel.onAction(ArtistAction.OnRefresh)
+                    releases.refresh()
+                }
             )
         },
         navigation = {
@@ -138,56 +149,76 @@ fun ArtistContent(
     state: ArtistState?,
     releases : LazyPagingItems<ReleaseItem>,
     onTopLightnessDetected: (isLight: Boolean) -> Unit,
-    onAlbumClick: (Int) -> Unit
+    onAlbumClick: (Int) -> Unit,
+    isRefreshing : Boolean,
+    onRefresh : () -> Unit
 ) {
     when (state) {
         is ArtistState.Success -> {
-            val artist = state.artists.firstOrNull() ?: return
-            val imageUrl = artist.images.find { it.type == "primary" }?.uri ?: artist.images.firstOrNull()?.uri
-
-            val context = LocalContext.current
-
-            LazyColumn(
-                modifier = modifier
-                    .fillMaxSize()
+            PullToRefreshBox(
+                modifier = Modifier.fillMaxSize(),
+                onRefresh = onRefresh,
+                isRefreshing = isRefreshing
             ) {
-                item {
-                    DisplayArtist(
-                        artistName = artist.name,
-                        artistImage = imageUrl.orEmpty(),
-                        onTopLightnessDetected = onTopLightnessDetected,
-                        onArtistClick = { openLink(artist.uri, context) },
-                        id = artist.id,
-                        realname = artist.realname
-                    )
-                }
-                item {
-                    Spacer(modifier = Modifier.height(32.dp))
-                }
-                if (artist.profile.isNotBlank()) {
+                val artist = state.artists.firstOrNull() ?: return@PullToRefreshBox
+                val imageUrl = artist.images.find { it.type == "primary" }?.uri ?: artist.images.firstOrNull()?.uri
+
+                val context = LocalContext.current
+
+                LazyColumn(
+                    modifier = modifier.fillMaxSize()
+                ) {
                     item {
-                        AboutArtist(
-                            info = artist.profile
+                        DisplayArtist(
+                            artistName = artist.name,
+                            artistImage = imageUrl.orEmpty(),
+                            onTopLightnessDetected = onTopLightnessDetected,
+                            onArtistClick = { openLink(artist.uri, context) },
+                            id = artist.id,
+                            realname = artist.realname
                         )
                     }
-                }
-                if (artist.images.isNotEmpty()) {
                     item {
-                        ArtistGallery(images = artist.images)
+                        Spacer(modifier = Modifier.height(32.dp))
                     }
-                }
-                if (releases.itemCount > 0) {
-                    item {
-                        ArtistReleases(
-                            onAlbumClick = onAlbumClick,
-                            releases = releases
-                        )
+                    if (artist.profile.isNotBlank()) {
+                        item {
+                            AboutArtist(
+                                info = artist.profile
+                            )
+                        }
+                    }
+                    if (artist.images.isNotEmpty()) {
+                        item {
+                            ArtistGallery(images = artist.images)
+                        }
+                    }
+                    if (releases.itemCount > 0) {
+                        item {
+                            ArtistReleases(
+                                onAlbumClick = onAlbumClick,
+                                releases = releases
+                            )
+                        }
                     }
                 }
             }
         }
         is ArtistState.Error -> {
-            AnimationCard(text = state.message)
+            PullToRefreshBox(
+                modifier = modifier.fillMaxSize(),
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimationCard(text = state.message)
+                }
+            }
         }
         is ArtistState.Loading -> {
             Box(modifier = Modifier

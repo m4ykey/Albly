@@ -45,10 +45,50 @@ class LyricsViewModel(
         when (action) {
             is LyricsAction.OnLoadLyrics -> loadLyrics(action)
             LyricsAction.OnToggleSave -> toggleSave()
+            LyricsAction.OnRefresh -> refresh()
         }
     }
 
-    fun loadLyrics(action: LyricsAction.OnLoadLyrics) {
+    private fun refresh() {
+        val request = lastRequest ?: return
+
+        when (val current = _uiState.value) {
+            is LyricsUiState.Success -> if (current.isRefreshing) return
+            is LyricsUiState.Error -> if (current.isRefreshing) return
+            LyricsUiState.Loading -> return
+        }
+
+        job?.cancel()
+        job = viewModelScope.launch {
+            setRefreshing(true)
+            try {
+                fetchRemote(request) { e ->
+                    val message = e.localizedMessage ?: "An unexpected error occurred"
+                    when (_uiState.value) {
+                        is LyricsUiState.Success -> _effects.send(LyricsEffect.ShowError(message))
+                        is LyricsUiState.Error -> _uiState.update { state ->
+                            (state as? LyricsUiState.Error)?.copy(message = message) ?: state
+                        }
+                        else -> Unit
+                    }
+                }
+            } finally {
+                setRefreshing(false)
+            }
+        }
+    }
+
+    private fun setRefreshing(value : Boolean) {
+        _uiState.update { state ->
+            when (state) {
+                is LyricsUiState.Success -> state.copy(isRefreshing = value)
+                is LyricsUiState.Error -> state.copy(isRefreshing = value)
+                else -> state
+            }
+        }
+    }
+
+    private fun loadLyrics(action: LyricsAction.OnLoadLyrics) {
         val request = LyricsRequest(
             artist = action.artist,
             track = action.track,
@@ -85,38 +125,45 @@ class LyricsViewModel(
                 )
             }
 
-            getLyricsUseCase.invoke(
-                track = action.track,
-                album = action.album,
-                artist = action.artist,
-                image = action.image
-            )
-                .catch { e ->
-                    if (local == null) {
-                        _uiState.value = LyricsUiState.Error(
-                            e.localizedMessage ?: "An unexpected error occurred"
-                        )
-                    }
-                }
-                .collect { result ->
-                    val sourceStr = result.source?.name?.lowercase().orEmpty()
-
-                    val isSaved = withContext(Dispatchers.IO) {
-                        getLyricsSavedStateUseCase(
-                            source = sourceStr,
-                            remoteId = result.id,
-                            isrc = result.isrc
-                        ) != null
-                    }
-
-                    _uiState.value = LyricsUiState.Success(
-                        item = result,
-                        isSaved = isSaved
+            fetchRemote(request) { e ->
+                if (local == null) {
+                    _uiState.value = LyricsUiState.Error(
+                        e.localizedMessage ?: "An unexpected error occurred"
                     )
-
-                    cacheLyrics(result)
                 }
+            }
         }
+    }
+
+    private suspend fun fetchRemote(
+        request: LyricsRequest,
+        onError : suspend (Throwable) -> Unit
+    ) {
+        getLyricsUseCase.invoke(
+            track = request.track,
+            album = request.album,
+            artist = request.artist,
+            image = request.image
+        )
+            .catch { e -> onError(e) }
+            .collect { result ->
+                val sourceStr = result.source?.name?.lowercase().orEmpty()
+
+                val isSaved = withContext(Dispatchers.IO) {
+                    getLyricsSavedStateUseCase(
+                        source = sourceStr,
+                        remoteId = result.id,
+                        isrc = result.isrc
+                    ) != null
+                }
+
+                _uiState.value = LyricsUiState.Success(
+                    item = result,
+                    isSaved = isSaved
+                )
+
+                cacheLyrics(result)
+            }
     }
 
     private fun cacheLyrics(item : LyricsItem) {

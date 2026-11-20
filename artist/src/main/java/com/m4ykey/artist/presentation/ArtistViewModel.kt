@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.m4ykey.artist.domain.model.Artist
 import com.m4ykey.artist.domain.model.ReleaseItem
 import com.m4ykey.artist.domain.repository.ArtistRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -40,6 +42,7 @@ class ArtistViewModel(
                 loadArtists(listOf(action.id))
             }
             is ArtistAction.OnLoadArtists -> loadArtists(action.ids)
+            ArtistAction.OnRefresh -> refresh()
         }
     }
 
@@ -53,6 +56,14 @@ class ArtistViewModel(
         _uiState.update { it.copy(artistId = id) }
     }
 
+    private suspend fun fetchArtists(ids : List<Int>) : List<Artist> {
+        return coroutineScope {
+            ids
+                .map { id -> async { repository.getArtistById(id).first() } }
+                .awaitAll()
+        }
+    }
+
     private fun loadArtists(ids : List<Int>) {
         if (ids.isEmpty()) return
 
@@ -61,18 +72,40 @@ class ArtistViewModel(
             _uiState.update { it.copy(artistState = ArtistState.Loading) }
 
             val state = try {
-                val result = coroutineScope {
-                    ids
-                        .map { id -> async { repository.getArtistById(id).first() } }
-                        .awaitAll()
-                }
-
-                ArtistState.Success(result)
+                ArtistState.Success(fetchArtists(ids))
+            } catch (e : CancellationException) {
+                throw e
             } catch (e : Exception) {
-                ArtistState.Error(e.message ?: "Failed to fetch artists")
+                ArtistState.Error(e.message ?: "Failed to fetch artist")
             }
 
             _uiState.update { it.copy(artistState = state) }
+        }
+    }
+
+    private fun refresh() {
+        val current = _uiState.value
+        val id = current.artistId ?: return
+        if (current.isRefreshing || current.artistState == ArtistState.Loading) return
+
+        artistJob?.cancel()
+        artistJob = viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            try {
+                val artists = fetchArtists(listOf(id))
+                _uiState.update { it.copy(artistState = ArtistState.Success(artists)) }
+            } catch (e : CancellationException) {
+                throw e
+            } catch (e : Exception) {
+                _uiState.update { state ->
+                    if (state.artistState is ArtistState.Success) state
+                    else state.copy(
+                        artistState = ArtistState.Error(e.message ?: "Failed to fetch artists")
+                    )
+                }
+            } finally {
+                _uiState.update { it.copy(isRefreshing = false) }
+            }
         }
     }
 }

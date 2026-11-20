@@ -8,4 +8,5 @@ sealed interface LyricsAction {
         val album: String?,
         val image : String? = null
     ) : LyricsAction
+    data object OnRefresh : LyricsAction
 }
