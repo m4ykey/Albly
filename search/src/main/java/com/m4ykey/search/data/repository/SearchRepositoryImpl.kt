@@ -2,6 +2,8 @@ package com.m4ykey.search.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingData
+import com.m4ykey.core.database.dao.SearchDao
+import com.m4ykey.core.database.model.search.SearchItem
 import com.m4ykey.core.paging.pagingConfig
 import com.m4ykey.search.data.network.service.RemoteSearchService
 import com.m4ykey.search.data.paging.SearchAlbumPagingSource
@@ -11,10 +13,13 @@ import com.m4ykey.search.domain.model.album.ResultsAlbum
 import com.m4ykey.search.domain.model.artist.ResultsArtist
 import com.m4ykey.search.domain.model.lyrics.Hit
 import com.m4ykey.search.domain.repository.SearchRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
 class SearchRepositoryImpl(
-    private val service : RemoteSearchService
+    private val service : RemoteSearchService,
+    private val dao : SearchDao
 ) : SearchRepository {
 
     override fun searchAlbum(
@@ -59,5 +64,25 @@ class SearchRepositoryImpl(
                 )
             }
         ).flow
+    }
+
+    override suspend fun saveSearchItem(text: String) = withContext(Dispatchers.IO) {
+        val query = text.trim()
+        if (query.isEmpty()) return@withContext
+
+        dao.insertSearchItem(SearchItem(text = query))
+        dao.pruneSearchItems(10)
+    }
+
+    override suspend fun deleteSearchItem(search: SearchItem) {
+        dao.deleteSearchItem(search)
+    }
+
+    override suspend fun deleteAllSearchItems() = withContext(Dispatchers.IO) {
+        dao.deleteAllSearchItems()
+    }
+
+    override fun getSearchItemList(): Flow<List<SearchItem>> {
+        return dao.getSearchItemList(10)
     }
 }

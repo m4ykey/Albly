@@ -6,15 +6,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.m4ykey.core.database.model.search.SearchItem
 import com.m4ykey.core.paging.distinctById
+import com.m4ykey.search.domain.usecase.DeleteSearchItemUseCase
+import com.m4ykey.search.domain.usecase.GetRecentSearchesUseCase
+import com.m4ykey.search.domain.usecase.SaveSearchItemUseCase
 import com.m4ykey.search.domain.usecase.SearchAlbumUseCase
 import com.m4ykey.search.domain.usecase.SearchArtistUseCase
 import com.m4ykey.search.domain.usecase.SearchLyricsUseCase
 import com.m4ykey.search.presentation.SearchEffect.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -22,13 +28,17 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val albumUseCase: SearchAlbumUseCase,
     private val artistUseCase : SearchArtistUseCase,
-    private val lyricsUseCase: SearchLyricsUseCase
+    private val lyricsUseCase: SearchLyricsUseCase,
+    getRecentSearchesUseCase: GetRecentSearchesUseCase,
+    private val saveSearchItemUseCase : SaveSearchItemUseCase,
+    private val deleteSearchItemUseCase: DeleteSearchItemUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -52,6 +62,13 @@ class SearchViewModel(
         source = { albumUseCase(query = it, type = "album") }
     ) { it.id ?: 0 }
 
+    val recentSearches : StateFlow<List<SearchItem>> = getRecentSearchesUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            started = SharingStarted.WhileSubscribed(5_000)
+        )
+
     fun onAction(action: SearchAction) {
         viewModelScope.launch {
             when (action) {
@@ -70,6 +87,48 @@ class SearchViewModel(
                 )
                 is SearchAction.OnTypeClick -> reduce { copy(type = action.type) }
                 is SearchAction.OnLongAlbumClick -> reduce { copy(selectedAlbumId = action.id) }
+                is SearchAction.OnSearchItemClick -> search(action.text)
+                SearchAction.OnConfirmDeleteSearchItem -> confirmDelete()
+                SearchAction.OnDeleteAllSearchItemsClick -> reduce { copy(deleteTarget = DeleteSearchTarget.All) }
+                SearchAction.OnHideSearchItemDialog -> reduce { copy(deleteTarget = null) }
+                is SearchAction.OnSearchItemLongClick -> reduce { copy(deleteTarget = DeleteSearchTarget.Single(action.item)) }
+            }
+        }
+    }
+
+    private suspend fun confirmDelete() {
+        val target = _uiState.value.deleteTarget ?: return
+
+        reduce { copy(deleteTarget = null) }
+
+        try {
+            when (target) {
+                DeleteSearchTarget.All -> deleteSearchItemUseCase()
+                is DeleteSearchTarget.Single -> deleteSearchItemUseCase(target.item)
+            }
+        } catch (e : CancellationException) {
+            throw e
+        } catch (_ : Exception) {
+
+        }
+    }
+
+    private fun search(text : String) {
+        val query = text.trim()
+        if (query.isEmpty()) return
+
+        reduce { copy(query = query, activeQuery = query) }
+        saveSearchItem(query)
+    }
+
+    private fun saveSearchItem(query : String) {
+        viewModelScope.launch {
+            try {
+                saveSearchItemUseCase(query)
+            } catch (e : CancellationException) {
+                throw e
+            } catch (_ : Exception) {
+
             }
         }
     }

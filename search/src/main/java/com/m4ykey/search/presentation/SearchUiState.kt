@@ -4,5 +4,6 @@ data class SearchUiState(
     val query : String = "",
     val type : SearchType = SearchType.ALBUM,
     val activeQuery : String = "",
-    val selectedAlbumId : Int? = null
+    val selectedAlbumId : Int? = null,
+    val deleteTarget : DeleteSearchTarget? = null
 )

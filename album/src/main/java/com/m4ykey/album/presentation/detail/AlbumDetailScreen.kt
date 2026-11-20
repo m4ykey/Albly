@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,7 +47,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.m4ykey.album.R
-import com.m4ykey.album.data.mapper.toAlbumEntity
 import com.m4ykey.album.domain.model.TrackClickItem
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.model.detail.Video
@@ -62,7 +60,7 @@ import com.m4ykey.artist.presentation.ArtistViewModel
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
-import com.m4ykey.core.ui.ErrorCard
+import com.m4ykey.core.ui.AnimationCard
 import com.m4ykey.core.ui.LoadImage
 import com.m4ykey.core.ui.copyText
 import com.m4ykey.core.ui.showToast
@@ -165,7 +163,7 @@ fun AlbumDetailDisplay(
             }
         }
         is DetailUiState.Error -> {
-            ErrorCard(text = albumDetail.message)
+            AnimationCard(text = albumDetail.message)
         }
         is DetailUiState.Success -> {
             Box(

@@ -72,7 +72,7 @@ import com.m4ykey.artist.domain.model.ReleaseItem
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AppScaffold
-import com.m4ykey.core.ui.ErrorCard
+import com.m4ykey.core.ui.AnimationCard
 import com.m4ykey.core.ui.LoadImage
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
@@ -187,7 +187,7 @@ fun ArtistContent(
             }
         }
         is ArtistState.Error -> {
-            ErrorCard(text = state.message)
+            AnimationCard(text = state.message)
         }
         is ArtistState.Loading -> {
             Box(modifier = Modifier
