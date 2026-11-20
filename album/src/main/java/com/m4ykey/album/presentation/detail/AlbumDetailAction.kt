@@ -4,4 +4,5 @@ sealed interface AlbumDetailAction {
     data class OnLoadAlbum(val id : Int) : AlbumDetailAction
     data object OnToggleSave : AlbumDetailAction
     data object OnToggleListenLater : AlbumDetailAction
+    data object OnRefresh : AlbumDetailAction
 }

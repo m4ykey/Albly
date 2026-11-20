@@ -42,11 +42,58 @@ class AlbumDetailViewModel(
             AlbumDetailAction.OnToggleSave -> toggleSave()
             AlbumDetailAction.OnToggleListenLater -> toggleListenLater()
             is AlbumDetailAction.OnLoadAlbum -> loadAlbum(action.id)
+            AlbumDetailAction.OnRefresh -> refresh()
         }
     }
 
     private var loadedId : Int? = null
     private var loadJob : Job? = null
+
+    private fun refresh() {
+        val id = loadedId ?: return
+
+        when (val current = _uiState.value) {
+            is DetailUiState.Success -> if (current.isRefreshing) return
+            is DetailUiState.Error -> if (current.isRefreshing) return
+            DetailUiState.Loading -> return
+        }
+
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            _uiState.update { state ->
+                when (state) {
+                    is DetailUiState.Success -> state.copy(isRefreshing = true)
+                    is DetailUiState.Error -> state.copy(isRefreshing = true)
+                    else -> state
+                }
+            }
+
+            fetchRemoteAlbum(id).fold(
+                onSuccess = { album ->
+                    _uiState.update { state ->
+                        when (state) {
+                            is DetailUiState.Success -> state.copy(item = album, isRefreshing = false)
+                            else -> DetailUiState.Success(item = album)
+                        }
+                    }
+                    cacheAlbum(album)
+                },
+                onFailure = { error ->
+                    val message = error.localizedMessage ?: "Unknown error"
+                    _uiState.update { state ->
+                        when (state) {
+                            is DetailUiState.Success -> state.copy(isRefreshing = false)
+                            is DetailUiState.Error -> state.copy(isRefreshing = false, message = message)
+                            else -> state
+                        }
+                    }
+                    if (_uiState.value is DetailUiState.Success) {
+                        _effects.send(AlbumDetailEffect.ShowError(message))
+                    }
+                }
+            )
+        }
+    }
 
     private fun loadAlbum(id : Int) {
         if (loadedId == id && _uiState.value is DetailUiState.Success) return
@@ -76,11 +123,16 @@ class AlbumDetailViewModel(
 
             remoteAlbum.await().fold(
                 onSuccess = { album ->
-                    _uiState.value = DetailUiState.Success(
-                        item = album,
-                        isSaved = local?.isAlbumSaved != null,
-                        isListenLaterSaved = local?.isListenLaterSaved != null
-                    )
+                    _uiState.update { state ->
+                        when (state) {
+                            is DetailUiState.Success -> state.copy(item = album, isRefreshing = false)
+                            else -> DetailUiState.Success(
+                                item = album,
+                                isSaved = local?.isAlbumSaved != null,
+                                isListenLaterSaved = local?.isListenLaterSaved != null
+                            )
+                        }
+                    }
                     cacheAlbum(album)
                 },
                 onFailure = { error ->

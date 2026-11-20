@@ -19,7 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -27,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -133,7 +136,8 @@ fun AlbumDetailScreen(
                 onListenLaterToggle = { viewModel.onAction(AlbumDetailAction.OnToggleListenLater) },
                 onCoverClick = onCoverClick,
                 onArtistClick = onArtistClick,
-                artistViewModel = artistViewModel
+                artistViewModel = artistViewModel,
+                onRefresh = { viewModel.onAction(AlbumDetailAction.OnRefresh) }
             )
         }
     )
@@ -150,7 +154,8 @@ fun AlbumDetailDisplay(
     onListenLaterToggle: () -> Unit,
     onCoverClick: (String) -> Unit,
     onArtistClick : (Int) -> Unit,
-    artistViewModel : ArtistViewModel
+    artistViewModel : ArtistViewModel,
+    onRefresh : () -> Unit
 ) {
     when (albumDetail) {
         is DetailUiState.Loading -> {
@@ -163,16 +168,33 @@ fun AlbumDetailDisplay(
             }
         }
         is DetailUiState.Error -> {
-            AnimationCard(text = albumDetail.message)
+            PullToRefreshBox(
+                onRefresh = onRefresh,
+                isRefreshing = albumDetail.isRefreshing,
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimationCard(text = albumDetail.message)
+                }
+            }
         }
         is DetailUiState.Success -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
+            PullToRefreshBox(
+                onRefresh = onRefresh,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                isRefreshing = albumDetail.isRefreshing
             ) {
                 AlbumDetailContent(
                     item = albumDetail.item,
-                    contentPadding = paddingValues,
                     state = state,
                     onTrackClick = onTrackClick,
                     onSaveToggle = onSaveToggle,
@@ -190,7 +212,6 @@ fun AlbumDetailDisplay(
 
 @Composable
 fun AlbumDetailContent(
-    contentPadding : PaddingValues = PaddingValues(0.dp),
     state : LazyListState,
     onTrackClick : (TrackClickItem) -> Unit,
     onSaveToggle : () -> Unit,
@@ -229,9 +250,7 @@ fun AlbumDetailContent(
     }
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding),
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         state = state
