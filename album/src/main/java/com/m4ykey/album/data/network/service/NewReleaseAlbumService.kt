@@ -13,8 +13,7 @@ class NewReleaseAlbumService(
     override suspend fun getNewReleases(
         perPage: Int,
         page: Int,
-        year: Int,
-        releaseDate: String
+        year: Int
     ): NewReleaseRootDto {
         return httpClient.get("search") {
             parameter("per_page", perPage)
@@ -22,8 +21,7 @@ class NewReleaseAlbumService(
             parameter("type", "master")
             parameter("format", "album")
             parameter("year", year)
-            parameter("release_date", releaseDate)
-            parameter("sort", "year")
+            parameter("sort", "date_added")
             parameter("sort_order", "desc")
         }.body()
     }

@@ -8,7 +8,7 @@ import com.m4ykey.core.paging.BasePagingSource
 
 class NewReleasePagingSource(
     private val service : RemoteNewReleaseAlbumService,
-    private val releaseDate : String
+    private val year : Int
 ) : BasePagingSource<NewReleaseResult>() {
     override suspend fun loadData(
         page: Int,
@@ -17,7 +17,8 @@ class NewReleasePagingSource(
         return safeApi {
             service.getNewReleases(
                 page = page,
-                releaseDate = releaseDate
+                perPage = limit,
+                year = year
             )
         }.map { response ->
             response.toNewReleaseRoot().results

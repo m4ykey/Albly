@@ -6,10 +6,9 @@ import java.time.LocalDate
 interface RemoteNewReleaseAlbumService {
 
     suspend fun getNewReleases(
-        perPage : Int = 20,
-        page : Int = 1,
-        year : Int = LocalDate.now().year,
-        releaseDate : String
+        perPage : Int,
+        page : Int,
+        year : Int
     ) : NewReleaseRootDto
 
 }
