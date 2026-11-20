@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -23,6 +25,7 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -122,7 +125,8 @@ fun LyricsScreen(
                 imageUrl = imageUrl,
                 paddingValues = padding,
                 lyricsUiState = lyricsUiState,
-                onImageClick = onImageClick
+                onImageClick = onImageClick,
+                onRefresh = { viewModel.onAction(LyricsAction.OnRefresh) }
             )
         },
         actions = {
@@ -144,7 +148,8 @@ fun LyricsDisplay(
     paddingValues: PaddingValues,
     state: LazyListState,
     imageUrl: String,
-    onImageClick: (String) -> Unit
+    onImageClick: (String) -> Unit,
+    onRefresh : () -> Unit
 ) {
     when (lyricsUiState) {
         is LyricsUiState.Loading -> {
@@ -157,12 +162,28 @@ fun LyricsDisplay(
             }
         }
         is LyricsUiState.Error -> {
-            AnimationCard(text = lyricsUiState.message)
+            PullToRefreshBox(
+                onRefresh = onRefresh,
+                isRefreshing = lyricsUiState.isRefreshing,
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimationCard(text = lyricsUiState.message)
+                }
+            }
         }
         is LyricsUiState.Success -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
+            PullToRefreshBox(
+                modifier = Modifier.fillMaxSize(),
+                isRefreshing = lyricsUiState.isRefreshing,
+                onRefresh = onRefresh
             ) {
                 LyricsContent(
                     state = state,
