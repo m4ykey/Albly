@@ -5,5 +5,5 @@ data class SearchUiState(
     val type : SearchType = SearchType.ALBUM,
     val activeQuery : String = "",
     val selectedAlbumId : Int? = null,
-    val removeOneElement : Boolean = false
+    val deleteTarget : DeleteSearchTarget? = null
 )

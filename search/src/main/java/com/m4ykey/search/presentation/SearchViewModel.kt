@@ -36,7 +36,7 @@ class SearchViewModel(
     private val albumUseCase: SearchAlbumUseCase,
     private val artistUseCase : SearchArtistUseCase,
     private val lyricsUseCase: SearchLyricsUseCase,
-    private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
+    getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val saveSearchItemUseCase : SaveSearchItemUseCase,
     private val deleteSearchItemUseCase: DeleteSearchItemUseCase
 ) : ViewModel() {
@@ -88,8 +88,28 @@ class SearchViewModel(
                 is SearchAction.OnTypeClick -> reduce { copy(type = action.type) }
                 is SearchAction.OnLongAlbumClick -> reduce { copy(selectedAlbumId = action.id) }
                 is SearchAction.OnSearchItemClick -> search(action.text)
-                is SearchAction.OnDeleteSearchItem -> deleteSearchItem(action.item)
+                SearchAction.OnConfirmDeleteSearchItem -> confirmDelete()
+                SearchAction.OnDeleteAllSearchItemsClick -> reduce { copy(deleteTarget = DeleteSearchTarget.All) }
+                SearchAction.OnHideSearchItemDialog -> reduce { copy(deleteTarget = null) }
+                is SearchAction.OnSearchItemLongClick -> reduce { copy(deleteTarget = DeleteSearchTarget.Single(action.item)) }
             }
+        }
+    }
+
+    private suspend fun confirmDelete() {
+        val target = _uiState.value.deleteTarget ?: return
+
+        reduce { copy(deleteTarget = null) }
+
+        try {
+            when (target) {
+                DeleteSearchTarget.All -> deleteSearchItemUseCase()
+                is DeleteSearchTarget.Single -> deleteSearchItemUseCase(target.item)
+            }
+        } catch (e : CancellationException) {
+            throw e
+        } catch (_ : Exception) {
+
         }
     }
 
@@ -105,18 +125,6 @@ class SearchViewModel(
         viewModelScope.launch {
             try {
                 saveSearchItemUseCase(query)
-            } catch (e : CancellationException) {
-                throw e
-            } catch (_ : Exception) {
-
-            }
-        }
-    }
-
-    private fun deleteSearchItem(item : SearchItem) {
-        viewModelScope.launch {
-            try {
-                deleteSearchItemUseCase(item)
             } catch (e : CancellationException) {
                 throw e
             } catch (_ : Exception) {

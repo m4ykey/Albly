@@ -225,11 +225,15 @@ fun SearchScreen(
         }
     )
 
-//    DisplayDeleteSearchItem(
-//        onDismissDialog = { onAction(SearchAction.OnHideDeleteDialog) },
-//        removeOneElement = uiState.removeOneElement,
-//        onDelete = {  }
-//    )
+    val deleteTarget = uiState.deleteTarget
+    if (deleteTarget != null) {
+        DisplayDeleteSearchItem(
+            onDismissDialog = { onAction(SearchAction.OnHideSearchItemDialog) },
+            removeOneElement = deleteTarget is DeleteSearchTarget.Single,
+            onDelete = { onAction(SearchAction.OnConfirmDeleteSearchItem) },
+            item = (deleteTarget as? DeleteSearchTarget.Single)?.item?.text
+        )
+    }
 }
 
 @Composable
@@ -273,7 +277,7 @@ fun SearchContent(
                 )
                 if (recentSearch.isNotEmpty()) {
                     IconButton(
-                        onClick = {  },
+                        onClick = { onAction(SearchAction.OnDeleteAllSearchItemsClick) },
                         modifier = Modifier.then(Modifier.size(22.dp))
                     ) {
                         Icon(
@@ -304,7 +308,7 @@ fun SearchContent(
                                 onAction(SearchAction.OnQueryChange(item.text))
                                 onAction(SearchAction.OnSearchClick)
                             },
-                            onLongClick = { onAction(SearchAction.OnDeleteSearchItem(item)) },
+                            onLongClick = { onAction(SearchAction.OnSearchItemLongClick(item)) },
                             onSetText = { onAction(SearchAction.OnQueryChange(item.text)) }
                         )
                     }

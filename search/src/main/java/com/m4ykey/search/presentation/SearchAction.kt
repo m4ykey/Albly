@@ -11,6 +11,10 @@ sealed interface SearchAction {
     data class OnArtistClick(val id : Int) : SearchAction
     data class OnLongAlbumClick(val id : Int) : SearchAction
     data object OnHideAlbumDialog : SearchAction
+
     data class OnSearchItemClick(val text : String) : SearchAction
-    data class OnDeleteSearchItem(val item : SearchItem) : SearchAction
+    data class OnSearchItemLongClick(val item : SearchItem) : SearchAction
+    data object OnDeleteAllSearchItemsClick : SearchAction
+    data object OnConfirmDeleteSearchItem : SearchAction
+    data object OnHideSearchItemDialog : SearchAction
 }

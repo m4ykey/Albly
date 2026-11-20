@@ -7,4 +7,8 @@ class DeleteSearchItemUseCase(private val repository: SearchRepository) {
     suspend operator fun invoke(item : SearchItem) {
         repository.deleteSearchItem(item)
     }
+
+    suspend operator fun invoke() {
+        repository.deleteAllSearchItems()
+    }
 }

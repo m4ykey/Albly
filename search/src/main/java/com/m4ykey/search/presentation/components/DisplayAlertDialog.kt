@@ -69,9 +69,7 @@ fun DisplayDeleteSearchItem(
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    TextButton(
-                        onClick = { onDismissDialog() }
-                    ) {
+                    TextButton(onClick = onDismissDialog) {
                         Text(text = stringResource(R.string.cancel))
                     }
                     TextButton(
