@@ -21,9 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 
 class AlbumRepositoryImpl(
     private val service : RemoteAlbumService,
@@ -48,18 +46,14 @@ class AlbumRepositoryImpl(
     }.flowOn(Dispatchers.IO)
 
     override fun getNewRelease(): Flow<PagingData<NewReleaseResult>> {
-        val today = LocalDate.now()
-        val currentFriday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.FRIDAY))
-        val lastFriday = currentFriday.minusWeeks(1)
-
-        val dateRange = "$lastFriday..$currentFriday"
+        val year = LocalDate.now().year
 
         return Pager(
             config = pagingConfig,
             pagingSourceFactory = {
                 NewReleasePagingSource(
                     service = newReleaseService,
-                    releaseDate = dateRange
+                    year = year
                 )
             }
         ).flow

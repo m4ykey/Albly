@@ -67,8 +67,8 @@ import com.m4ykey.search.domain.model.artist.ResultsArtist
 import com.m4ykey.search.domain.model.lyrics.Hit
 import com.m4ykey.search.presentation.components.AlbumSearchList
 import com.m4ykey.search.presentation.components.ArtistSearchList
-import com.m4ykey.search.presentation.components.DisplayAlbumCard
-import com.m4ykey.search.presentation.components.DisplayDeleteSearchItem
+import com.m4ykey.album.presentation.components.DisplayAlbumCard
+import com.m4ykey.album.presentation.components.DisplayDeleteSearchItem
 import com.m4ykey.search.presentation.components.LyricsSearchList
 import com.m4ykey.search.presentation.components.SearchBar
 import com.m4ykey.search.presentation.components.SearchItemList

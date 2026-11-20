@@ -17,4 +17,14 @@
     <string name="choose_artist">Choose Artist</string>
     <string name="data_is_provided_by_discogs">Data is provided by Discogs</string>
     <string name="videos">Videos</string>
+    <string name="delete_this_item">Do you want to delete this item?</string>
+    <string name="delete_all_items">Do you want to remove all items?</string>
+    <string name="delete">Delete</string>
+    <string name="delete_all_items_from_list">You will remove all items from the list</string>
+    <string name="cancel">Cancel</string>
+    <string name="genres">Genres</string>
+    <string name="styles">Styles</string>
+    <string name="view_album">View album</string>
+    <string name="year">Year</string>
+    <string name="close">Close</string>
 </resources>
