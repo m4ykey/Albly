@@ -18,14 +18,11 @@ class GetLyricsUseCase(
         album: String?,
         image: String? = null
     ): Flow<LyricsItem> = flow {
-        fetchFromLrclib(artist, track, album)?.let {
-            val finalImage = it.image.ifBlank { image.orEmpty() }
-            emit(it.copy(source = LyricsSource.LRCLIB, image = finalImage))
-            return@flow
-        }
-        val redResult = fetchFromRedLyrics(artist, track)
-        val finalImage = redResult.image.ifBlank { image.orEmpty() }
-        emit(redResult.copy(source = LyricsSource.RED_LYRICS, image = finalImage))
+        val (result, source) = fetchFromLrclib(artist, track, album)?.let { it to LyricsSource.LRCLIB }
+            ?: (fetchFromRedLyrics(artist, track) to LyricsSource.RED_LYRICS)
+
+        val finalImage = result.image.ifBlank { image.orEmpty() }
+        emit(result.copy(source = source, image = finalImage))
     }
 
     private suspend fun fetchFromLrclib(
@@ -84,11 +81,14 @@ class GetLyricsUseCase(
             )
         }
 
+        val wantedArtist = normalize(artist)
+        val wantedTitle = normalize(track)
+
         val ranked = candidates.values
-            .map { it to score(it, artist, track) }
+            .map { it to score(it, wantedArtist, wantedTitle) }
             .sortedByDescending { it.second }
-            .map { it.first }
             .take(5)
+            .map { it.first }
 
         var lastError: Exception? = null
         for (item in ranked) {
@@ -121,11 +121,9 @@ class GetLyricsUseCase(
         )
     }
 
-    private fun score(item: LyricsRedItem, artist: String, track: String): Int {
+    private fun score(item: LyricsRedItem, wantedArtist: String, wantedTitle: String): Int {
         val title = normalize(item.title)
         val itemArtist = normalize(item.artist)
-        val wantedTitle = normalize(track)
-        val wantedArtist = normalize(artist)
 
         var s = 0
         if (title == wantedTitle) s += 10
@@ -139,9 +137,16 @@ class GetLyricsUseCase(
 
     private fun normalize(value: String): String =
         value.lowercase()
-            .replace(Regex("\\(.*?\\)|\\[.*?]"), " ")
-            .replace(Regex("\\b(feat|ft|featuring)\\.?\\b.*"), " ")
-            .replace(Regex("[^\\p{L}\\p{N}]+"), " ")
+            .replace(BRACKETS_REGEX, " ")
+            .replace(FEAT_REGEX, " ")
+            .replace(SYMBOLS_REGEX, " ")
             .trim()
-            .replace(Regex("\\s+"), " ")
+            .replace(SPACES_REGEX, " ")
+
+    companion object {
+        private val SPACES_REGEX = Regex("\\s+")
+        private val BRACKETS_REGEX = Regex("\\(.*?\\)|\\[.*?]")
+        private val FEAT_REGEX = Regex("\\b(feat|ft|featuring)\\.?\\b.*")
+        private val SYMBOLS_REGEX = Regex("[^\\p{L}\\p{N}]+")
+    }
 }

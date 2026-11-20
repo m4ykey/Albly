@@ -7,9 +7,6 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
-import org.xml.sax.InputSource
-import java.io.StringReader
-import javax.xml.parsers.DocumentBuilderFactory
 
 class LyricsService(
     private val lrcLibClient: HttpClient,
@@ -21,15 +18,11 @@ class LyricsService(
         artistName : String,
         albumName : String?
     ): List<LyricsDtoItem> {
-        return try {
-            lrcLibClient.get("search") {
-                parameter("track_name", trackName)
-                parameter("artist_name", artistName)
-                parameter("album_name", albumName)
-            }.body()
-        } catch (e : Exception) {
-            throw e
-        }
+        return lrcLibClient.get("search") {
+            parameter("track_name", trackName)
+            parameter("artist_name", artistName)
+            parameter("album_name", albumName)
+        }.body()
     }
 
     override suspend fun getLyrics(id: Int): LyricsDtoItem {
