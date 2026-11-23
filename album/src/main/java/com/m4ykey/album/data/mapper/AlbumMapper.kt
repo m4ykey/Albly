@@ -16,7 +16,35 @@ import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.model.new_release.NewReleaseRoot
 import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.core.database.model.album.ArtistEntity
+import com.m4ykey.core.database.model.album.NewReleaseEntity
 import com.m4ykey.core.database.model.album.TrackEntity
+
+fun NewReleaseResult.toEntity(
+    position : Int,
+    fetchedAt : Long,
+    year : Int
+) : NewReleaseEntity {
+    return NewReleaseEntity(
+        year = year,
+        fetchedAt = fetchedAt,
+        position = position,
+        artist = artist,
+        coverImage = coverImage,
+        masterId = masterId,
+        title = title,
+        thumb = thumb
+    )
+}
+
+fun NewReleaseEntity.toModel() : NewReleaseResult {
+    return NewReleaseResult(
+        artist = artist,
+        coverImage = coverImage,
+        masterId = masterId,
+        title = title,
+        thumb = thumb
+    )
+}
 
 fun NewReleaseRootDto.toNewReleaseRoot() : NewReleaseRoot {
     return NewReleaseRoot(

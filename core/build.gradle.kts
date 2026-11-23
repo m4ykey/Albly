@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.browser)
     implementation(libs.bundles.room)
+    implementation(libs.androidx.paging.room)
     ksp(libs.room.compiler)
 
     api(libs.androidx.icons.extended)

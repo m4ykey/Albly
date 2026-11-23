@@ -6,10 +6,13 @@ import androidx.room.TypeConverters
 import com.m4ykey.core.database.converter.AlbumConverters
 import com.m4ykey.core.database.dao.AlbumDao
 import com.m4ykey.core.database.dao.LyricsDao
+import com.m4ykey.core.database.dao.NewReleaseDao
 import com.m4ykey.core.database.dao.SearchDao
 import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.core.database.model.album.IsAlbumSaved
 import com.m4ykey.core.database.model.album.IsListenLaterSaved
+import com.m4ykey.core.database.model.album.NewReleaseCursor
+import com.m4ykey.core.database.model.album.NewReleaseEntity
 import com.m4ykey.core.database.model.lyrics.IsLyricsSaved
 import com.m4ykey.core.database.model.lyrics.LyricsEntity
 import com.m4ykey.core.database.model.search.SearchItem
@@ -21,9 +24,11 @@ import com.m4ykey.core.database.model.search.SearchItem
         IsListenLaterSaved::class,
         LyricsEntity::class,
         IsLyricsSaved::class,
-        SearchItem::class
+        SearchItem::class,
+        NewReleaseEntity::class,
+        NewReleaseCursor::class
     ],
-    version = 7
+    version = 8
 )
 @TypeConverters(AlbumConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -31,5 +36,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun albumDao() : AlbumDao
     abstract fun lyricsDao() : LyricsDao
     abstract fun searchDao() : SearchDao
+    abstract fun newReleaseDao() : NewReleaseDao
 
 }

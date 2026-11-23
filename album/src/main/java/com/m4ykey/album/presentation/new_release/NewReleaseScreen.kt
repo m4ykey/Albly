@@ -131,20 +131,20 @@ fun AlbumNewReleaseScreen(
                         }
                     }
                     is DetailUiState.Success -> {
+                        val item = state.item
+
+                        val genres = item.genres.joinToString(", ") { it }
+                        val styles = item.styles.joinToString(", ") { it }
+
+                        val imageUrl = item.images.find { it.type == "primary" }?.uri ?:
+                        item.images.firstOrNull()?.uri
+
+                        val artists = item.artists.joinToString(", ") { it.name }
+
                         LazyColumn(
                             modifier = Modifier.padding(16.dp),
                             state = lazyListState
                         ) {
-                            val item = state.item
-
-                            val genres = item.genres.joinToString(", ") { it }
-                            val styles = item.styles.joinToString(", ") { it }
-
-                            val imageUrl = item.images.find { it.type == "primary" }?.uri ?:
-                            item.images.firstOrNull()?.uri
-
-                            val artists = item.artists.joinToString(", ") { it.name }
-
                             item {
                                 Box(
                                     modifier = Modifier.fillMaxWidth(),
@@ -238,7 +238,10 @@ fun NewReleaseContent(
     BasePagingList(
         items = newRelease,
         listContent = { items ->
-            val isRefreshing = items.loadState.refresh is LoadState.Loading && items.itemCount > 0
+            val isRefreshing = items.itemCount > 0 && (
+                    items.loadState.refresh is LoadState.Loading ||
+                    items.loadState.mediator?.refresh is LoadState.Loading
+                    )
 
             PullToRefreshBox(
                 modifier = modifier.fillMaxSize(),

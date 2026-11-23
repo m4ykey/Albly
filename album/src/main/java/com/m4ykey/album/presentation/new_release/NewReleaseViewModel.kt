@@ -26,9 +26,7 @@ class NewReleaseViewModel(
     val uiState : StateFlow<NewReleaseUiState> = _uiState.asStateFlow()
 
     val newRelease : Flow<PagingData<NewReleaseResult>> =
-        useCase.invoke()
-            .map { pagingData -> pagingData.distinctById { it.masterId } }
-            .cachedIn(viewModelScope)
+        useCase.invoke().cachedIn(viewModelScope)
 
     private val _effects = Channel<NewReleaseEffect>(Channel.BUFFERED)
     val uiEvent : Flow<NewReleaseEffect> = _effects.receiveAsFlow()
