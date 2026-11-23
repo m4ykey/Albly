@@ -13,4 +13,6 @@
     <string name="song_search_engine">Wyszukiwarka utworów</string>
     <string name="remove_image_cache">Usuń pamięć podręczną obrazków</string>
     <string name="remove_image_cache_message">Usuwa pamięć podręczną obrazków w aplikacji</string>
+    <string name="used_libraries_message">Do stworzenia aplikacji zostały użyte te biblioteki</string>
+    <string name="used_libraries">Użyte Biblioteki</string>
 </resources>

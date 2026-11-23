@@ -13,4 +13,6 @@
     <string name="song_search_engine">Song search engine</string>
     <string name="remove_image_cache">Remove image cache</string>
     <string name="remove_image_cache_message">Clears the image cache in the application</string>
+    <string name="used_libraries_message">The following libraries were used to develop the application</string>
+    <string name="used_libraries">Used Libraries</string>
 </resources>

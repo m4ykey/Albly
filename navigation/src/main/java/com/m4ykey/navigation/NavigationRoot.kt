@@ -27,6 +27,7 @@ import com.m4ykey.artist.presentation.ArtistScreen
 import com.m4ykey.collection.presentation.CollectionScreen
 import com.m4ykey.lyrics.presentation.LyricsScreen
 import com.m4ykey.search.presentation.SearchScreen
+import com.m4ykey.settings.AppLibraries
 import com.m4ykey.settings.SettingsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -44,6 +45,7 @@ internal val navConfiguration = SavedStateConfiguration {
             subclass(Route.Cover::class, Route.Cover.serializer())
             subclass(Route.Artist::class, Route.Artist.serializer())
             subclass(Route.Video::class, Route.Video.serializer())
+            subclass(Route.Libraries::class, Route.Libraries.serializer())
         }
     }
 }
@@ -118,7 +120,10 @@ internal fun appEntryProvider(
         )
     }
     entry<Route.Settings> {
-        SettingsScreen(onBack = navigator::navigateBack)
+        SettingsScreen(
+            onBack = navigator::navigateBack,
+            onLibrariesClick = { navigator.navigateTo(Route.Libraries) }
+        )
     }
     entry<Route.ListenLater> {
         ListenLaterScreen(
@@ -197,5 +202,8 @@ internal fun appEntryProvider(
             onBack = navigator::navigateBack,
             videos = key.videos
         )
+    }
+    entry<Route.Libraries> {
+        AppLibraries(onBack = navigator::navigateBack)
     }
 }
