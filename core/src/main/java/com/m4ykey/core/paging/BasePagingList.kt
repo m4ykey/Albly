@@ -101,12 +101,17 @@ fun <T: Any> BasePagingList(
 ) {
     var showLoading by remember { mutableStateOf(false) }
 
-    val refreshState = items.loadState.refresh
-    val isRefreshing = refreshState is LoadState.Loading
-
     if (!isActiveSearch) {
         return
     }
+
+    val refreshState = items.loadState.refresh
+    val mediatorRefresh = items.loadState.mediator?.refresh
+
+    val error = (mediatorRefresh as? LoadState.Error)?.error
+        ?: (refreshState as? LoadState.Error)?.error
+
+    val isRefreshing = refreshState is LoadState.Loading || mediatorRefresh is LoadState.Error
 
     LaunchedEffect(isRefreshing) {
         if (isRefreshing) {
@@ -118,21 +123,18 @@ fun <T: Any> BasePagingList(
         }
     }
 
-    when (refreshState) {
-        is LoadState.Loading -> {
+    when {
+        error != null && items.itemCount == 0 -> {
+            errorContent(error) { items.refresh() }
+        }
+
+        isRefreshing -> {
             if (showLoading || items.itemCount == 0) loadingContent()
+            else listContent(items)
         }
 
-        is LoadState.Error -> {
-            errorContent(refreshState.error) { items.retry() }
-        }
+        items.itemCount == 0 -> emptyContent()
 
-        is LoadState.NotLoading -> {
-            if (items.itemCount == 0) {
-                emptyContent()
-            } else {
-                listContent(items)
-            }
-        }
+        else -> listContent(items)
     }
 }

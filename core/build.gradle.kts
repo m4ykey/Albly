@@ -12,7 +12,9 @@ plugins {
 android {
     namespace = "com.m4ykey.core"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 2
+        }
     }
 
     defaultConfig {
@@ -38,6 +40,10 @@ android {
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.datetime)
@@ -49,6 +55,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.browser)
     implementation(libs.bundles.room)
+    implementation(libs.androidx.paging.room)
     ksp(libs.room.compiler)
 
     api(libs.androidx.icons.extended)

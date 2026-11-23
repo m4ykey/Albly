@@ -131,3 +131,58 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
         connection.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_search_item_table_text ON search_item_table (text)")
     }
 }
+
+val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS new_release_table (
+                masterId INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                thumb TEXT NOT NULL,
+                coverImage TEXT NOT NULL,
+                artist TEXT NOT NULL,
+                position INTEGER NOT NULL,
+                fetchedAt INTEGER NOT NULL,
+                year INTEGER NOT NULL,
+                PRIMARY KEY(masterId)
+            )
+        """.trimIndent())
+
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS new_release_cursor (
+                id INTEGER NOT NULL,
+                fetchedAt INTEGER NOT NULL,
+                nextPage INTEGER,
+                PRIMARY KEY(id)
+            )
+        """.trimIndent())
+    }
+}
+
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS artist_release_entity (
+                artistId INTEGER NOT NULL,
+                releaseType TEXT NOT NULL,
+                releaseId INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                thumb TEXT NOT NULL,
+                year INTEGER NOT NULL,
+                resourceUrl TEXT NOT NULL,
+                position INTEGER NOT NULL,
+                fetchedAt INTEGER NOT NULL,
+                PRIMARY KEY(artistId, releaseType, releaseId)
+            )
+        """.trimIndent())
+
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS artist_release_cursor (
+                artistId INTEGER NOT NULL,
+                fetchedAt INTEGER NOT NULL,
+                nextPage INTEGER,
+                PRIMARY KEY(artistId)
+            )
+        """.trimIndent())
+    }
+}

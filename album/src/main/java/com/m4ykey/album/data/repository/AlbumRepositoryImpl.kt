@@ -1,32 +1,41 @@
+@file:OptIn(ExperimentalPagingApi::class)
+
 package com.m4ykey.album.data.repository
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingData
+import androidx.paging.map
 import com.m4ykey.album.data.mapper.toAlbumRoot
+import com.m4ykey.album.data.mapper.toModel
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
-import com.m4ykey.album.data.paging.NewReleasePagingSource
+import com.m4ykey.album.data.remote_mediator.NewReleaseRemoteMediator
 import com.m4ykey.album.domain.model.detail.AlbumRoot
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.repository.AlbumRepository
 import com.m4ykey.core.database.dao.AlbumDao
+import com.m4ykey.core.database.dao.NewReleaseDao
 import com.m4ykey.core.database.model.album.AlbumEntity
 import com.m4ykey.core.database.model.album.AlbumListItem
 import com.m4ykey.core.database.model.album.AlbumWithStates
 import com.m4ykey.core.database.model.album.IsAlbumSaved
 import com.m4ykey.core.database.model.album.IsListenLaterSaved
+import com.m4ykey.core.database.model.album.NewReleaseEntity
 import com.m4ykey.core.network.safeApi
 import com.m4ykey.core.paging.pagingConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 
 class AlbumRepositoryImpl(
     private val service : RemoteAlbumService,
     private val dao : AlbumDao,
-    private val newReleaseService : RemoteNewReleaseAlbumService
+    private val newReleaseService : RemoteNewReleaseAlbumService,
+    private val newReleaseDao: NewReleaseDao
 ) : AlbumRepository {
 
     private val MAX_CACHED_ALBUMS = 200
@@ -50,13 +59,16 @@ class AlbumRepositoryImpl(
 
         return Pager(
             config = pagingConfig,
-            pagingSourceFactory = {
-                NewReleasePagingSource(
-                    service = newReleaseService,
-                    year = year
-                )
-            }
-        ).flow
+            remoteMediator = NewReleaseRemoteMediator(
+                dao = newReleaseDao,
+                service = newReleaseService,
+                year = year,
+                perPage = pagingConfig.pageSize
+            ),
+            pagingSourceFactory = { newReleaseDao.pagingSource() }
+        ).flow.map { pagingData ->
+            pagingData.map { entity -> entity.toModel() }
+        }
     }
 
     override suspend fun insertAlbum(album: AlbumEntity) {

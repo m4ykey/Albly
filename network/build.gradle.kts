@@ -15,7 +15,9 @@ val contact_mail : String = localProps.getProperty("contact_mail")
 android {
     namespace = "com.m4ykey.network"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 2
+        }
     }
 
     defaultConfig {

@@ -7,6 +7,8 @@ import com.m4ykey.core.database.migration.MIGRATION_3_4
 import com.m4ykey.core.database.migration.MIGRATION_4_5
 import com.m4ykey.core.database.migration.MIGRATION_5_6
 import com.m4ykey.core.database.migration.MIGRATION_6_7
+import com.m4ykey.core.database.migration.MIGRATION_7_8
+import com.m4ykey.core.database.migration.MIGRATION_8_9
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -24,7 +26,9 @@ val databaseModule = module {
                 MIGRATION_3_4,
                 MIGRATION_4_5,
                 MIGRATION_5_6,
-                MIGRATION_6_7
+                MIGRATION_6_7,
+                MIGRATION_7_8,
+                MIGRATION_8_9
             )
             .build()
     }
@@ -32,4 +36,6 @@ val databaseModule = module {
     single { get<AppDatabase>().albumDao() }
     single { get<AppDatabase>().lyricsDao() }
     single { get<AppDatabase>().searchDao() }
+    single { get<AppDatabase>().newReleaseDao() }
+    single { get<AppDatabase>().artistReleaseDao() }
 }
