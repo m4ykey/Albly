@@ -42,4 +42,7 @@ sealed interface Route : NavKey {
     @Serializable
     data class Video(val videos : List<com.m4ykey.album.domain.model.detail.Video>) : Route
 
+    @Serializable
+    data object Libraries : Route
+
 }

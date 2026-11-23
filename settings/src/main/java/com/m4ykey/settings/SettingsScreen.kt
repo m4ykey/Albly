@@ -65,7 +65,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SettingsScreen(
     onBack : () -> Unit,
-    viewModel: SettingsViewModel = koinViewModel()
+    viewModel: SettingsViewModel = koinViewModel(),
+    onLibrariesClick : () -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -103,7 +104,8 @@ fun SettingsScreen(
                 paddingValues = padding,
                 onOpenSourceClick = { onAction(SettingsAction.OnOpenSource) },
                 onThemeClick = { onAction(SettingsAction.OnShowThemeDialog) },
-                onImageCacheClick = { onAction(SettingsAction.OnClearImageCache) }
+                onImageCacheClick = { onAction(SettingsAction.OnClearImageCache) },
+                onLibrariesClick = onLibrariesClick
             )
         },
         title = R.string.settings
@@ -130,7 +132,8 @@ fun SettingsContent(
     themeLabel : String,
     onThemeClick : () -> Unit,
     onOpenSourceClick : () -> Unit,
-    onImageCacheClick : () -> Unit
+    onImageCacheClick : () -> Unit,
+    onLibrariesClick: () -> Unit
 ) {
     LazyColumn(
         modifier = modifier.padding(paddingValues),
@@ -158,6 +161,14 @@ fun SettingsContent(
                 title = R.string.remove_image_cache,
                 message = stringResource(R.string.remove_image_cache_message),
                 onClick = onImageCacheClick
+            )
+        }
+        item {
+            SettingsIcon(
+                onClick = onLibrariesClick,
+                title = R.string.used_libraries,
+                message = stringResource(R.string.used_libraries_message),
+                icon = R.drawable.ic_libraries
             )
         }
         item {
