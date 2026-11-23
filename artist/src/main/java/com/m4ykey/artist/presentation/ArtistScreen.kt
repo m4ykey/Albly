@@ -114,7 +114,10 @@ fun ArtistScreen(
         onDispose { controller.isAppearanceLightStatusBars = previous }
     }
 
-    val isRefreshing = uiState.isRefreshing || (releases.loadState.refresh is LoadState.Loading && releases.itemCount > 0)
+    val isRefreshing = uiState.isRefreshing || releases.itemCount > 0 && (
+            releases.loadState.refresh is LoadState.Loading ||
+            releases.loadState.mediator?.refresh is LoadState.Loading
+            )
 
     AppScaffold(
         content = { padding ->
@@ -254,7 +257,9 @@ fun ArtistReleases(
         ) {
             items(
                 count = releases.itemCount,
-                key = { index -> releases.peek(index)?.id ?: index }
+                key = { index ->
+                    releases.peek(index)?.let { release -> "${release.type}:${release.id}" } ?: index
+                }
             ) { index ->
                 releases[index]?.let { release ->
                     Column(

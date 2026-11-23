@@ -33,7 +33,9 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.m4ykey.albly"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 2
+        }
     }
 
     signingConfigs {
@@ -49,7 +51,7 @@ android {
     defaultConfig {
         applicationId = "com.m4ykey.albly"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100
         versionName = "$versionMajor.$versionMinor.$versionPatch"
 

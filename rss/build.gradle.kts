@@ -5,7 +5,9 @@ plugins {
 android {
     namespace = "com.m4ykey.rss"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 2
+        }
     }
 
     defaultConfig {

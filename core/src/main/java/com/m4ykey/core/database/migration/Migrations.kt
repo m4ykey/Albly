@@ -158,3 +158,31 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
         """.trimIndent())
     }
 }
+
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS artist_release_entity (
+                artistId INTEGER NOT NULL,
+                releaseType TEXT NOT NULL,
+                releaseId INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                thumb TEXT NOT NULL,
+                year INTEGER NOT NULL,
+                resourceUrl TEXT NOT NULL,
+                position INTEGER NOT NULL,
+                fetchedAt INTEGER NOT NULL,
+                PRIMARY KEY(artistId, releaseType, releaseId)
+            )
+        """.trimIndent())
+
+        connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS artist_release_cursor (
+                artistId INTEGER NOT NULL,
+                fetchedAt INTEGER NOT NULL,
+                nextPage INTEGER,
+                PRIMARY KEY(artistId)
+            )
+        """.trimIndent())
+    }
+}

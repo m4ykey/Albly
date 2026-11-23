@@ -19,7 +19,9 @@ val versionPatch = versionProperties["versionPatch"].toString().toInt()
 android {
     namespace = "com.m4ykey.settings"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 2
+        }
     }
 
     defaultConfig {

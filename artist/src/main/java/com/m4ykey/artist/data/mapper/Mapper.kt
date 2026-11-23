@@ -6,6 +6,36 @@ import com.m4ykey.artist.data.dto.ReleaseItemDto
 import com.m4ykey.artist.domain.model.Artist
 import com.m4ykey.artist.domain.model.Image
 import com.m4ykey.artist.domain.model.ReleaseItem
+import com.m4ykey.core.database.model.artist.ArtistReleaseEntity
+
+fun ReleaseItemDto.toEntity(
+    fetchedAt : Long,
+    artistId : Int,
+    position : Int
+) : ArtistReleaseEntity {
+    return ArtistReleaseEntity(
+        thumb = thumb.orEmpty(),
+        fetchedAt = fetchedAt,
+        releaseId = id ?: 0,
+        title = title.orEmpty(),
+        year = year ?: 0,
+        releaseType = type.orEmpty().ifBlank { "release" },
+        resourceUrl = resourceUrl.orEmpty(),
+        artistId = artistId,
+        position = position
+    )
+}
+
+fun ArtistReleaseEntity.toReleaseItem() : ReleaseItem {
+    return ReleaseItem(
+        id = releaseId,
+        title = title,
+        thumb = thumb,
+        year = year,
+        type = releaseType,
+        resourceUrl = resourceUrl
+    )
+}
 
 fun ImageDto.toImage() : Image {
     return Image(

@@ -26,7 +26,7 @@ class NewReleaseRemoteMediator(
         val cursor = dao.cursor()
         val fresh = cursor != null &&
                 dao.countItems() > 0 &&
-                System.currentTimeMillis() - cursor.fetchedAt < TTL_MS
+                System.currentTimeMillis() - cursor.fetchedAt < MS
 
         return if (fresh) InitializeAction.SKIP_INITIAL_REFRESH
         else InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -85,6 +85,6 @@ class NewReleaseRemoteMediator(
     }
 
     private companion object {
-        const val TTL_MS = 6 * 60 * 60 * 1000L
+        const val MS = 6 * 60 * 60 * 1000L
     }
 }
