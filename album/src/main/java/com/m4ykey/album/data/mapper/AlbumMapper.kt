@@ -15,7 +15,7 @@ import com.m4ykey.album.domain.model.detail.Video
 import com.m4ykey.album.domain.model.new_release.NewReleaseResult
 import com.m4ykey.album.domain.model.new_release.NewReleaseRoot
 import com.m4ykey.core.database.model.album.AlbumEntity
-import com.m4ykey.core.database.model.album.ArtistEntity
+import com.m4ykey.core.database.model.album.AlbumArtistEntity
 import com.m4ykey.core.database.model.album.NewReleaseEntity
 import com.m4ykey.core.database.model.album.TrackEntity
 
@@ -85,8 +85,8 @@ fun AlbumRoot.toAlbumEntity() : AlbumEntity {
     )
 }
 
-fun Artists.toArtistEntity() : ArtistEntity {
-    return ArtistEntity(
+fun Artists.toArtistEntity() : AlbumArtistEntity {
+    return AlbumArtistEntity(
         name = name,
         artist_id = 0
     )
@@ -116,7 +116,7 @@ fun AlbumEntity.toAlbumRoot() : AlbumRoot {
     )
 }
 
-fun ArtistEntity.toArtists() : Artists {
+fun AlbumArtistEntity.toArtists() : Artists {
     return Artists(
         name = name,
         id = artist_id

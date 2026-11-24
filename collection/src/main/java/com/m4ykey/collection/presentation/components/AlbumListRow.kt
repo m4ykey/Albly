@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.m4ykey.core.database.model.album.ArtistEntity
+import com.m4ykey.core.database.model.album.AlbumArtistEntity
 import com.m4ykey.core.ui.LoadImage
 
 @Composable
@@ -25,7 +25,7 @@ fun AlbumListRow(
     image : String,
     title : String,
     id : Int,
-    artistList : List<ArtistEntity>,
+    artistList : List<AlbumArtistEntity>,
     onAlbumClick : (Int) -> Unit
 ) {
     val artists = artistList.joinToString(", ") { it.name }
