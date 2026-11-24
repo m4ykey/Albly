@@ -43,11 +43,11 @@ class ArtistRepositoryImpl(
         }.map { it.toArtist() }
 
         result.fold(
-            onSuccess = { item ->
-                emit(item)
-            },
+            onSuccess = { item -> emit(item) },
             onFailure = { error ->
-                throw error
+                val cached = artistDao.getArtistWithStates(id)?.artistEntity
+                    ?: throw error
+                emit(cached.toArtist())
             }
         )
     }.flowOn(Dispatchers.IO)

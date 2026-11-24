@@ -2,10 +2,12 @@
 
 package com.m4ykey.artist.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.m4ykey.artist.data.mapper.toArtist
 import com.m4ykey.artist.data.mapper.toArtistEntity
 import com.m4ykey.artist.domain.model.Artist
 import com.m4ykey.artist.domain.model.ReleaseItem
@@ -64,40 +66,100 @@ class ArtistViewModel(
         .cachedIn(viewModelScope)
 
     private fun setArtistId(id : Int) {
-        _uiState.update { it.copy(artistId = id, isSaved = false) }
+        _uiState.update {
+            it.copy(
+                artistId = id.takeIf { id -> id > 0 },
+                isSaved = false
+            )
+        }
     }
 
-    private suspend fun fetchArtists(ids : List<Int>) : List<Artist> {
-        return coroutineScope {
-            ids
-                .map { id -> async { repository.getArtistById(id).first() } }
-                .awaitAll()
+    private suspend fun fetchArtists(ids : List<Int>) : Result<List<Artist>> {
+        return try {
+            val artists = coroutineScope {
+                ids
+                    .map { id -> async { repository.getArtistById(id).first() } }
+                    .awaitAll()
+            }
+
+            artists.forEach(::cacheArtist)
+            Result.success(artists)
+        } catch (e : CancellationException) {
+            throw e
+        } catch (e : Exception) {
+            Result.failure(e)
+        }
+    }
+
+    private suspend fun fetchCachedArtists(ids : List<Int>) : List<Artist> {
+        return ids.mapNotNull { id ->
+            try {
+                val withStates = repository.getArtistWithStates(id)
+                withStates?.artistEntity?.toArtist()
+            } catch (e : CancellationException) {
+                throw e
+            } catch (_ : Exception) {
+                null
+            }
+        }
+    }
+
+    private suspend fun isArtistSaved(id : Int?) : Boolean {
+        return id != null && try {
+            repository.getSavedArtistState(id) != null
+        } catch (e : CancellationException) {
+            throw e
+        } catch (_ : Exception) {
+            false
         }
     }
 
     private fun loadArtists(ids : List<Int>) {
-        if (ids.isEmpty()) return
+        val validIds = ids.filter { it > 0 }
+        if (validIds.isEmpty()) {
+            _uiState.update {
+                it.copy(artistState = ArtistState.Error("Invalid artist id"))
+            }
+            return
+        }
 
         artistJob?.cancel()
         artistJob = viewModelScope.launch {
-            _uiState.update { it.copy(artistState = ArtistState.Loading) }
+            val id = _uiState.value.artistId
+            val cached = fetchCachedArtists(validIds)
 
-            val state = try {
-                ArtistState.Success(fetchArtists(ids))
-            } catch (e : CancellationException) {
-                throw e
-            } catch (e : Exception) {
-                ArtistState.Error(e.message ?: "Failed to fetch artist")
-            }
-
-            val isSaved = if (state is ArtistState.Success) {
-                val id = _uiState.value.artistId
-                id != null && repository.getSavedArtistState(id) != null
+            if (cached.isNotEmpty()) {
+                _uiState.update {
+                    it.copy(
+                        isSaved = isArtistSaved(id),
+                        artistState = ArtistState.Success(cached)
+                    )
+                }
             } else {
-                false
+                _uiState.update { it.copy(artistState = ArtistState.Loading) }
             }
 
-            _uiState.update { it.copy(artistState = state, isSaved = isSaved) }
+            fetchArtists(validIds).fold(
+                onSuccess = { artists ->
+                    _uiState.update {
+                        it.copy(
+                            artistState = ArtistState.Success(artists),
+                            isSaved = isArtistSaved(id)
+                        )
+                    }
+                },
+                onFailure = { error ->
+                    if (cached.isEmpty()) {
+                        _uiState.update {
+                            it.copy(
+                                artistState = ArtistState.Error(
+                                    error.message ?: "Failed to fetch artist"
+                                )
+                            )
+                        }
+                    }
+                }
+            )
         }
     }
 
@@ -110,17 +172,29 @@ class ArtistViewModel(
         artistJob = viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
             try {
-                val artists = fetchArtists(listOf(id))
-                _uiState.update { it.copy(artistState = ArtistState.Success(artists)) }
-            } catch (e : CancellationException) {
-                throw e
-            } catch (e : Exception) {
-                _uiState.update { state ->
-                    if (state.artistState is ArtistState.Success) state
-                    else state.copy(
-                        artistState = ArtistState.Error(e.message ?: "Failed to fetch artists")
-                    )
-                }
+                fetchArtists(listOf(id)).fold(
+                    onSuccess = { artists ->
+                        _uiState.update {
+                            it.copy(
+                                artistState = ArtistState.Success(artists),
+                                isSaved = isArtistSaved(id)
+                            )
+                        }
+                    },
+                    onFailure = { error ->
+                        if (_uiState.value.artistState !is ArtistState.Success) {
+                            _uiState.update {
+                                it.copy(
+                                    artistState = ArtistState.Error(
+                                        error.message ?: "Failed to fetch artist"
+                                    )
+                                )
+                            }
+                        } else {
+                            _effects.send(ArtistEffect.ShowError("Offline — showing cached data"))
+                        }
+                    }
+                )
             } finally {
                 _uiState.update { it.copy(isRefreshing = false) }
             }
@@ -143,10 +217,9 @@ class ArtistViewModel(
         val current = _uiState.value
         if (current.isSaving) return
 
+        val id = current.artistId ?: return
         val success = current.artistState as? ArtistState.Success ?: return
-        val artist = success.artists.firstOrNull { it.id == current.artistId }
-            ?: success.artists.firstOrNull()
-            ?: return
+        val artist = success.artists.firstOrNull { it.id == id } ?: return
 
         val wasSaved = current.isSaved
 

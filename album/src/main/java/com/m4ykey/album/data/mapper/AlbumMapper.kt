@@ -88,7 +88,7 @@ fun AlbumRoot.toAlbumEntity() : AlbumEntity {
 fun Artists.toArtistEntity() : AlbumArtistEntity {
     return AlbumArtistEntity(
         name = name,
-        artist_id = 0
+        artist_id = id
     )
 }
 

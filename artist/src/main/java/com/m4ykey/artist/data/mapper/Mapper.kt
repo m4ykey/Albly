@@ -10,6 +10,27 @@ import com.m4ykey.core.database.model.artist.ArtistEntity
 import com.m4ykey.core.database.model.artist.ArtistReleaseEntity
 import com.m4ykey.core.database.model.artist.ImageEntity
 
+fun ArtistEntity.toArtist() : Artist {
+    return Artist(
+        name = name,
+        realname = realname,
+        id = id,
+        uri = uri,
+        urls = urls,
+        profile = profile,
+        images = images.map { it.toImage() }
+    )
+}
+
+fun ImageEntity.toImage() : Image {
+    return Image(
+        width = width,
+        height = height,
+        type = type,
+        uri = uri
+    )
+}
+
 fun Artist.toArtistEntity(
     saveTime : Long = System.currentTimeMillis()
 ) : ArtistEntity {
@@ -81,16 +102,5 @@ fun ArtistDto.toArtist() : Artist {
         uri = uri.orEmpty(),
         urls = urls,
         images = images.map { it.toImage() }
-    )
-}
-
-fun ReleaseItemDto.toReleaseItem() : ReleaseItem {
-    return ReleaseItem(
-        id = id ?: 0,
-        resourceUrl = resourceUrl.orEmpty(),
-        thumb = thumb.orEmpty(),
-        title = title.orEmpty(),
-        type = type.orEmpty(),
-        year = year ?: 0
     )
 }
