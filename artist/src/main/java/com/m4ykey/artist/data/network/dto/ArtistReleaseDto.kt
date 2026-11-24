@@ -1,4 +1,4 @@
-package com.m4ykey.artist.data.dto
+package com.m4ykey.artist.data.network.dto
 
 import kotlinx.serialization.Serializable
 

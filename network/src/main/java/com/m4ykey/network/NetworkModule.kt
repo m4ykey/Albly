@@ -4,8 +4,8 @@ import com.m4ykey.album.data.network.service.AlbumService
 import com.m4ykey.album.data.network.service.NewReleaseAlbumService
 import com.m4ykey.album.data.network.service.RemoteAlbumService
 import com.m4ykey.album.data.network.service.RemoteNewReleaseAlbumService
-import com.m4ykey.artist.data.service.ArtistService
-import com.m4ykey.artist.data.service.RemoteArtistService
+import com.m4ykey.artist.data.network.service.ArtistService
+import com.m4ykey.artist.data.network.service.RemoteArtistService
 import com.m4ykey.lyrics.data.service.LyricsService
 import com.m4ykey.lyrics.data.service.RemoteLyricsService
 import com.m4ykey.network.BuildConfig.token

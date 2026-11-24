@@ -11,7 +11,7 @@ data class AlbumEntity(
     @ColumnInfo("title") val title : String,
     @ColumnInfo("year") val year : Int,
     @ColumnInfo("trackList") val trackList : List<TrackEntity>,
-    @ColumnInfo("artist") val artistList : List<ArtistEntity>,
+    @ColumnInfo("artist") val artistList : List<AlbumArtistEntity>,
     @ColumnInfo("image") val image : String,
     @ColumnInfo("save_time") val save_time : Long? = null,
     @ColumnInfo("uri") val uri : String

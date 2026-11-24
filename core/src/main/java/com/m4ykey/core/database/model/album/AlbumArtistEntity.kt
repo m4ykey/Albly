@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ArtistEntity(
+data class AlbumArtistEntity(
     @ColumnInfo("artist_id") val artist_id : Int,
     @ColumnInfo("name") val name : String
 )

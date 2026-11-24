@@ -1,12 +1,59 @@
 package com.m4ykey.artist.data.mapper
 
-import com.m4ykey.artist.data.dto.ArtistDto
-import com.m4ykey.artist.data.dto.ImageDto
-import com.m4ykey.artist.data.dto.ReleaseItemDto
+import com.m4ykey.artist.data.network.dto.ArtistDto
+import com.m4ykey.artist.data.network.dto.ImageDto
+import com.m4ykey.artist.data.network.dto.ReleaseItemDto
 import com.m4ykey.artist.domain.model.Artist
 import com.m4ykey.artist.domain.model.Image
 import com.m4ykey.artist.domain.model.ReleaseItem
+import com.m4ykey.core.database.model.artist.ArtistEntity
 import com.m4ykey.core.database.model.artist.ArtistReleaseEntity
+import com.m4ykey.core.database.model.artist.ImageEntity
+
+fun ArtistEntity.toArtist() : Artist {
+    return Artist(
+        name = name,
+        realname = realname,
+        id = id,
+        uri = uri,
+        urls = urls,
+        profile = profile,
+        images = images.map { it.toImage() }
+    )
+}
+
+fun ImageEntity.toImage() : Image {
+    return Image(
+        width = width,
+        height = height,
+        type = type,
+        uri = uri
+    )
+}
+
+fun Artist.toArtistEntity(
+    saveTime : Long = System.currentTimeMillis()
+) : ArtistEntity {
+    return ArtistEntity(
+        realname = realname,
+        id = id,
+        name = name,
+        profile = profile,
+        uri = uri,
+        urls = urls.map { it },
+        images = images.map { it.toImage() },
+        save_time = saveTime
+    )
+}
+
+fun Image.toImage() : ImageEntity {
+    return ImageEntity(
+        height = height,
+        width = width,
+        type = type,
+        uri = uri
+    )
+}
 
 fun ReleaseItemDto.toEntity(
     fetchedAt : Long,
@@ -55,16 +102,5 @@ fun ArtistDto.toArtist() : Artist {
         uri = uri.orEmpty(),
         urls = urls,
         images = images.map { it.toImage() }
-    )
-}
-
-fun ReleaseItemDto.toReleaseItem() : ReleaseItem {
-    return ReleaseItem(
-        id = id ?: 0,
-        resourceUrl = resourceUrl.orEmpty(),
-        thumb = thumb.orEmpty(),
-        title = title.orEmpty(),
-        type = type.orEmpty(),
-        year = year ?: 0
     )
 }

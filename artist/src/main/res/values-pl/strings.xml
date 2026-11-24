@@ -7,4 +7,6 @@
     <string name="collapse_description">Zwiń opis</string>
     <string name="gallery">Galeria</string>
     <string name="releases">Wydania</string>
+    <string name="remove_saved_artist">Usuń z zapisanych</string>
+    <string name="save_artist">Zapisz artystę</string>
 </resources>

@@ -2,7 +2,9 @@ package com.m4ykey.artist.di
 
 import com.m4ykey.artist.data.repository.ArtistRepositoryImpl
 import com.m4ykey.artist.domain.repository.ArtistRepository
+import com.m4ykey.artist.domain.use_case.CacheArtistUseCase
 import com.m4ykey.artist.domain.use_case.GetSavedArtistUseCase
+import com.m4ykey.artist.domain.use_case.ToggleArtistSavedUseCase
 import com.m4ykey.artist.presentation.ArtistViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -14,6 +16,8 @@ val artistModule = module {
     singleOf(::ArtistRepositoryImpl) bind ArtistRepository::class
 
     factoryOf(::GetSavedArtistUseCase)
+    factoryOf(::CacheArtistUseCase)
+    factoryOf(::ToggleArtistSavedUseCase)
 
     viewModelOf(::ArtistViewModel)
 }

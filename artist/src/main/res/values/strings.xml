@@ -7,4 +7,6 @@
     <string name="collapse_description">Collapse description</string>
     <string name="gallery">Gallery</string>
     <string name="releases">Releases</string>
+    <string name="remove_saved_artist">Remove from saved</string>
+    <string name="save_artist">Save artist</string>
 </resources>

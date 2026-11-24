@@ -86,6 +86,8 @@ import com.m4ykey.core.Sort
 import com.m4ykey.core.ui.ActionIconButton
 import com.m4ykey.core.ui.AlbumGridCard
 import com.m4ykey.core.ui.AppScaffold
+import com.m4ykey.core.ui.ArtistCard
+import com.m4ykey.core.ui.ArtistGridCard
 import com.m4ykey.core.ui.LyricsCard
 import com.m4ykey.core.ui.LyricsGridCard
 import com.m4ykey.core.ui.showToast
@@ -107,7 +109,8 @@ fun CollectionScreen(
     navigateToNewRelease : () -> Unit,
     navigateToListenLater : () -> Unit,
     navigateToSettings : () -> Unit,
-    onLyricsClick : (track : String, artist : String, image : String, album : String) -> Unit
+    onLyricsClick : (track : String, artist : String, image : String, album : String) -> Unit,
+    onArtistClick : (Int) -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -232,7 +235,8 @@ fun CollectionScreen(
                     onAlbumClick = onAlbumClick,
                     gridState = gridState,
                     listTypeState = uiState.listTypeState,
-                    onLyricsClick = onLyricsClick
+                    onLyricsClick = onLyricsClick,
+                    onArtistClick = onArtistClick
                 )
             },
             scrollBehavior = scrollBehavior
@@ -351,7 +355,8 @@ fun CollectionScreenContent(
     onAlbumClick : (Int) -> Unit,
     gridState : LazyGridState,
     listTypeState : ListTypeState,
-    onLyricsClick : (track : String, artist : String, image : String, album : String) -> Unit
+    onLyricsClick : (track : String, artist : String, image : String, album : String) -> Unit,
+    onArtistClick : (Int) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         val headerModifier = Modifier.layout { measurable, constraints ->
@@ -419,7 +424,26 @@ fun CollectionScreenContent(
                         }
                     }
 
-                    ListType.ARTIST -> {}
+                    ListType.ARTIST -> {
+                        if (uiState.artists.isEmpty() && !uiState.isLoading) {
+                            item(key = "empty_list", span = { GridItemSpan(maxLineSpan) }) {
+                                EmptyList()
+                            }
+                        }
+                        items(
+                            items = uiState.artists,
+                            contentType = { "artist_item" },
+                            key = { "artist_${it.id}" }
+                        ) { item ->
+                            val imageUrl = item.images.find { it.type == "primary" }?.uri ?: item.images.firstOrNull()?.uri
+
+                            ArtistGridCard(
+                                onClick = { onArtistClick(item.id) },
+                                artist = item.name,
+                                imageUrl = imageUrl
+                            )
+                        }
+                    }
                     ListType.LYRICS -> {
                         if (uiState.lyrics.isEmpty() && !uiState.isLoading) {
                             item(key = "empty_list", span = { GridItemSpan(maxLineSpan) }) {
@@ -500,7 +524,32 @@ fun CollectionScreenContent(
                             }
                         }
                     }
-                    ListType.ARTIST -> {}
+                    ListType.ARTIST -> {
+                        if (uiState.artists.isEmpty() && !uiState.isLoading) {
+                            item {
+                                EmptyList()
+                            }
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        items(
+                            items = uiState.artists,
+                            key = { "artist_${it.id}" },
+                            contentType = { "artist_list" }
+                        ) { item ->
+                            val imageUrl = item.images.find { it.type == "primary" }?.uri ?: item.images.firstOrNull()?.uri
+
+                            Box(modifier = Modifier.padding(bottom = 5.dp)) {
+                                ArtistCard(
+                                    id = item.id,
+                                    title = item.name,
+                                    cover = imageUrl,
+                                    onArtistClick = onArtistClick
+                                )
+                            }
+                        }
+                    }
                     ListType.LYRICS -> {
                         if (uiState.lyrics.isEmpty() && !uiState.isLoading) {
                             item {

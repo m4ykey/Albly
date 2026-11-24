@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AnimatedToggleIcon
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.AnimationCard
 import com.m4ykey.core.ui.LoadImage
@@ -105,12 +106,6 @@ fun LyricsScreen(
 
     val isSaved = (lyricsUiState as? LyricsUiState.Success)?.isSaved == true
 
-    val icon = if (isSaved) {
-        Icons.Default.Favorite
-    } else {
-        Icons.Outlined.FavoriteBorder
-    }
-
     AppScaffold(
         navigation = {
             ActionIconButton(
@@ -131,10 +126,13 @@ fun LyricsScreen(
         },
         actions = {
             if (lyricsUiState is LyricsUiState.Success) {
-                ActionIconButton(
+                AnimatedToggleIcon(
+                    checked = isSaved,
+                    checkedIcon = Icons.Default.Favorite,
+                    unCheckedIcon = Icons.Outlined.FavoriteBorder,
                     onClick = { viewModel.onAction(LyricsAction.OnToggleSave) },
-                    icon = icon,
-                    textRes = R.string.save
+                    checkedColor = Color(0xFFE53935),
+                    contentDescription = stringResource(R.string.save)
                 )
             }
         }

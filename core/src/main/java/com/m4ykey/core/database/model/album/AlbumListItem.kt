@@ -4,5 +4,5 @@ data class AlbumListItem(
     val id : Int,
     val title : String,
     val image : String,
-    val artist : List<ArtistEntity>
+    val artist : List<AlbumArtistEntity>
 )

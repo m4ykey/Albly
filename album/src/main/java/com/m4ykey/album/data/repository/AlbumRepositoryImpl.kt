@@ -128,7 +128,14 @@ class AlbumRepositoryImpl(
     }
 
     override suspend fun cacheAlbum(album: AlbumEntity) {
-        if (dao.isAlbumStored(album.id)) return
+        val existing = dao.getAlbumWithStates(album.id)?.albumEntity
+
+        if (existing != null) {
+            if (existing.artistList.any { it.artist_id == 0}) {
+                dao.insertAlbum(album.copy(save_time = existing.save_time))
+            }
+            return
+        }
 
         dao.insertAlbum(album)
 
