@@ -7,7 +7,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.m4ykey.artist.data.mapper.toEntity
-import com.m4ykey.artist.data.service.RemoteArtistService
+import com.m4ykey.artist.data.network.service.RemoteArtistService
 import com.m4ykey.core.database.dao.ArtistReleaseDao
 import com.m4ykey.core.database.model.artist.ArtistReleaseCursor
 import com.m4ykey.core.database.model.artist.ArtistReleaseEntity

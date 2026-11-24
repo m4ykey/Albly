@@ -1,8 +1,8 @@
 package com.m4ykey.artist.data.mapper
 
-import com.m4ykey.artist.data.dto.ArtistDto
-import com.m4ykey.artist.data.dto.ImageDto
-import com.m4ykey.artist.data.dto.ReleaseItemDto
+import com.m4ykey.artist.data.network.dto.ArtistDto
+import com.m4ykey.artist.data.network.dto.ImageDto
+import com.m4ykey.artist.data.network.dto.ReleaseItemDto
 import com.m4ykey.artist.domain.model.Artist
 import com.m4ykey.artist.domain.model.Image
 import com.m4ykey.artist.domain.model.ReleaseItem

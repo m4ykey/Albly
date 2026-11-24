@@ -95,4 +95,7 @@ interface ArtistDao {
     """)
     suspend fun deleteOldestCachedArtists(limit : Int)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM artist_table WHERE id = :id)")
+    suspend fun isArtistStored(id : Int) : Boolean
+
 }

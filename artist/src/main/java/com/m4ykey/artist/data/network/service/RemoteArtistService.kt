@@ -1,7 +1,7 @@
-package com.m4ykey.artist.data.service
+package com.m4ykey.artist.data.network.service
 
-import com.m4ykey.artist.data.dto.ArtistDto
-import com.m4ykey.artist.data.dto.ArtistReleaseDto
+import com.m4ykey.artist.data.network.dto.ArtistDto
+import com.m4ykey.artist.data.network.dto.ArtistReleaseDto
 
 interface RemoteArtistService {
 
