@@ -36,13 +36,13 @@ interface ArtistDao {
     @Query("""
         SELECT 
             artist_table.id,
-            artist_table.realname,
+            artist_table.name,
             artist_table.images
         FROM artist_table
         INNER JOIN is_artist_saved_table ON artist_table.id = is_artist_saved_table.id
         WHERE is_artist_saved_table.isArtistSaved = 1
         AND (
-            artist_table.realname LIKE '%' || :query || '%'
+            artist_table.name LIKE '%' || :query || '%'
         )
         ORDER BY artist_table.save_time DESC
     """)
@@ -51,13 +51,13 @@ interface ArtistDao {
     @Query("""
         SELECT 
             artist_table.id,
-            artist_table.realname,
+            artist_table.name,
             artist_table.images
         FROM artist_table
         INNER JOIN is_artist_saved_table ON artist_table.id = is_artist_saved_table.id
         WHERE is_artist_saved_table.isArtistSaved = 1
         AND (
-            artist_table.realname LIKE '%' || :query || '%'
+            artist_table.name LIKE '%' || :query || '%'
         )
         ORDER BY artist_table.save_time ASC
     """)
@@ -66,15 +66,15 @@ interface ArtistDao {
     @Query("""
         SELECT 
             artist_table.id,
-            artist_table.realname,
+            artist_table.name,
             artist_table.images
         FROM artist_table
         INNER JOIN is_artist_saved_table ON artist_table.id = is_artist_saved_table.id
         WHERE is_artist_saved_table.isArtistSaved = 1
         AND (
-            artist_table.realname LIKE '%' || :query || '%'
+            artist_table.name LIKE '%' || :query || '%'
         )
-        ORDER BY artist_table.realname ASC
+        ORDER BY artist_table.name ASC
     """)
     fun getSavedArtistAlphabetical(query : String) : Flow<List<ArtistListItem>>
 

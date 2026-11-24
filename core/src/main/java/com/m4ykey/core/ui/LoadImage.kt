@@ -26,7 +26,7 @@ import com.skydoves.landscapist.crossfade.CrossfadePlugin
 @Composable
 fun LoadImage(
     modifier: Modifier = Modifier,
-    imageUrl : String,
+    imageUrl : String?,
     onImageLoaded : ((Bitmap) -> Unit)? = null
 ) {
     var imageState by remember {

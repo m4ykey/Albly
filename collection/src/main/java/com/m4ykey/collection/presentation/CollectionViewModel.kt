@@ -85,10 +85,6 @@ class CollectionViewModel(
 
     }
 
-    private fun sendEffect(effect: CollectionEffect) {
-        viewModelScope.launch { _effects.send(effect) }
-    }
-
     private fun observeContent() {
         viewModelScope.launch {
             _uiState
@@ -114,7 +110,7 @@ class CollectionViewModel(
         val source : Flow<ContentUpdate> = when (key.type) {
             ListType.ALBUM -> getSavedAlbumsUseCase(key.query, key.sort ?: Sort.LATEST)
                 .map { albums -> ContentUpdate(isLoading = false, albums = albums) }
-            ListType.ARTIST -> getSavedArtistUseCase(key.query)
+            ListType.ARTIST -> getSavedArtistUseCase(key.query, key.sort ?: Sort.LATEST)
                 .map { artists -> ContentUpdate(isLoading = false, artists = artists) }
             ListType.LYRICS -> getSavedLyricsUseCase(key.query, key.sort ?: Sort.LATEST)
                 .map { lyrics -> ContentUpdate(isLoading = false, lyrics = lyrics) }

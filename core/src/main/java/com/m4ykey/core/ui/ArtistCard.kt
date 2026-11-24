@@ -3,6 +3,7 @@ package com.m4ykey.core.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -19,7 +20,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ArtistCard(
     title : String,
-    cover : String,
+    cover : String?,
     id : Int,
     onArtistClick : (Int) -> Unit
 ) {
@@ -43,6 +44,29 @@ fun ArtistCard(
             maxLines = 2,
             color = textColor,
             fontSize = 17.sp
+        )
+    }
+}
+
+@Composable
+fun ArtistGridCard(
+    modifier: Modifier = Modifier,
+    onClick : () -> Unit,
+    imageUrl : String?,
+    artist : String
+) {
+    val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
+        LoadImage(imageUrl = imageUrl)
+        Text(
+            text = artist,
+            fontSize = 17.sp,
+            color = textColor
         )
     }
 }

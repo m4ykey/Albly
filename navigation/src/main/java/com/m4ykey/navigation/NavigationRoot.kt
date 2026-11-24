@@ -99,7 +99,8 @@ internal fun appEntryProvider(
                     artist = artist,
                     img = image,
                     album = album))
-            }
+            },
+            onArtistClick = { navigator.navigateTo(Route.Artist(it)) }
         )
     }
     entry<Route.Search> {
