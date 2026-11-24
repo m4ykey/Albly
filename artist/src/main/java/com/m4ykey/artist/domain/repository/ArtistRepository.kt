@@ -16,7 +16,7 @@ interface ArtistRepository {
 
     suspend fun insertArtist(artist : ArtistEntity)
     suspend fun insertSavedArtist(isArtistSaved: IsArtistSaved)
-    fun getSavedArtistState(id : Int) : IsArtistSaved?
+    suspend fun getSavedArtistState(id : Int) : IsArtistSaved?
     suspend fun getArtistWithStates(id : Int) : ArtistWithStates?
     suspend fun deleteArtist(id : Int)
     suspend fun deleteSavedArtistState(id : Int)

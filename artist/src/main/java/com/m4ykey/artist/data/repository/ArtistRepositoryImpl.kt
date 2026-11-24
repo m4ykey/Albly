@@ -75,7 +75,7 @@ class ArtistRepositoryImpl(
         artistDao.insertSavedArtist(isArtistSaved)
     }
 
-    override fun getSavedArtistState(id: Int): IsArtistSaved? {
+    override suspend fun getSavedArtistState(id: Int): IsArtistSaved? {
         return artistDao.getSavedArtistState(id)
     }
 

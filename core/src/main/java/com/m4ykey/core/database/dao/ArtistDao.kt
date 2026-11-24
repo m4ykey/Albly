@@ -21,7 +21,7 @@ interface ArtistDao {
     suspend fun insertSavedArtist(isArtistSaved: IsArtistSaved)
 
     @Query("SELECT * FROM is_artist_saved_table WHERE id = :id")
-    fun getSavedArtistState(id : Int) : IsArtistSaved?
+    suspend fun getSavedArtistState(id : Int) : IsArtistSaved?
 
     @Transaction
     @Query("SELECT * FROM artist_table WHERE id = :id")
@@ -30,7 +30,7 @@ interface ArtistDao {
     @Query("DELETE FROM artist_table WHERE id = :id")
     suspend fun deleteArtist(id : Int)
 
-    @Query("SELECT * FROM is_artist_saved_table WHERE id = :id")
+    @Query("DELETE FROM is_artist_saved_table WHERE id = :id")
     suspend fun deleteSavedArtistState(id : Int)
 
     @Query("""

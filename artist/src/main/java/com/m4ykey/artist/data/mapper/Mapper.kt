@@ -6,7 +6,33 @@ import com.m4ykey.artist.data.network.dto.ReleaseItemDto
 import com.m4ykey.artist.domain.model.Artist
 import com.m4ykey.artist.domain.model.Image
 import com.m4ykey.artist.domain.model.ReleaseItem
+import com.m4ykey.core.database.model.artist.ArtistEntity
 import com.m4ykey.core.database.model.artist.ArtistReleaseEntity
+import com.m4ykey.core.database.model.artist.ImageEntity
+
+fun Artist.toArtistEntity(
+    saveTime : Long = System.currentTimeMillis()
+) : ArtistEntity {
+    return ArtistEntity(
+        realname = realname,
+        id = id,
+        name = name,
+        profile = profile,
+        uri = uri,
+        urls = urls.map { it },
+        images = images.map { it.toImage() },
+        save_time = saveTime
+    )
+}
+
+fun Image.toImage() : ImageEntity {
+    return ImageEntity(
+        height = height,
+        width = width,
+        type = type,
+        uri = uri
+    )
+}
 
 fun ReleaseItemDto.toEntity(
     fetchedAt : Long,

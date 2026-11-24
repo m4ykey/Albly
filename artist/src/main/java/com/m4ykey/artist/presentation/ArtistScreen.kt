@@ -27,6 +27,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -34,6 +37,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -63,7 +67,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.get
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -75,9 +82,11 @@ import com.m4ykey.artist.domain.model.Image
 import com.m4ykey.artist.domain.model.ReleaseItem
 import com.m4ykey.core.network.openLink
 import com.m4ykey.core.ui.ActionIconButton
+import com.m4ykey.core.ui.AnimatedToggleIcon
 import com.m4ykey.core.ui.AppScaffold
 import com.m4ykey.core.ui.AnimationCard
 import com.m4ykey.core.ui.LoadImage
+import com.m4ykey.core.ui.showToast
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.coil3.CoilImageState
@@ -97,6 +106,19 @@ fun ArtistScreen(
 ) {
     LaunchedEffect(artistId) {
         viewModel.onAction(ArtistAction.OnLoadArtist(artistId))
+    }
+
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel, context) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is ArtistEffect.ShowError -> showToast(context, effect.message)
+                }
+            }
+        }
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -142,7 +164,20 @@ fun ArtistScreen(
             )
         },
         transparentTopBar = true,
-        topBarContentColor = if (topIsLight) Color.Black else Color.White
+        topBarContentColor = if (topIsLight) Color.Black else Color.White,
+        actions = {
+            if (uiState.artistState is ArtistState.Success) {
+                AnimatedToggleIcon(
+                    checked = uiState.isSaved,
+                    checkedIcon = Icons.Default.Favorite,
+                    unCheckedIcon = Icons.Outlined.FavoriteBorder,
+                    onClick = { viewModel.onAction(ArtistAction.OnToggleSave) },
+                    checkedColor = Color(0xFFE53935),
+                    contentDescription = if (uiState.isSaved) stringResource(R.string.remove_saved_artist)
+                        else stringResource(R.string.save_artist)
+                )
+            }
+        }
     )
 }
 
